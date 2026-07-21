@@ -164,3 +164,4 @@ __all__ = [
     "ownership_graph_router",
     "tenders_router",
 ]
+from .acp import router as acp_router

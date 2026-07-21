@@ -27,6 +27,7 @@ from app.database import close_db, init_db
 
 # Імпортуємо всі роутери через __init__.py
 from app.routers import (
+    acp_router,
     admin_chaos_router,
     admin_v2_router,
     agents_router,
@@ -357,6 +358,7 @@ ROUTERS = [
     ("/api/v1", warroom_router),
     ("/api/v1", ml_studio_router),
     ("/api/v1", agents_router),
+    ("/api/v1", acp_router),
     ("/api/v1", antigravity_router),
     ("/api/v1", admin_chaos_router),
     ("/api/v1", graph_intelligence_router),

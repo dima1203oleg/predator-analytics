@@ -15,7 +15,7 @@ from app.routers import (
     persons_router as users_router,
 )
 from app.api.v1.adv_dvs import router as adv_dvs_router
-from app.api.v1.endpoints import agents_control, llm, claw_code, avatar_stream, osint
+from app.api.v1.endpoints import agents_control, llm, claw_code, avatar_stream, osint, copilot
 
 router = APIRouter()
 
@@ -42,6 +42,13 @@ router.include_router(
     avatar_stream.router,
     prefix="/v1/copilot/avatar",
     tags=["copilot", "avatar"]
+)
+
+# Підключення Copilot Router
+router.include_router(
+    copilot.router,
+    prefix="/v1/copilot",
+    tags=["copilot"]
 )
 
 # Підключення Claw Code (Автономний Рефакторинг)

@@ -15,6 +15,7 @@ import httpx
 from app.config import get_settings
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
+from app.services.embedding_service import embedding_service
 
 logger = get_logger("qdrant_service")
 settings = get_settings()
@@ -316,6 +317,70 @@ class QdrantService:
         if "error" in result:
             return {"status": "unhealthy", "error": result["error"]}
         return {"status": "healthy", "version": result.get("version", "unknown")}
+
+    # ------------------------------------------------------------------
+    # Person Dossier Indexing
+    # ------------------------------------------------------------------
+
+    def _dict_to_text(self, profile: dict[str, Any]) -> str:
+        """Перетворює профіль у текст для ембедингу."""
+        basic = profile.get("basic_info", {})
+        name = basic.get("name", "")
+        
+        business = [b.get("name", "") for b in profile.get("business_assets", [])]
+        business_str = ", ".join(business)
+        
+        real_estate = [r.get("type", "") + " " + r.get("location", "") for r in profile.get("property", {}).get("real_estate", [])]
+        re_str = ", ".join(real_estate)
+        
+        vehicles = [v.get("brand", "") for v in profile.get("property", {}).get("vehicles", [])]
+        veh_str = ", ".join(vehicles)
+        
+        relatives = [r.get("name", "") for r in profile.get("relatives", [])]
+        rel_str = ", ".join(relatives)
+        
+        hidden = []
+        for ha in profile.get("hidden_assets", []):
+            labels = ", ".join(ha.get("type", []))
+            chain = ha.get("chain", "")
+            hidden.append(f"[{labels}] через {chain}")
+        hidden_str = "; ".join(hidden)
+        
+        text = f"Особа: {name}. Бізнес: {business_str}. Нерухомість: {re_str}. Авто: {veh_str}. Родичі: {rel_str}. Приховані активи: {hidden_str}."
+        return text
+
+    async def index_person_dossier(self, person_id: str, profile: dict[str, Any], tenant_id: str = "global") -> bool:
+        """
+        Індексує досьє особи у векторну базу даних (колекція KNOWLEDGE).
+        """
+        try:
+            text_to_embed = self._dict_to_text(profile)
+            logger.info(f"Qdrant: Генерація вектора для {person_id}")
+            
+            embedding = await embedding_service.generate_embedding(text_to_embed)
+            if not embedding:
+                logger.warning(f"Qdrant: Не вдалося згенерувати вектор для {person_id}")
+                return False
+                
+            payload = {
+                "person_id": person_id,
+                "ueid": person_id,
+                "name": profile.get("basic_info", {}).get("name", ""),
+                "entity_type": "person_dossier",
+                "tenant_id": tenant_id,
+                "raw_text": text_to_embed
+            }
+            
+            return await self.upsert_single(
+                collection=COLLECTION_KNOWLEDGE,
+                point_id=str(abs(hash(person_id)) % (10 ** 15)),
+                vector=embedding,
+                payload=payload
+            )
+            
+        except Exception as e:
+            logger.error(f"Qdrant: Помилка індексації {person_id}: {e}")
+            return False
 
 
 # Singleton

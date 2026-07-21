@@ -113,13 +113,15 @@ export const CopilotPanel: React.FC = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/react-agent/query', {
+      const res = await fetch('/api/v1/copilot/chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
         },
-        body: JSON.stringify({ query: 'Згенеруй Executive Briefing на основі останнього досьє для поточної цілі.' })
+        body: JSON.stringify({ 
+          messages: [{ role: 'user', content: 'Згенеруй Executive Briefing на основі останнього досьє для поточної цілі.' }] 
+        })
       });
       
       if (!res.ok) throw new Error('Network error');
@@ -161,13 +163,16 @@ export const CopilotPanel: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/v1/react-agent/query', {
+      
+      const updatedMessages = [...messages, { role: 'user', content: query }];
+      
+      const res = await fetch('/api/v1/copilot/chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ messages: updatedMessages })
       });
       
       if (!res.ok) throw new Error('Network error');

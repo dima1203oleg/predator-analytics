@@ -107,8 +107,11 @@ async def start_scan(req: ScanRequest) -> Dict[str, Any]:
     
     # We will publish to a generic ingestion raw topic for now, 
     # the worker can route it based on action.
+    from app.config import get_settings
+    app_settings = get_settings()
+    
     await kafka_service.produce(
-        topic="predator.tenant.default.ingestion.raw",
+        topic=app_settings.KAFKA_TOPIC_INGESTION_RAW,
         value=json.dumps(payload).encode("utf-8"),
         key=req.entity_id.encode("utf-8")
     )
@@ -116,4 +119,31 @@ async def start_scan(req: ScanRequest) -> Dict[str, Any]:
     # Prevent duplicate scans within 1 hour
     await cache_service.set(cache_key, payload["job_id"], ttl=3600)
     
+    # Initialize the job status in cache so polling works immediately
+    await cache_service.set(f"osint:job:{payload['job_id']}", json.dumps({
+        "status": "scan_started",
+        "entity_id": req.entity_id,
+        "progress": 0
+    }), ttl=3600)
+    
     return {"status": "scan_started", "entity_id": req.entity_id, "job_id": payload["job_id"]}
+
+@router.get("/scan/status/{job_id}", summary="Перевірити статус сканування")
+async def get_scan_status(job_id: str) -> Dict[str, Any]:
+    """Перевіряє поточний статус OSINT сканування у Redis."""
+    from app.services.cache_service import cache_service
+    import json
+    
+    status_data = await cache_service.get(f"osint:job:{job_id}")
+    if not status_data:
+        # Можливо сканування ще не почалося або вже закінчилося і ключ зник (TTL),
+        # але зазвичай TTL=3600, тому відсутність ключа означає помилку або неіснуючу джобу
+        raise HTTPException(status_code=404, detail="Job not found or expired")
+    
+    if isinstance(status_data, str):
+        try:
+            return json.loads(status_data)
+        except:
+            return {"status": status_data}
+    
+    return status_data

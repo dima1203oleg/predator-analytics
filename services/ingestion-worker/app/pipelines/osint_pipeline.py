@@ -14,6 +14,11 @@ class OSINTPipeline(BasePipeline):
         self.postgres_sink = postgres_sink
         self.clickhouse_sink = clickhouse_sink
         self.logger = logging.getLogger("ingestion_worker.osint_pipeline")
+        
+        from app.config import get_settings
+        import redis.asyncio as redis
+        settings = get_settings()
+        self.redis = redis.from_url(settings.REDIS_URL, decode_responses=True)
 
     async def process(self, msg_value: Dict[str, Any]) -> None:
         """Обробляє вхідний OSINT-запит."""
@@ -41,6 +46,15 @@ class OSINTPipeline(BasePipeline):
                 name=name,
                 tenant_id=msg_value.get("tenant_id")
             )
+            
+            # Позначаємо в Redis статус processing
+            if job_id:
+                import json
+                await self.redis.set(f"osint:job:{job_id}", json.dumps({
+                    "status": "compiling",
+                    "entity_id": entity_id,
+                    "progress": 50
+                }), ex=3600)
             
             # 1. Execute the actual collectors
             dossier = await aggregator.build_dossier(query)
@@ -108,6 +122,16 @@ class OSINTPipeline(BasePipeline):
                 await self.clickhouse_sink.insert_osint_dossier(dossier_data)
                 self.logger.info("osint_pipeline.clickhouse_saved", job_id=job_id)
             
+            # 6. Оновлюємо статус в Redis на completed
+            if job_id:
+                import json
+                await self.redis.set(f"osint:job:{job_id}", json.dumps({
+                    "status": "success",
+                    "entity_id": entity_id,
+                    "progress": 100,
+                    "risk_score": risk_score
+                }), ex=3600)
+                
         except Exception as e:
             self.logger.error(
                 "osint_pipeline.error",
@@ -116,3 +140,11 @@ class OSINTPipeline(BasePipeline):
                 error=str(e),
                 exc_info=True
             )
+            if job_id:
+                import json
+                await self.redis.set(f"osint:job:{job_id}", json.dumps({
+                    "status": "error",
+                    "entity_id": entity_id,
+                    "error": str(e)
+                }), ex=3600)
+

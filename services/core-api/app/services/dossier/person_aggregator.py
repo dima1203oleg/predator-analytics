@@ -10,8 +10,31 @@ logger = logging.getLogger(__name__)
 
 class PersonDossierAggregator:
     def __init__(self):
-        # В реальному коді тут буде інжектитись клієнт Neo4j з core-api/app/db
-        logger.info("Initialized PersonDossierAggregator")
+        # Інтеграція клієнта Neo4j з core-api
+        from app.services.neo4j_service import Neo4jService
+        self.neo4j = Neo4jService()
+        
+        # Ініціалізація OSINT-колекторів
+        from app.services.osint.collectors.edr_collector import EdrCollector
+        from app.services.osint.collectors.leak_collector import LeakCollector
+        from app.services.osint.collectors.blockchain_collector import BlockchainCollector
+        from app.services.osint.collectors.document_collector import DocumentCollector
+        from app.services.osint.collectors.social_media_collector import SocialMediaCollector
+        from app.services.osint.collectors.sanctions_collector import SanctionsCollector
+        from app.services.osint.collectors.darknet_collector import DarknetCollector
+        
+        self.edr_collector = EdrCollector()
+        self.collectors = [
+            EdrCollector(),
+            LeakCollector(),
+            BlockchainCollector(),
+            DocumentCollector(),
+            SocialMediaCollector(),
+            SanctionsCollector(),
+            DarknetCollector()
+        ]
+        
+        logger.info("Initialized PersonDossierAggregator with Neo4jService and OSINT Collectors")
 
     async def compile_full_profile(self, identifier: str) -> Dict[str, Any]:
         """
@@ -47,99 +70,100 @@ class PersonDossierAggregator:
         logger.info(f"Збираємо дані для особи: {identifier}")
 
         # Симуляція запиту до графу та інших джерел
-        # В реальності тут будуть виклики Neo4j драйвера та OSINT-збирачів
+        # Виклик реального методу пошуку прихованих активів
+        hidden_assets_result = await self.neo4j.find_hidden_assets(f"person_{identifier}", max_depth=3)
+        hidden_assets = []
+        if hidden_assets_result.success:
+            hidden_assets = hidden_assets_result.data.get("hidden_assets", [])
+            logger.info(f"Знайдено {len(hidden_assets)} прихованих активів для {identifier}")
         
+        # Запуск OSINT колекторів конкурентно
+        import asyncio
+        tasks = [collector.run_pipeline(identifier, identifier) for collector in self.collectors]
+        results = await asyncio.gather(*tasks)
+
         graph_data = {"nodes": [], "edges": []}
         
-        # Симулюємо перевірку в Darknet
-        darknet_findings = []
-        is_high_risk = "black" in identifier.lower() or "hack" in identifier.lower() or "dark" in identifier.lower()
-        
-        if is_high_risk:
-            darknet_findings = [
-                {
-                    "node_id": "darknet_post_1",
-                    "labels": ["DarknetMention", "DataBreach"],
-                    "properties": {
-                        "source": "RaidForums Archive",
-                        "date": "2025-11-20",
-                        "description": f"Злита база даних. Можливий збіг по {identifier}",
-                        "risk_level": "CRITICAL"
-                    }
-                },
-                {
-                    "node_id": "crypto_wallet_1",
-                    "labels": ["CryptoWallet", "HighRisk"],
-                    "properties": {
-                        "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-                        "cluster": "Hydra Market",
-                        "total_received": 14.5
-                    }
-                }
-            ]
-
         # Базова персона
+        person_node_id = f"person_{identifier}"
         graph_data["nodes"].append({
-            "node_id": f"person_{identifier}",
+            "node_id": person_node_id,
             "labels": ["Person", "Target"],
             "properties": {
                 "name": identifier,
-                "type": "physical_person",
-                "risk_status": "HIGH" if is_high_risk else "UNKNOWN"
+                "type": "physical_person"
             }
         })
 
-        # Додаємо Darknet вузли та зв'язки
-        for finding in darknet_findings:
-            graph_data["nodes"].append(finding)
-            graph_data["edges"].append({
-                "source": f"person_{identifier}",
-                "target": finding["node_id"],
-                "type": "MENTIONED_IN" if "DarknetMention" in finding["labels"] else "OWNS_WALLET",
-                "properties": {"confidence": 0.85, "source": "Darknet Collector"}
+        # Функція для мерджу результатів колекторів
+        def merge_collector_data(collector_data: Dict[str, Any]):
+            graph_data["nodes"].extend(collector_data.get("nodes", []))
+            # Додаємо джерело зв'язку від персони
+            for edge in collector_data.get("edges", []):
+                edge["source"] = person_node_id
+                graph_data["edges"].append(edge)
+        for collector_data in results:
+            merge_collector_data(collector_data)
+
+        # Додаємо знайдені приховані активи до профілю (Neo4j Search)
+        formatted_hidden_assets = []
+        for ha in hidden_assets:
+            formatted_hidden_assets.append({
+                "type": ha["type"],
+                "chain": " -> ".join(ha["connection_chain"]),
+                "relations": " -> ".join(ha["relation_chain"]),
+                "depth": ha["depth"],
+                "properties": ha["asset"].get("properties", {})
             })
 
-        # Додамо трохи легальних активів для контрасту
-        graph_data["nodes"].append({
-            "node_id": "company_1",
-            "labels": ["Company"],
-            "properties": {
-                "name": "ТОВ 'Рога і Копита'",
-                "edrpou": "12345678"
-            }
-        })
-        graph_data["edges"].append({
-            "source": f"person_{identifier}",
-            "target": "company_1",
-            "type": "FOUNDER",
-            "properties": {"share": 100}
-        })
-
+        # Формування підсумкового JSON-досьє
         profile = {
             "basic_info": {
-                "name": "Іванов Іван Іванович",
+                "name": identifier,
                 "identifier": identifier,
                 "citizenship": "UA"
             },
-            "business_assets": [
-                {"name": "ТОВ ОФШОР", "role": "Бенефіціар", "risk": "High"}
-            ],
-            "property": {
-                "real_estate": [{"type": "Квартира", "area": "250 м2", "location": "Київ"}],
-                "vehicles": [{"brand": "Mercedes-Benz G-Class", "year": 2023}]
-            },
-            "relatives": [
-                {"name": "Іванова Марія", "relation": "Дружина", "is_pep": True}
-            ],
+            "business_assets": [],
+            "property": {},
+            "hidden_assets": formatted_hidden_assets,
+            "relatives": [],
             "digital_footprint": {
-                "crypto_wallets": [{"address": "1A1zP1...", "risk_score": 95}],
-                "leaks": [{"email": "ivan.boss@gmail.com", "source": "Collection #1"}]
+                "social_media": [],
+                "crypto_wallets": [],
+                "leaks": [],
+                "darknet_mentions": []
             },
             "legal_status": {
                 "sanctions": [],
                 "interpol": False
             }
         }
+        
+        # Merge all dossier_updates from all results into the final profile
+        for res in results:
+            updates = res.get("dossier_updates", {})
+            if "business_assets" in updates:
+                profile["business_assets"].extend(updates["business_assets"])
+            if "property" in updates:
+                if "property" not in profile:
+                    profile["property"] = {}
+                # merge dicts like real_estate, vehicles
+                for k, v in updates["property"].items():
+                    if k not in profile["property"]:
+                        profile["property"][k] = []
+                    profile["property"][k].extend(v)
+            if "relatives" in updates:
+                profile["relatives"].extend(updates["relatives"])
+            if "digital_footprint" in updates:
+                df = updates["digital_footprint"]
+                for key in ["social_media", "crypto_wallets", "leaks", "darknet_mentions"]:
+                    if key in df:
+                        profile["digital_footprint"][key].extend(df[key])
+            if "legal_status" in updates:
+                ls = updates["legal_status"]
+                if "sanctions" in ls:
+                    profile["legal_status"]["sanctions"].extend(ls["sanctions"])
+        
         return {
             "profile": profile,
             "graph_data": graph_data

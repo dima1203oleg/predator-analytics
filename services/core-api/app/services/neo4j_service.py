@@ -623,6 +623,49 @@ class Neo4jService:
                 })
         return cycles
 
+    async def find_hidden_assets(self, person_id: str, max_depth: int = 3) -> GraphResult:
+        """Пошук прихованих активів через родичів та компанії.
+        Виявляє активи (нерухомість, транспорт, компанії), які пов'язані з особою
+        через проміжні ланки (наприклад, записані на дружину або на підконтрольну компанію).
+        """
+        # Пошук через родичів, дружин, партнерів або компанії
+        query = f"""
+        MATCH (p:Person {{node_id: $person_id}})
+        MATCH path = (p)-[:RELATED_TO|FOUNDED|CONTROLS|OWNS*1..{max_depth}]->(asset)
+        WHERE 'Asset' IN labels(asset) OR 'Vehicle' IN labels(asset) OR 'Location' IN labels(asset) OR 'Organization' IN labels(asset)
+        // Виключаємо пряме володіння, якщо шукаємо саме "приховані" (або можна залишати всі, сортуючи за глибиною)
+        WITH path, p, asset, length(path) as depth
+        WHERE depth > 1 
+        RETURN 
+            asset,
+            labels(asset) as asset_labels,
+            depth,
+            [node in nodes(path) | node.name] as connection_chain,
+            [rel in relationships(path) | type(rel)] as relation_chain
+        ORDER BY depth ASC
+        LIMIT 50
+        """
+
+        assets = []
+        async with await self._get_session() as session:
+            try:
+                result = await session.run(query, person_id=person_id)
+                async for record in result:
+                    assets.append({
+                        "asset": dict(record["asset"]),
+                        "type": record["asset_labels"],
+                        "depth": record["depth"],
+                        "connection_chain": record["connection_chain"],
+                        "relation_chain": record["relation_chain"]
+                    })
+                return GraphResult(
+                    success=True,
+                    data={"hidden_assets": assets, "total": len(assets)}
+                )
+            except Exception as e:
+                logger.error(f"Error in find_hidden_assets: {e}")
+                return GraphResult(success=False, errors=[str(e)])
+
     # ======================== IMPORT DATA ========================
 
     async def import_company(

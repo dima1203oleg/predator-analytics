@@ -47,8 +47,10 @@ import { AlertCenter } from './components/AlertCenter';
 import { WatchlistPanel } from './components/WatchlistPanel';
 import { OracleWorkspace } from './components/OracleWorkspace';
 import { ShieldCompliance } from './components/ShieldCompliance';
+import ACPFactoryPage from './pages/ACPFactoryPage';
+import ResearchEnginePage from './pages/ResearchEnginePage';
 
-type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'warroom' | 'oracle' | 'shield' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
+type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'warroom' | 'oracle' | 'shield' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics' | 'acp-factory' | 'research-engine';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
@@ -607,6 +609,8 @@ export default function App() {
         { id: 'volumes', label: '📚 Томи ТЗ (Митні регламенти)', type: 'nav' },
         { id: 'advisor', label: '🤖 ШІ-Архітектор', type: 'nav' },
         { id: 'data-ingestion', label: '📥 Центр Інгестії Даних', type: 'nav' },
+        { id: 'acp-factory', label: '⚡ ACP Factory', type: 'nav' },
+        { id: 'research-engine', label: '🧠 AI Research Engine', type: 'nav' },
       ];
 
       const allActions = [
@@ -1890,6 +1894,32 @@ export default function App() {
                         </div>
                       )}
                     </button>
+
+                    <button 
+                      onClick={() => setActiveTab('acp-factory')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'acp-factory' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <Zap className={`w-4 h-4 ${activeTab === 'acp-factory' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>ACP Factory</span>
+                          <span className="text-[9px] bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 px-1.5 py-0.5 rounded font-mono font-bold">ACP</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('research-engine')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'research-engine' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <BrainCircuit className={`w-4 h-4 ${activeTab === 'research-engine' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>Research Engine</span>
+                          <span className="text-[9px] bg-fuchsia-500/15 text-fuchsia-400 border border-fuchsia-500/30 px-1.5 py-0.5 rounded font-mono font-bold">AI</span>
+                        </div>
+                      )}
+                    </button>
                   </div>
 
                   {/* Group: Scenarios (User Space) */}
@@ -2195,6 +2225,12 @@ export default function App() {
                   ) : (
                     <AdvisorTab />
                   )
+                )}
+                {activeTab === 'acp-factory' && (
+                  <ACPFactoryPage />
+                )}
+                {activeTab === 'research-engine' && (
+                  <ResearchEnginePage />
                 )}
               </motion.div>
             </AnimatePresence>
