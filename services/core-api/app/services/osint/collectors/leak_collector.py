@@ -52,7 +52,7 @@ class LeakCollector(BaseOsintCollector):
 
         leaks = raw_data.get("leaks", [])
 
-        for idx, leak in enumerate(leaks):
+        for _idx, leak in enumerate(leaks):
             source = leak.get("source")
             email = leak.get("email")
 

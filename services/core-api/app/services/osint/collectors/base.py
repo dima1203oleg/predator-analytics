@@ -1,6 +1,6 @@
 import abc
 import asyncio
-from datetime import datetime
+from datetime import UTC, datetime
 import logging
 from typing import Any
 
@@ -52,7 +52,7 @@ class BaseOsintCollector(abc.ABC):
         існує в RegistryManager, але OSINT колектори можуть мати свій бакет.
         """
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             filename = f"osint/{self.source_name}/{identifier}_{timestamp}.json"
 
             # В реальній імплементації:
