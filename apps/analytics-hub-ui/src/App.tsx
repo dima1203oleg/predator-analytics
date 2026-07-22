@@ -27,13 +27,14 @@ import {
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
   Activity, Camera, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Fingerprint
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Fingerprint,
+  UserCheck, LayoutDashboard
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
 import { AuthStatus } from './components/AuthStatus';
 
-type TabId = 'live-analytical-center' | 'person-osint' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'media-forensics' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
+type TabId = 'live-analytical-center' | 'person-osint' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'media-forensics' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'sandbox' | 'data-ingestion' | 'autonomous-factory';
 
 export default function App() {
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
@@ -1581,185 +1582,195 @@ export default function App() {
         <div className="flex-1 flex overflow-hidden relative">
           
           {/* LEFT SIDEBAR (Section 7) */}
-          <aside 
-            className={`shrink-0 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-r border-indigo-500/5 flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}
+          <aside
+            className={`shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 z-10 ${sidebarCollapsed ? "w-[68px]" : "w-[260px]"}`}
             id="tactical-sidebar"
           >
-            
             {/* Navigation group */}
-            <div className="p-3 space-y-4 overflow-y-auto flex-1">
+            <div className="p-3 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
               
-              {ecosystem === 'user' ? (
-                <>
-                  {/* User Ecosystem Navigation */}
-                  <div className="space-y-1.5">
-                    {!sidebarCollapsed && (
-                      <span className="text-[9px] text-indigo-400 font-mono font-bold uppercase tracking-widest block px-2.5 py-1">
-                        🛰️ АНАЛІТИЧНИЙ ПРОСТІР
-                      </span>
-                    )}
-                    
-                    <button 
-                      onClick={() => setActiveTab('live-analytical-center')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'live-analytical-center' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+              {/* Ecosystem Selector Desktop */}
+              {!sidebarCollapsed && (
+                <div className="mb-4 space-y-2 pb-4 border-b border-slate-800/60">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block px-1">
+                    Простір Управління
+                  </span>
+                  <div className="flex gap-1.5 p-1 bg-slate-950/50 rounded-lg border border-slate-800/80">
+                    <button
+                      onClick={() => {
+                        setEcosystem("user");
+                        setActiveTab("live-analytical-center");
+                      }}
+                      className={`flex-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all text-center ${ecosystem === "user" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                     >
-                      <Compass className={`w-4 h-4 ${activeTab === 'live-analytical-center' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Живе ШІ-Ядро</span>
-                          <span className="text-[8px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">CORE</span>
-                        </div>
-                      )}
+                      Користувач
                     </button>
-
-                    <button 
-                      onClick={() => setActiveTab('person-osint')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'person-osint' ? 'bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 text-indigo-300 border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    <button
+                      onClick={() => {
+                        setEcosystem("admin");
+                        setActiveTab("admin-back-office");
+                      }}
+                      className={`flex-1 py-1.5 px-2 rounded-md text-xs font-medium transition-all text-center ${ecosystem === "admin" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                     >
-                      <Fingerprint className={`w-4 h-4 ${activeTab === 'person-osint' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>👤 Фізична особа</span>
-                          <span className="text-[8px] bg-gradient-to-r from-indigo-500/15 to-purple-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">OSINT</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('maps')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'maps' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Map className={`w-4 h-4 ${activeTab === 'maps' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Інтерактивна Карта</span>
-                          <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold">MAP</span>
-                        </div>
-                      )}
-                    </button>
-          <button 
-                      onClick={() => setActiveTab('media-forensics')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'media-forensics' ? 'bg-fuchsia-600/10 text-fuchsia-400 border border-fuchsia-500/20 shadow-[inset_0_0_15px_rgba(217,70,239,0.1)]' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                      title="Triggers high-load forensic deep-analysis"
-                    >
-                      <Camera className={`w-4 h-4 ${activeTab === 'media-forensics' ? 'text-fuchsia-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Media Forensics</span>
-                          <div className="flex items-center gap-1.5 opacity-80">
-                            {/* Animated CSS Waveform */}
-                            <div className="flex items-center gap-[2px] h-3">
-                              <div className="w-[2px] bg-fuchsia-500 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.1s] h-1.5" />
-                              <div className="w-[2px] bg-fuchsia-400 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.3s] h-3" />
-                              <div className="w-[2px] bg-fuchsia-500 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.5s] h-1" />
-                              <div className="w-[2px] bg-fuchsia-400 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.2s] h-2" />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </button>
-
-
-                    <button 
-                      onClick={() => setActiveTab('dashboard')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'dashboard' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Layers className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Старий Дашборд</span>
-                          <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded font-mono">LIVE</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('osint')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'osint' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Search className={`w-4 h-4 ${activeTab === 'osint' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Старий Пошук</span>
-                          <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded font-mono">RISK</span>
-                        </div>
-                      )}
+                      Адміністратор
                     </button>
                   </div>
+                </div>
+              )}
+              {sidebarCollapsed && (
+                <div className="mb-4 pb-4 border-b border-slate-800/60 flex justify-center">
+                   <button
+                      onClick={() => {
+                        if (ecosystem === "user") {
+                          setEcosystem("admin");
+                          setActiveTab("admin-back-office");
+                        } else {
+                          setEcosystem("user");
+                          setActiveTab("live-analytical-center");
+                        }
+                      }}
+                      className="w-10 h-10 rounded-lg bg-slate-950/50 border border-slate-800/80 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                      title={ecosystem === "user" ? "Switch to Admin" : "Switch to User"}
+                    >
+                      {ecosystem === "user" ? "US" : "AD"}
+                    </button>
+                </div>
+              )}
 
-                  {/* Group: Scenarios (User Space) */}
-                  <div className="space-y-1">
-                    {!sidebarCollapsed && (
-                      <span className="text-[9px] text-indigo-400 font-mono font-bold uppercase tracking-widest block px-2.5 py-1">
-                        🔮 СЦЕНАРІЇ ДОСЛІДЖЕННЯ
-                      </span>
-                    )}
+              {ecosystem === "user" ? (
+                <>
+                  <div className="space-y-6">
+                    {/* 📊 ГОЛОВНЕ */}
+                    <div className="space-y-1">
+                      {!sidebarCollapsed && (
+                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                          Головне
+                        </div>
+                      )}
+                      
+                      <button
+                        onClick={() => setActiveTab("dashboard")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "dashboard" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Layers className={`w-4 h-4 ${activeTab === "dashboard" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Головна Панель</span>}
+                      </button>
 
-                    {[
-                      { id: 'business', label: 'Бізнес-профіль', icon: Briefcase },
-                      { id: 'logistics', label: 'Логістичні шляхи', icon: Truck },
-                      { id: 'taxes', label: 'Податкові ризики', icon: Landmark },
-                      { id: 'customs', label: 'Митна декларація', icon: Database },
-                      { id: 'geography', label: 'Гео-аналітика', icon: Globe },
-                      { id: 'analytics', label: 'Прогнозування', icon: TrendingUp },
-                      { id: 'assistant', label: 'ШІ-Асистент Jarvis', icon: Bot },
-                      { id: 'partners', label: 'Контрагенти', icon: Users },
-                      { id: 'risks', label: 'Рівні ризиків', icon: ShieldAlert },
-                    ].map((scen) => {
-                      const Icon = scen.icon;
-                      const isActive = activeTab === 'live-analytical-center' && selectedScenario === scen.id;
-                      return (
-                        <button
-                          key={scen.id}
-                          onClick={() => {
-                            setActiveTab('live-analytical-center');
-                            setSelectedScenario(scen.id);
-                          }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                        >
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
-                          {!sidebarCollapsed && <span>{scen.label}</span>}
-                        </button>
-                      );
-                    })}
+                      <button
+                        onClick={() => setActiveTab("live-analytical-center")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "live-analytical-center" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Compass className={`w-4 h-4 ${activeTab === "live-analytical-center" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Аналітика та Звіти</span>}
+                      </button>
+                    </div>
+
+                    {/* 🔍 РОЗСЛІДУВАННЯ */}
+                    <div className="space-y-1">
+                      {!sidebarCollapsed && (
+                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                          Розслідування
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => setActiveTab("osint")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "osint" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Search className={`w-4 h-4 ${activeTab === "osint" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Глибокий Пошук</span>}
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab("person-osint")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "person-osint" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <UserCheck className={`w-4 h-4 ${activeTab === "person-osint" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Перевірка Осіб</span>}
+                      </button>
+                      
+                      <button
+                        onClick={() => setActiveTab("media-forensics")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "media-forensics" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Camera className={`w-4 h-4 ${activeTab === "media-forensics" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Аналіз Фото/Відео</span>}
+                      </button>
+                    </div>
+
+                    {/* 🛠 ДОДАТКОВІ ІНСТРУМЕНТИ */}
+                    <div className="space-y-1">
+                      {!sidebarCollapsed && (
+                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                          Додатково
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => setActiveTab("maps")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "maps" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Globe className={`w-4 h-4 ${activeTab === "maps" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Інтерактивна Карта</span>}
+                      </button>
+                      
+                      <button
+                        onClick={() => setActiveTab("data-ingestion")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "data-ingestion" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Database className={`w-4 h-4 ${activeTab === "data-ingestion" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Завантаження Даних</span>}
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab("sandbox")}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "sandbox" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      >
+                        <Network className={`w-4 h-4 ${activeTab === "sandbox" ? "text-blue-400" : "text-slate-400"}`} />
+                        {!sidebarCollapsed && <span>Розширений Аналіз</span>}
+                      </button>
+                    </div>
                   </div>
                 </>
               ) : (
                 <>
-                  {/* Admin Ecosystem Navigation */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     {!sidebarCollapsed && (
-                      <span className="text-[9px] text-amber-500 font-mono font-bold uppercase tracking-widest block px-2.5 py-1">
-                        ⚙️ АДМІНІСТРУВАННЯ КЛАСУ
-                      </span>
+                      <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Адміністрування
+                      </div>
                     )}
-                    
-                    <button 
-                      onClick={() => setActiveTab('admin-back-office')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'admin-back-office' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    <button
+                      onClick={() => setActiveTab("admin-back-office")}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "admin-back-office" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                     >
-                      <Settings className={`w-4 h-4 ${activeTab === 'admin-back-office' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Back Office Консоль</span>
-                          <span className="text-[8px] bg-amber-500/15 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">ADMIN</span>
-                        </div>
-                      )}
+                      <Settings className={`w-4 h-4 ${activeTab === "admin-back-office" ? "text-blue-400" : "text-slate-400"}`} />
+                      {!sidebarCollapsed && <span>Back Office Консоль</span>}
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab("autonomous-factory")}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "autonomous-factory" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                    >
+                      <Cpu className={`w-4 h-4 ${activeTab === "autonomous-factory" ? "text-blue-400" : "text-slate-400"}`} />
+                      {!sidebarCollapsed && <span>Автономна Фабрика</span>}
                     </button>
                   </div>
 
-                  {/* Group: Infra Specifications (Admin Space) */}
-                  <div className="space-y-1">
+                  <div className="space-y-1 mt-6">
                     {!sidebarCollapsed && (
-                      <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block px-2.5 py-1">
-                        АРХІТЕКТУРА ІНФРАСТРУКТУРИ
-                      </span>
+                      <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Архітектура Інфраструктури
+                      </div>
                     )}
-
                     {[
-                      { id: 'architecture', label: 'Граф залежностей', icon: Network },
-                      { id: 'gap', label: 'Аналіз прогалин', icon: Wrench },
-                      { id: 'roadmap', label: 'Дорожня карта', icon: Calendar },
+                      { id: "architecture", label: "Граф залежностей", icon: Network },
+                      { id: "gap", label: "Аналіз прогалин", icon: Wrench },
+                      { id: "roadmap", label: "Дорожня карта", icon: Calendar },
+                      { id: "catalog", label: "Каталог рішень", icon: Layers },
+                      { id: "license", label: "Сумісність ліцензій", icon: ShieldAlert },
+                      { id: "volumes", label: "Томи ТЗ", icon: Database },
+                      { id: "advisor", label: "ШІ-Архітектор", icon: Cpu },
                     ].map((tab) => {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;
@@ -1768,19 +1779,19 @@ export default function App() {
                           key={tab.id}
                           onClick={() => {
                             setActiveTab(tab.id as TabId);
-                            if (tab.id === 'architecture') {
+                            if (tab.id === "architecture") {
                               setSelectedNode({
-                                id: 'core_api',
-                                label: 'Core REST API',
-                                group: 'Core'
+                                id: "core_api",
+                                label: "Core REST API",
+                                group: "Core",
                               });
                               setSelectedEntity(null);
                               setSelectedTool(null);
                             }
                           }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-indigo-400 border border-indigo-500/10' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${isActive ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                         >
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
+                          <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
                           {!sidebarCollapsed && <span>{tab.label}</span>}
                         </button>
                       );
@@ -1788,36 +1799,43 @@ export default function App() {
                   </div>
                 </>
               )}
-
-              {/* Quick status alerts inside sidebar */}
+              
               {!sidebarCollapsed && (
-                <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl space-y-2 mt-4">
-                  <span className="text-[8px] text-slate-500 font-mono font-bold uppercase tracking-wider block">СТАН СИСТЕМИ PREDATOR</span>
-                  <div className="space-y-1 text-[10px] text-slate-300 font-mono">
-                    <div className="flex justify-between">
-                      <span>Kafka Queue:</span>
-                      <span className="text-emerald-400 font-bold">0 lag</span>
+                <div className="bg-slate-800/30 border border-slate-700/50 p-3 rounded-xl space-y-3 mt-6">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
+                    Стан Системи
+                  </span>
+                  <div className="space-y-2 text-xs text-slate-400">
+                    <div className="flex justify-between items-center">
+                      <span>Kafka:</span>
+                      <span className="text-emerald-400 font-medium flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        0 lag
+                      </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span>Qdrant:</span>
-                      <span className="text-indigo-400">98% Match</span>
+                      <span className="text-blue-400 font-medium">98% Match</span>
                     </div>
                   </div>
                 </div>
               )}
-
             </div>
 
             {/* Collapsed control */}
-            <div className="p-3 border-t border-indigo-500/5 text-center">
-              <button 
+            <div className="p-3 border-t border-slate-800">
+              <button
                 onClick={() => setIsInspectorOpen(!isInspectorOpen)}
-                className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-850 text-slate-300 hover:text-slate-200 py-2 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                {sidebarCollapsed ? 'INSP' : isInspectorOpen ? 'Сховати Інспектор' : 'Показати Інспектор'}
+                {!sidebarCollapsed && <LayoutDashboard className="w-4 h-4" />}
+                {sidebarCollapsed
+                  ? "INSP"
+                  : isInspectorOpen
+                    ? "Сховати Інспектор"
+                    : "Показати Інспектор"}
               </button>
             </div>
-
           </aside>
 
           {/* MAIN WORKSPACE (Section 8) */}
@@ -1834,8 +1852,8 @@ export default function App() {
               <span className="text-indigo-400 font-bold">
                 {activeTab === 'live-analytical-center' && 'Живий Аналітичний Центр (ШІ-Ядро)'}
                 {activeTab === 'admin-back-office' && 'Back Office Консоль (ArgoCD & Grafana)'}
-                {activeTab === 'dashboard' && 'Старий Дашборд'}
-                {activeTab === 'osint' && 'Старий Пошук OSINT'}
+                {activeTab === 'dashboard' && 'Головна Панель'}
+                {activeTab === 'osint' && 'Глибокий Пошук OSINT'}
                 {activeTab === 'maps' && 'Інтерактивна Карта PREDATOR'}
                 {activeTab === 'catalog' && 'Каталог рішень'}
                 {activeTab === 'license' && 'Сумісність ліцензій'}
@@ -1846,6 +1864,9 @@ export default function App() {
                  {activeTab === 'advisor' && 'ШІ-Архітектор'}
                 {activeTab === 'media-forensics' && 'Аналіз Медіа (Forensics)'}
                 {activeTab === 'person-osint' && 'Все про фізичну особу (Повний OSINT)'}
+                {activeTab === 'data-ingestion' && 'Завантаження Даних (ETL)'}
+                {activeTab === 'sandbox' && 'Розширений Аналіз (Sandbox)'}
+                {activeTab === 'autonomous-factory' && 'Автономна Фабрика'}
               </span>
             </div>
 
@@ -1918,6 +1939,19 @@ export default function App() {
                 {activeTab === 'advisor' && <AdvisorTab />}
                 {activeTab === 'media-forensics' && <MediaForensicsTab />}
                 {activeTab === 'person-osint' && <PersonOsintPage />}
+
+                {(activeTab === 'data-ingestion' || activeTab === 'sandbox' || activeTab === 'autonomous-factory') && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center justify-center h-full text-slate-400 space-y-4"
+                  >
+                    <Wrench className="w-12 h-12 text-blue-500/50" />
+                    <h2 className="text-xl font-semibold text-white">Модуль в розробці</h2>
+                    <p className="text-sm">Цей розділ знаходиться на стадії підключення до бекенду.</p>
+                  </motion.div>
+                )}
               </motion.div>
             </AnimatePresence>
 

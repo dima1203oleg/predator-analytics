@@ -21,7 +21,7 @@ echo "[2/3] Building and bringing up Docker containers..."
 ssh -p ${SSH_PORT} ${USER}@${SERVER_IP} "cd ${REMOTE_DIR}/deploy && docker compose down && docker compose up --build -d"
 
 echo "[3/4] Seeding the database..."
-ssh -p ${SSH_PORT} ${USER}@${SERVER_IP} "cd ${REMOTE_DIR}/deploy && docker compose cp scripts/seed.py graph-service:/tmp/seed.py && docker compose exec graph-service pip install asyncpg && docker compose exec graph-service python /tmp/seed.py"
+ssh -p ${SSH_PORT} ${USER}@${SERVER_IP} "cd ${REMOTE_DIR}/deploy && docker compose cp scripts/seed.py graph-service:/tmp/seed.py && docker compose exec graph-service python /tmp/seed.py"
 
 echo "[4/4] Deployment successful! API Gateway is starting on port 8000."
 echo "============================================="

@@ -52,3 +52,5 @@ Pillow>=10.0.0
 # ML extras
 lightgbm>=4.3.0
 optuna>=3.6.0
+beautifulsoup4
+lxml

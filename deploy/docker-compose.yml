@@ -168,7 +168,7 @@ services:
       dockerfile: services/core-api/Dockerfile
     container_name: predator_core_api
     ports:
-      - "8000:8000"
+      - "8888:8000"
     env_file:
       - ../.env
     environment:
@@ -241,18 +241,18 @@ services:
     networks:
       - predator_net
 
-  # 5. MOCK DATA GENERATOR
-  mock-generator:
-    build:
-      context: ../services/mock-data-generator
-      dockerfile: Dockerfile
-    container_name: predator_mock_generator
-    environment:
-      - KAFKA_BROKER=redpanda:29092
-    depends_on:
-      - redpanda
-    networks:
-      - predator_net
+#  # 5. MOCK DATA GENERATOR
+#  mock-generator:
+#    build:
+#      context: ../services/mock-data-generator
+#      dockerfile: Dockerfile
+#    container_name: predator_mock_generator
+#    environment:
+#      - KAFKA_BROKER=redpanda:29092
+#    depends_on:
+#      - redpanda
+#    networks:
+#      - predator_net
 
   # 6. Tor Proxy (For OSINT / Darknet Collectors)
   tor-proxy:
