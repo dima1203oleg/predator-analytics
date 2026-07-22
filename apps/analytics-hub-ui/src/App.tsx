@@ -40,7 +40,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('live-analytical-center');
   const [selectedScenario, setSelectedScenario] = useState<string>('business');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isInspectorOpen, setIsInspectorOpen] = useState(true);
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   
   // Interactive rendering and mobile adaptive states
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'iphone'>('desktop');
@@ -129,15 +129,9 @@ export default function App() {
   }, []);
 
   // Inspector contents
-  const [selectedEntity, setSelectedEntity] = useState<OsintEntity | null>(OSINT_ENTITIES[0]);
-  const [selectedTool, setSelectedTool] = useState<any | null>(SOLUTIONS[0]);
-  const [selectedNode, setSelectedNode] = useState<any | null>({
-    id: 'core_api',
-    label: 'Core REST API',
-    group: 'Core',
-    details: 'Основний бекенд-сервіс на базі FastAPI. Забезпечує оркестрацію черг, інтеграцію ШІ-моделей vLLM та інтерфейс до баз даних Qdrant та Neo4j.'
-  });
-
+  const [selectedEntity, setSelectedEntity] = useState<OsintEntity | null>(null);
+  const [selectedTool, setSelectedTool] = useState<any | null>(null);
+  const [selectedNode, setSelectedNode] = useState<any | null>(null);
 
   // Floating AI Assistant state
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
@@ -933,7 +927,7 @@ export default function App() {
 
         {/* Mobile Swipe Bottom Sheet for Inspector Detail panel */}
         <AnimatePresence>
-          {isInspectorOpen && (selectedEntity || selectedTool || selectedNode) && (
+          {isInspectorOpen && activeTab !== 'person-osint' && activeTab !== 'dashboard' && (selectedEntity || selectedTool || selectedNode) && (
             <>
               {/* Backdrop blur click receiver */}
               <motion.div
@@ -1931,7 +1925,7 @@ export default function App() {
 
           {/* RIGHT INSPECTOR PANEL (Section 9) */}
           <AnimatePresence>
-            {isInspectorOpen && (
+            {isInspectorOpen && activeTab !== 'person-osint' && activeTab !== 'dashboard' && (
               <motion.aside 
                 initial={{ opacity: 0, x: 200, width: 0 }}
                 animate={{ opacity: 1, x: 0, width: 340 }}

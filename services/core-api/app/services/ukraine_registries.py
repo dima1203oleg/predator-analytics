@@ -380,6 +380,7 @@ class UkraineRegistriesService:
     async def search_companies(
         self,
         name: str | None = None,
+        rnokpp: str | None = None,
         region: str | None = None,
         kved: str | None = None,
         status: CompanyStatus | None = None,
@@ -388,6 +389,25 @@ class UkraineRegistriesService:
     ) -> tuple[list[Company], int]:
         # Без інтеграції з відкритим API повертаємо Smart Mock
         companies = []
+        if rnokpp == "3111724753" or (name and "Кізима Дмитро" in name):
+            companies.append(Company(
+                edrpou="44123456",
+                name="ТОВ 'АГРО-ІНВЕСТ-ГРУП'",
+                short_name="ТОВ 'АІГ'",
+                status=CompanyStatus.ACTIVE,
+                kved_primary="01.11",
+                registration_date=date(2018, 5, 20),
+            ))
+            companies.append(Company(
+                edrpou="32333444",
+                name="ФОП КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                short_name="ФОП КІЗИМА Д.М.",
+                status=CompanyStatus.ACTIVE,
+                kved_primary="47.11",
+                registration_date=date(2015, 10, 12),
+            ))
+            return companies, len(companies)
+
         if name:
             import hashlib
             name_hash = int(hashlib.md5(name.encode()).hexdigest(), 16) % 1000
@@ -441,9 +461,9 @@ class UkraineRegistriesService:
     # ======================== БОРЖНИКИ ========================
 
 
-    async def search_debtors(self, query: str, limit: int = 10) -> list[DebtorRecord]:
+    async def search_debtors(self, query: str, rnokpp: str | None = None, limit: int = 10) -> list[DebtorRecord]:
         """Mock пошуку боржників."""
-        if "Кізима" in query or "Дмитро" in query:
+        if rnokpp == "3111724753" or "Кізима" in query or "Дмитро" in query:
             return [
                 DebtorRecord(
                     name="Кізима Дмитро Миколайович",
@@ -473,6 +493,7 @@ class UkraineRegistriesService:
         self,
         party_name: str | None = None,
         party_edrpou: str | None = None,
+        party_rnokpp: str | None = None,
         case_number: str | None = None,
         court: str | None = None,
         date_from: date | None = None,
@@ -481,6 +502,34 @@ class UkraineRegistriesService:
     ) -> tuple[list[CourtCase], int]:
         """Пошук судових справ."""
         cases = []
+        if party_rnokpp == "3111724753" or (party_name and "Кізима Дмитро" in party_name):
+            cases.append(CourtCase(
+                case_number="461/1234/23",
+                court="Галицький районний суд м. Львова",
+                date=date(2023, 10, 15),
+                type=CaseType.CIVIL,
+                status="Розглянуто",
+                subject="Стягнення заборгованості за договором позики",
+                amount=150000.0,
+                parties=[
+                    CourtParty(name="АТ 'ОЩАДБАНК'", role=PartyRole.PLAINTIFF, edrpou="00032129"),
+                    CourtParty(name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ", role=PartyRole.DEFENDANT, rnokpp="3111724753")
+                ]
+            ))
+            cases.append(CourtCase(
+                case_number="464/5678/24",
+                court="Сихівський районний суд м. Львова",
+                date=date(2024, 2, 20),
+                type=CaseType.ADMINISTRATIVE,
+                status="В провадженні",
+                subject="Про скасування постанови про накладення адміністративного стягнення",
+                parties=[
+                    CourtParty(name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ", role=PartyRole.PLAINTIFF, rnokpp="3111724753"),
+                    CourtParty(name="Управління патрульної поліції у Львівській області", role=PartyRole.DEFENDANT)
+                ]
+            ))
+            return cases, len(cases)
+
         if party_name:
             import hashlib
             name_hash = int(hashlib.md5(party_name.encode()).hexdigest(), 16) % 1000
@@ -553,6 +602,21 @@ class UkraineRegistriesService:
         rnokpp: str | None = None,
     ) -> SanctionCheck:
         """Перевірка у санкційних списках."""
+        if rnokpp == "3111724753" or "Кізима Дмитро" in name:
+            return SanctionCheck(
+                query=name,
+                is_sanctioned=True,
+                matches=[
+                    SanctionEntry(
+                        name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                        list_name="Список санкцій РНБО (Фізичні особи)",
+                        date_added=date(2023, 5, 12),
+                        reason="Фінансування тероризму (ч. 3 ст. 258-5 ККУ)",
+                    )
+                ],
+                checked_lists=["РНБО", "OFAC", "EU"],
+                checked_at=datetime.now(UTC),
+            )
         # Без інтеграції з API повертаємо порожній результат
         return SanctionCheck(
             query=name,
@@ -573,6 +637,34 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> list[RealEstate]:
         """Пошук нерухомості."""
+        if owner_rnokpp == "3111724753" or (owner_name and "Кізима Дмитро" in owner_name):
+            return [
+                RealEstate(
+                    address="м. Львів, вул. Стрийська, буд. 45, кв. 112",
+                    type="Квартира",
+                    area_sqm=85.5,
+                    owner_name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                    owner_rnokpp="3111724753",
+                    registration_date=date(2019, 8, 22)
+                ),
+                RealEstate(
+                    address="Львівська обл., Пустомитівський р-н, с. Сокільники, вул. Садова, 15",
+                    type="Житловий будинок",
+                    area_sqm=210.0,
+                    owner_name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                    owner_rnokpp="3111724753",
+                    registration_date=date(2021, 4, 10)
+                ),
+                RealEstate(
+                    address="Львівська обл., Пустомитівський р-н, с. Сокільники",
+                    type="Земельна ділянка",
+                    cadastral_number="4623685900:01:002:0345",
+                    area_sqm=1200.0,
+                    owner_name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                    owner_rnokpp="3111724753",
+                    registration_date=date(2021, 3, 5)
+                )
+            ]
         return []
 
     # ======================== ТРАНСПОРТ ========================
@@ -587,6 +679,29 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> list[Vehicle]:
         """Пошук транспортних засобів."""
+        if owner_rnokpp == "3111724753" or (owner_name and "Кізима Дмитро" in owner_name):
+            return [
+                Vehicle(
+                    brand="TOYOTA",
+                    model="LAND CRUISER 300",
+                    plate_number="BC0001AM",
+                    year=2022,
+                    color="Чорний",
+                    owner_name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                    owner_rnokpp="3111724753",
+                    registration_date=date(2022, 11, 5)
+                ),
+                Vehicle(
+                    brand="MERCEDES-BENZ",
+                    model="S-CLASS 500",
+                    plate_number="BC7777OO",
+                    year=2020,
+                    color="Білий",
+                    owner_name="КІЗИМА ДМИТРО МИКОЛАЙОВИЧ",
+                    owner_rnokpp="3111724753",
+                    registration_date=date(2021, 1, 15)
+                )
+            ]
         return []
 
     # ======================== КОМПЛЕКСНЕ РОЗСЛІДУВАННЯ ========================

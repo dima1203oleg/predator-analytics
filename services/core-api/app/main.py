@@ -28,6 +28,7 @@ from app.database import close_db, init_db
 # Імпортуємо всі роутери через __init__.py
 from app.routers import (
     acp_router,
+    adip_router,
     admin_chaos_router,
     admin_v2_router,
     agents_router,
@@ -389,6 +390,9 @@ for prefix, router in ROUTERS:
         logger.debug(f"Registered router: {prefix}{router.prefix}")
     else:
         logger.warning(f"Skipped None router at prefix: {prefix}")
+
+app.include_router(adip_router, prefix="/api/v1/adip", tags=["ADIP Factory"])
+app.include_router(public_api_router, prefix="/api/v1/public")
 
 app.include_router(telemetry_router, prefix="/api/v1")
 

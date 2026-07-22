@@ -178,7 +178,7 @@ class Settings(BaseSettings):
     ENABLE_TRACING: bool = False
 
     # Параметри CORS та швидкодії
-    CORS_ORIGINS: str | list[str] = ["http://localhost:3030", "http://194.177.1.240:8000"]
+    CORS_ORIGINS: str | list[str] = ["http://localhost:3030", "http://localhost:3032", "http://194.177.1.240:8000"]
     RATE_LIMIT_REQUESTS_PER_MINUTE: int = 1000
     RATE_LIMIT_ANALYTICS_PER_MINUTE: int = 50
     CACHE_TTL_SECONDS: int = 300

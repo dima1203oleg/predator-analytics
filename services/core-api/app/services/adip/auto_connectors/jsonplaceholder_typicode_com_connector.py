@@ -1,0 +1,1 @@
+Ollama Error: 404 - {"error":"model 'ollama/deepseek-r1:latest' not found"}

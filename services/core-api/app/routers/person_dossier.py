@@ -79,7 +79,7 @@ async def _run_scan(job_id: str, form: ScanRequest) -> None:
         # ── Крок 1: ЄДР ──────────────────────────────────
         job["progress"] = 10
         job["message"] = "Сканування ЄДР та реєстру ФОП..."
-        companies, _ = await registries.search_companies(name=full_name)
+        companies, _ = await registries.search_companies(name=full_name, rnokpp=form.ipn or None)
         edr_data = []
         corporate_links = []
         for c in companies:
@@ -100,7 +100,7 @@ async def _run_scan(job_id: str, form: ScanRequest) -> None:
         # ── Крок 2: Судові справи ─────────────────────────
         job["progress"] = 25
         job["message"] = "Пошук судових справ..."
-        cases, _ = await registries.search_court_cases(party_name=full_name)
+        cases, _ = await registries.search_court_cases(party_name=full_name, party_rnokpp=form.ipn or None)
         court_cases = []
         for c in cases:
             court_cases.append({
@@ -128,7 +128,7 @@ async def _run_scan(job_id: str, form: ScanRequest) -> None:
         # ── Крок 4: Боржники / Податки ────────────────────
         job["progress"] = 45
         job["message"] = "Перевірка податкових боргів та виконавчих проваджень..."
-        debtors = await registries.search_debtors(query=full_name)
+        debtors = await registries.search_debtors(query=full_name, rnokpp=form.ipn or None)
         tax_debts = []
         for d in debtors:
             tax_debts.append({
@@ -141,7 +141,7 @@ async def _run_scan(job_id: str, form: ScanRequest) -> None:
         # ── Крок 5: Нерухомість ───────────────────────────
         job["progress"] = 55
         job["message"] = "Пошук нерухомого майна в ДРРП..."
-        real_estate = await registries.search_real_estate(owner_name=full_name)
+        real_estate = await registries.search_real_estate(owner_name=full_name, owner_rnokpp=form.ipn or None)
         property_registry = []
         land_registry = []
         assets = []
@@ -174,7 +174,7 @@ async def _run_scan(job_id: str, form: ScanRequest) -> None:
         # ── Крок 6: Транспорт ─────────────────────────────
         job["progress"] = 62
         job["message"] = "Пошук транспортних засобів в МВС..."
-        vehicles = await registries.search_vehicles(owner_name=full_name)
+        vehicles = await registries.search_vehicles(owner_name=full_name, owner_rnokpp=form.ipn or None)
         vehicle_registry = []
         for v in vehicles:
             vehicle_registry.append({

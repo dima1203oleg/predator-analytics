@@ -11,8 +11,11 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   
   const headers = new Headers(options.headers);
   
-  // Remove fallback to test-token. Only use real token from storage.
-  const token = localStorage.getItem('predator_token');
+  // Add fallback to test-token for local development
+  let token = localStorage.getItem('predator_token');
+  if (!token && import.meta.env.MODE === 'development') {
+    token = 'test-token';
+  }
   
   if (token && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);

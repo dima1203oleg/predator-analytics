@@ -3,6 +3,7 @@ import httpx
 from typing import Dict, Any
 from bs4 import BeautifulSoup
 import json
+from app.services.ai_service import AIService
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +56,28 @@ class DiscoveryEngine:
             elif "text/csv" in content_type:
                 profile["type"] = "csv_dump"
             
-            # TODO: Інтегрувати LLM (Model Context Protocol) для глибокого аналізу 
-            # rate limits, pagination (через аналіз документації).
+            # AI Integration for deeper analysis
+            ai_prompt = f"""
+            Analyze the following API response or HTML preview from URL: {url}
+            Determine the likely pagination method and authentication type required.
+            Response format must be ONLY JSON with keys: "auth_type", "pagination", "endpoints" (list of strings).
+            
+            Content Preview (first 2000 chars):
+            {response.text[:2000]}
+            """
+            
+            try:
+                ai_analysis = await AIService.get_reasoning(prompt=ai_prompt, context={"role": "Data Engineer"})
+                # Parse AI response (assuming it might be wrapped in ```json)
+                cleaned = ai_analysis.replace("```json", "").replace("```", "").strip()
+                ai_data = json.loads(cleaned)
+                profile["auth_type"] = ai_data.get("auth_type", profile["auth_type"])
+                profile["pagination"] = ai_data.get("pagination", profile["pagination"])
+                if ai_data.get("endpoints") and not profile.get("endpoints"):
+                    profile["endpoints"] = ai_data.get("endpoints")
+                logger.info(f"Discovery AI Analysis completed: {profile['auth_type']}, {profile['pagination']}")
+            except Exception as e:
+                logger.error(f"Discovery AI analysis failed: {e}")
             
         except Exception as e:
             logger.error(f"Discovery: Помилка аналізу {url}: {e}")

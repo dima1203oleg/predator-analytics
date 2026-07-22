@@ -27,6 +27,7 @@
 """
 
 # Експортуємо всі роутери для зручності імпорту
+from .adip_router import adip_router
 from .admin_chaos import router as admin_chaos_router
 from .admin_v2 import router as admin_v2_router
 from .agents import router as agents_router
