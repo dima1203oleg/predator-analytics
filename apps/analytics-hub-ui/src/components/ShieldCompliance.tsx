@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck, ShieldAlert, FileText, Lock, CheckCircle, Search, Cpu } from 'lucide-react';
-import { ScrollArea } from './ui/scroll-area';
 
 interface AuditEvent {
   action: string;

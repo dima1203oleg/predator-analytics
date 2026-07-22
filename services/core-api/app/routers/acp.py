@@ -4,7 +4,9 @@ from typing import Dict, Any, List
 
 from app.services.acp_factory import acp_factory
 from app.services.research_engine import research_engine
-from app.core.security import get_tenant_id, PermissionChecker, Permission
+from app.core.security import get_current_user_payload
+from app.dependencies import PermissionChecker
+from app.core.permissions import Permission
 
 router = APIRouter(prefix="/acp", tags=["Autonomous Connector Platform"])
 
@@ -15,8 +17,8 @@ class GenerateConnectorRequest(BaseModel):
 @router.post("/generate", summary="Генерувати новий OSINT колектор")
 async def generate_acp_connector(
     request: GenerateConnectorRequest,
-    tenant_id: str = Depends(get_tenant_id),
-    _ = Depends(PermissionChecker([Permission.CREATE_SCAN]))
+    user: dict = Depends(get_current_user_payload),
+    _ = Depends(PermissionChecker([Permission.MANAGE_INFRASTRUCTURE]))
 ):
     """
     Ініціює процес генерації нового колектора для переданого URL 
@@ -32,8 +34,8 @@ async def generate_acp_connector(
 async def deploy_acp_connector(
     connector_name: str = Body(..., embed=True),
     code: str = Body(..., embed=True),
-    tenant_id: str = Depends(get_tenant_id),
-    _ = Depends(PermissionChecker([Permission.CREATE_SCAN]))
+    user: dict = Depends(get_current_user_payload),
+    _ = Depends(PermissionChecker([Permission.MANAGE_INFRASTRUCTURE]))
 ):
     """
     Зберігає код колектора в систему та виконує hot-reload.
@@ -46,8 +48,8 @@ async def deploy_acp_connector(
 
 @router.get("/research/insights", summary="Отримати інсайти від Research Engine")
 async def get_research_insights(
-    tenant_id: str = Depends(get_tenant_id),
-    _ = Depends(PermissionChecker([Permission.VIEW_SCAN]))
+    user: dict = Depends(get_current_user_payload),
+    _ = Depends(PermissionChecker([Permission.MANAGE_INFRASTRUCTURE]))
 ):
     """
     Повертає список нових інструментів та підходів, знайдених Research Engine 

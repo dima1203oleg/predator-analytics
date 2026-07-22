@@ -132,7 +132,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
     let currentDate = new Date(2024, lastMonth - 1, lastDay);
 
     // Connect the lines by adding forecast keys to the last actual point
-    const enhancedChartData = [...chartData];
+    const enhancedChartData: any[] = [...chartData];
     enhancedChartData[enhancedChartData.length - 1] = {
       ...enhancedChartData[enhancedChartData.length - 1],
       operationsForecast: enhancedChartData[enhancedChartData.length - 1].operations,

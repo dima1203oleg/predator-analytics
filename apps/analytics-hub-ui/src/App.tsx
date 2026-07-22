@@ -32,7 +32,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
 import { AuthStatus } from './components/AuthStatus';
 
-type TabId = 'live-analytical-center' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
+type TabId = 'live-analytical-center' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'media-forensics' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
 
 export default function App() {
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
@@ -52,7 +52,7 @@ export default function App() {
   const [isIphoneMuted, setIsIphoneMuted] = useState(false);
   const [iphoneVolume, setIphoneVolume] = useState(65);
   const [showVolumeHUD, setShowVolumeHUD] = useState(false);
-  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert'>('normal');
+  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert' | 'voice-listening'>('normal');
   const [volumeTimer, setVolumeTimer] = useState<any>(null);
   const [lockscreenDate, setLockscreenDate] = useState('Четвер, 16 липня');
 

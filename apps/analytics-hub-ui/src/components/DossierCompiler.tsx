@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Activity, Search, Database, Globe, Network, Server, ChevronRight, CheckCircle, XCircle, FileText, Download, Send } from 'lucide-react';
+import { Shield, Activity, Search, Database, Globe, Network, Server, ChevronRight, CheckCircle, XCircle, FileText, Download, Send, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportDossierToPDF } from '../lib/pdfExport';
 
@@ -174,10 +174,10 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
         // Fallback to local mock server if main API fails (Dev Mode / Zero-Local-Deployment)
         addLog(`⚠️ Головний API недоступний (${apiErr.message}). Спроба використати Mock Server (порт 9080)...`);
         try {
-          const mockResponse = await fetch(`http://localhost:9080${apiUrl}`, {
-            method: method,
+          const mockResponse = await fetch(`http://localhost:9080/api/v1/dossier/compile`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            ...(body ? { body } : {})
+            body: JSON.stringify({ query: identifier, entityType })
           });
           if (!mockResponse.ok) throw new Error(`Mock API Error: ${mockResponse.status}`);
           data = await mockResponse.json();

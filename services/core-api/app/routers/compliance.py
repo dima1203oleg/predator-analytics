@@ -15,7 +15,7 @@ router = APIRouter(prefix="/compliance", tags=["compliance"])
 @router.get("/audit")
 async def get_audit_trail(
     limit: int = 50,
-    user: dict = Depends(PermissionChecker([Permission.VIEW_SYSTEM_LOGS]))
+    user: dict = Depends(PermissionChecker([Permission.VIEW_LOGS]))
 ):
     """
     Отримує незмінний ланцюг подій аудиту (Evidence Chain).

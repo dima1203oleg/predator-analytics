@@ -10,7 +10,7 @@ export interface OsintEntity {
   code: string; // EDRPOU, IPN, Passport, or Wallet Address
   status: 'ACTIVE' | 'LIQUIDATED' | 'SANCTIONED' | 'SUSPICIOUS';
   riskScore: number; // 0-100
-  address: string;
+  address?: string;
   phone?: string;
   email?: string;
   founders?: { name: string; share: string; role: string; riskLevel: 'HIGH' | 'MEDIUM' | 'LOW' }[];
@@ -23,6 +23,19 @@ export interface OsintEntity {
   aiRecommendations: string;
   lastActivityDate?: string; // YYYY-MM-DD
   rawContext?: any;
+  risk_level?: string;
+  socialMediaProfiles?: any[];
+  telegramData?: any;
+  cryptoData?: any;
+  leakData?: any;
+  familyTies?: any[];
+  assets?: any[];
+  psychologicalPortrait?: any;
+  compromat?: any[];
+  interpol?: any;
+  cyber?: any;
+  leaks?: any[];
+  timeline?: any[];
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
