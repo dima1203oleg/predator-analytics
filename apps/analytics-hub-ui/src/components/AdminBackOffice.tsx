@@ -9,7 +9,7 @@ import {
   Cpu, Shield, Zap, RefreshCw, Key, Server, Settings, CheckCircle, 
   XCircle, AlertTriangle, Play, Pause, ChevronRight, BarChart4, Check, 
   Radio, HardDrive, BookOpen, Clock, Code, DollarSign, Bell, ShieldCheck,
-  Plus, Trash2, Lock, Unlock, Eye, Sliders, Filter, FileText, CheckSquare, Square, ToggleLeft, ToggleRight
+  Plus, Trash2, Lock, Unlock, Eye, Sliders, Filter, FileText, CheckSquare, Square, ToggleLeft, ToggleRight, Wrench
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
