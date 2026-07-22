@@ -352,7 +352,7 @@ async def init_kafka():
     service = get_kafka_service()
     await service.connect()
     # Спробувати відправити offline повідомлення
-    await service.flush_offline()
+    # await service.flush_offline()
 
 
 async def close_kafka():

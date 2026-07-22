@@ -141,8 +141,6 @@ class TaxDebt:
 
 
 @dataclass
-
-@dataclass
 class DebtorRecord:
     name: str
     debt_type: str

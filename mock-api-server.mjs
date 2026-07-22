@@ -5617,19 +5617,7 @@ app.get('/api/v1/cers/company/:edrpou/artifacts', (req, res) => {
 });
 
 // =============================================
-// 🔭 OSINT — запуск сканування (mock)
-// =============================================
-app.post('/api/v1/osint/scan/start', (req, res) => {
-    const { tool_id, target } = req.body || {};
-    res.json({
-        status: 'started',
-        scan_id: `scan-${tool_id}-${Date.now()}`,
-        tool_id: tool_id || 'unknown',
-        target: target || 'auto',
-        started_at: new Date().toISOString(),
-        estimated_duration: '2-5 хвилин',
-    });
-});
+// Duplicate route removed - handled by stateful OSINT scan polling handler below
 
 // =============================================
 // 🔭 OSINT Tools Mock — повний перелік з ТЗ
@@ -5857,12 +5845,236 @@ app.get('/api/v1/osint/search', (req, res) => {
   }, 300);
 });
 
+// =============================================
+// 🔭 OSINT Scan Polling Mock (Stateful)
+// =============================================
+const osintJobs = new Map();
+
+function generateMockDossier(form) {
+  const nameParts = (form.fullName || '').trim().split(/\s+/);
+  const surname = nameParts[0] || 'Невідомо';
+  const firstName = nameParts[1] || '';
+  const patronymic = nameParts[2] || '';
+  const shortName = `${surname} ${firstName.charAt(0)}.${patronymic ? ' ' + patronymic.charAt(0) + '.' : ''}`;
+
+  const addr = form.address || '';
+  const region = addr.includes('Львівська') ? 'Львівська обл.' :
+                 addr.includes('Київ') ? 'м. Київ' :
+                 addr.includes('Одеська') ? 'Одеська обл.' : 'Україна';
+  const district = addr.includes('Стрийськ') ? 'Стрийський р-н' :
+                   addr.includes('Обухів') ? 'Обухівський р-н' : '';
+  const settlement = addr.match(/с\.\s*(\S+)/i)?.[1] || addr.match(/м\.\s*(\S+)/i)?.[1] || '';
+
+  const cadastralPrefix = addr.includes('Львівська') ? '4625' : addr.includes('Київ') ? '3220' : '0000';
+  const dob = form.dateOfBirth || '1985-01-01';
+  const birthYear = parseInt(dob.split('-')[0]) || 1985;
+
+  return {
+    fullName: form.fullName,
+    dateOfBirth: form.dateOfBirth,
+    ipn: form.ipn || '—',
+    passport: form.passport || '—',
+    address: form.address || '—',
+    phone: form.phone || '—',
+    email: form.email || '—',
+    riskScore: 28,
+    edrData: [
+      {
+        companyName: `ФОП ${surname} ${firstName} ${patronymic}`,
+        edrpou: '—',
+        role: 'ФОП (КВЕД 47.11 — Роздрібна торгівля)',
+        status: 'Зареєстровано',
+        regDate: `${birthYear + 29}-04-12`,
+      },
+      {
+        companyName: `ТОВ "Будсервіс-${settlement || 'Захід'}"`,
+        edrpou: '4' + Math.floor(1000000 + Math.random() * 9000000),
+        role: 'Засновник (50%)',
+        status: 'Зареєстровано',
+        regDate: `${birthYear + 33}-09-01`,
+      },
+    ],
+    courtCases: [
+      {
+        caseNumber: `${Math.floor(100 + Math.random() * 900)}/${Math.floor(1000 + Math.random() * 9000)}/26`,
+        court: district ? `${district.replace(' р-н', '')}ий районний суд ${region}` : `Районний суд ${region}`,
+        type: 'Цивільне',
+        status: 'Розглядається',
+        date: '2025-11-03',
+        description: 'Позов про стягнення заборгованості за договором поставки',
+      },
+    ],
+    sanctions: [],
+    wantedList: [],
+    taxDebts: [
+      {
+        type: 'Єдиний податок (3 група)',
+        amount: '8 720 UAH',
+        period: '2025 Q1-Q2',
+        status: 'Непогашено',
+      },
+    ],
+    landRegistry: [
+      {
+        cadastralNumber: `${cadastralPrefix}81200:01:001:${Math.floor(1000 + Math.random() * 9000)}`,
+        area: '0.12 га',
+        type: 'Для будівництва та обслуговування жилого будинку',
+        location: form.address || region,
+        ownership: 'Приватна власність',
+      },
+    ],
+    vehicleRegistry: [
+      {
+        brand: 'Skoda Octavia A7',
+        year: 2017,
+        plate: `BC${Math.floor(1000 + Math.random() * 9000)}${['AO','BO','CO','DO'][Math.floor(Math.random()*4)]}`,
+        vin: 'TMBAG7NE8H' + Math.floor(100000 + Math.random() * 900000),
+        regDate: '2018-02-14',
+      },
+    ],
+    propertyRegistry: [
+      {
+        type: 'Житловий будинок',
+        area: '145 м²',
+        address: form.address || region,
+        regNumber: String(Math.floor(10000000 + Math.random() * 90000000)),
+        ownershipShare: '1/1',
+      },
+    ],
+    socialProfiles: [
+      {
+        platform: 'Facebook',
+        url: `https://facebook.com/search/people/?q=${encodeURIComponent(form.fullName)}`,
+        name: form.fullName,
+        activity: 'Активний',
+        followers: Math.floor(150 + Math.random() * 400),
+        lastPost: '2026-07-10',
+      },
+      {
+        platform: 'Instagram',
+        url: '#',
+        name: `@${firstName.toLowerCase()}_${surname.toLowerCase()}`.replace(/[^a-zA-Z_@]/g, ''),
+        activity: 'Помірна',
+        followers: Math.floor(50 + Math.random() * 200),
+        lastPost: '2026-06-22',
+      },
+    ],
+    telegramMentions: [
+      {
+        channel: district ? `@stryj_info` : '@lviv_news_ua',
+        date: '2026-05-18',
+        text: `Згадка ${shortName} у контексті місцевого підприємництва в ${settlement || district || region}`,
+      },
+    ],
+    facebookData: { friendsCount: Math.floor(200 + Math.random() * 500), groupsCount: Math.floor(5 + Math.random() * 20), pagesLiked: Math.floor(20 + Math.random() * 80) },
+    instagramData: { postsCount: Math.floor(30 + Math.random() * 100), followersCount: Math.floor(50 + Math.random() * 200), followingCount: Math.floor(100 + Math.random() * 300) },
+    webMentions: [
+      { source: 'youcontrol.com.ua', title: `ФОП ${shortName} — реєстраційні дані`, url: '#', date: '2026-03-12' },
+    ],
+    familyTies: [
+      { name: `${surname} Олена Петрівна`, relation: 'Дружина', dateOfBirth: `${birthYear + 2}-06-15`, riskLevel: 'LOW' },
+      { name: `${surname} Максим ${firstName}ович`, relation: 'Син', dateOfBirth: `${birthYear + 27}-09-20`, riskLevel: 'LOW' },
+    ],
+    relatedPersons: [
+      { name: 'Бондаренко Олексій Вікторович', relation: 'Бізнес-партнер', context: `Співзасновник ТОВ "Будсервіс-${settlement || 'Захід'}"`, riskLevel: 'LOW' },
+    ],
+    corporateLinks: [
+      { companyName: `ФОП ${surname} ${firstName} ${patronymic}`, edrpou: '—', role: 'Власник', share: '—' },
+      { companyName: `ТОВ "Будсервіс-${settlement || 'Захід'}"`, edrpou: '4' + Math.floor(1000000 + Math.random() * 9000000), role: 'Засновник', share: '50%' },
+    ],
+    assets: [
+      { type: 'Нерухомість', description: 'Житловий будинок 145 м²', value: '~2 800 000 UAH', location: form.address || region },
+      { type: 'Транспорт', description: 'Skoda Octavia A7 (2017)', value: '~480 000 UAH' },
+    ],
+    bankAccounts: [
+      { bank: 'ПриватБанк', type: 'ФОП — поточний рахунок', currency: 'UAH' },
+    ],
+    cryptoWallets: [],
+    psychologicalPortrait: {
+      mbtiType: 'ISTJ',
+      bigFive: { openness: 42, conscientiousness: 81, extraversion: 38, agreeableness: 65, neuroticism: 25 },
+      riskProfile: 'Консервативний, стабільний',
+      socialBehavior: `${firstName} ${patronymic} демонструє стабільну модель соціальної поведінки. Підтримує широке коло сімейних та бізнес-контактів. Публічна активність помірна.`,
+      motivations: ['Фінансова безпека родини', 'Розвиток власного бізнесу', 'Стабільність у громаді'],
+      redFlags: [],
+      summary: `Особа з низьким ризиковим профілем (Risk Score: 28/100). ${shortName} веде стандартну підприємницьку діяльність.`,
+      communicationStyle: 'Стриманий, практичний стиль.',
+      stressResistance: 'Вище середнього',
+      decisionMaking: 'Послідовний, прагматичний підхід',
+    },
+    aiRiskAssessment: {
+      overallRisk: 'НИЗЬКИЙ',
+      financialRisk: 'НИЗЬКИЙ',
+      legalRisk: 'ПОМІРНИЙ',
+      reputationalRisk: 'НИЗЬКИЙ',
+      summary: `Комплексний аналіз ${shortName} не виявив критичних ризик-факторів. Наявна незначна податкова заборгованість та судова справа. Загальна оцінка: об'єкт з низьким ризиковим профілем.`,
+    },
+    behavioralPatterns: [
+      { pattern: 'Стабільна підприємницька активність з 2014 р.', confidence: 0.89 },
+      { pattern: 'Регіональна бізнес-мережа (Стрийський р-н)', confidence: 0.76 },
+    ],
+    timeline: [
+      { date: `${birthYear}-03-12`, event: `Народження — ${region}${district ? ', ' + district : ''}`, type: 'social' },
+      { date: `${birthYear + 29}-04-12`, event: `Реєстрація ФОП ${shortName} (КВЕД 47.11)`, type: 'corporate' },
+      { date: '2025-11-03', event: 'Цивільна судова справа — позов про стягнення боргу', type: 'legal' },
+    ],
+  };
+}
+
 app.post('/api/v1/osint/scan/start', (req, res) => {
-    res.json({ jobId: 'job-osint-' + Math.floor(Math.random() * 1000) });
+    // Generate a unique job ID
+    const jobId = 'job-osint-' + Math.floor(Math.random() * 1000);
+    const form = req.body || {};
+    
+    // Set initial state
+    osintJobs.set(jobId, { status: 'RUNNING', progress: 0, message: 'Запуск збору даних...', form });
+    
+    // Simulate background processing
+    setTimeout(() => {
+        const job = osintJobs.get(jobId);
+        if (job) { job.progress = 30; job.message = 'Сканування ЄДР та Судових реєстрів...'; }
+    }, 1500);
+    
+    setTimeout(() => {
+        const job = osintJobs.get(jobId);
+        if (job) { job.progress = 65; job.message = 'Сканування соціальних мереж та Telegram...'; }
+    }, 3000);
+    
+    setTimeout(() => {
+        const job = osintJobs.get(jobId);
+        if (job) { job.progress = 85; job.message = 'Генерація ШІ-портрету (JARVIS)...'; }
+    }, 4500);
+
+    setTimeout(() => {
+        const job = osintJobs.get(jobId);
+        if (job) { 
+            job.progress = 100; 
+            job.status = 'COMPLETED'; 
+            job.message = 'Досьє сформовано.';
+            job.result = generateMockDossier(job.form);
+        }
+    }, 6000);
+
+    res.json({ jobId });
 });
 
 app.get('/api/v1/osint/scan/:id/status', (req, res) => {
-    res.json({ status: 'RUNNING', progress: 65, message: 'Сканування соціальних мереж...' });
+    const job = osintJobs.get(req.params.id);
+    if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+    }
+    res.json({ status: job.status, progress: job.progress, message: job.message });
+});
+
+app.get('/api/v1/osint/scan/:id/result', (req, res) => {
+    const job = osintJobs.get(req.params.id);
+    if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+    }
+    if (job.status !== 'COMPLETED') {
+        return res.status(400).json({ error: 'Scan is not completed yet' });
+    }
+    res.json(job.result);
 });
 
 // =============================================

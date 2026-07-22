@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "61.0-ELITE"
     DEBUG: bool = False
     ENV: str = "development"
-    TESTING: bool = False
+    TESTING: bool = True
 
     # Feature Flags (поступний rollout нового функціоналу)
     FF_KAFKA_ENABLED: bool = True

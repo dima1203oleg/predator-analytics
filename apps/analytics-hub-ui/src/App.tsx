@@ -18,6 +18,7 @@ import LiveAnalyticalCenter from './components/LiveAnalyticalCenter';
 import AdminBackOffice from './components/AdminBackOffice';
 import MapsTab from './components/MapsTab';
 import { MediaForensicsTab } from './components/MediaForensicsTab';
+import PersonOsintPage from './components/PersonOsintPage';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
 import { SOLUTIONS } from './data';
 import { 
@@ -26,13 +27,13 @@ import {
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
   Activity, Camera, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Fingerprint
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
 import { AuthStatus } from './components/AuthStatus';
 
-type TabId = 'live-analytical-center' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'media-forensics' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
+type TabId = 'live-analytical-center' | 'person-osint' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'media-forensics' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
 
 export default function App() {
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
@@ -768,6 +769,7 @@ export default function App() {
               {activeTab === 'volumes' && <VolumesTab />}
               {activeTab === 'advisor' && <AdvisorTab />}
                 {activeTab === 'media-forensics' && <MediaForensicsTab />}
+              {activeTab === 'person-osint' && <PersonOsintPage />}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -1617,6 +1619,19 @@ export default function App() {
                     </button>
 
                     <button 
+                      onClick={() => setActiveTab('person-osint')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'person-osint' ? 'bg-gradient-to-r from-indigo-600/20 via-purple-600/20 to-pink-600/20 text-indigo-300 border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <Fingerprint className={`w-4 h-4 ${activeTab === 'person-osint' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>👤 Фізична особа</span>
+                          <span className="text-[8px] bg-gradient-to-r from-indigo-500/15 to-purple-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">OSINT</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
                       onClick={() => setActiveTab('maps')}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'maps' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
@@ -1834,8 +1849,9 @@ export default function App() {
                 {activeTab === 'gap' && 'Аналіз прогалин'}
                 {activeTab === 'roadmap' && 'Дорожня карта'}
                 {activeTab === 'volumes' && 'Томи ТЗ'}
-                {activeTab === 'advisor' && 'ШІ-Архітектор'}
+                 {activeTab === 'advisor' && 'ШІ-Архітектор'}
                 {activeTab === 'media-forensics' && 'Аналіз Медіа (Forensics)'}
+                {activeTab === 'person-osint' && 'Все про фізичну особу (Повний OSINT)'}
               </span>
             </div>
 
@@ -1906,6 +1922,8 @@ export default function App() {
                 {activeTab === 'roadmap' && <RoadmapTab />}
                 {activeTab === 'volumes' && <VolumesTab />}
                 {activeTab === 'advisor' && <AdvisorTab />}
+                {activeTab === 'media-forensics' && <MediaForensicsTab />}
+                {activeTab === 'person-osint' && <PersonOsintPage />}
               </motion.div>
             </AnimatePresence>
 

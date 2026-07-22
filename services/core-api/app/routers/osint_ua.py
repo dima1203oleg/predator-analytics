@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, Query
 
-from app.services.osint.datagov import DataGovUACollector
-from app.services.osint.prozorro import ProzorroCollector
-from app.services.osint.youcontrol import YouControlCollector
+# from app.services.osint.datagov import DataGovUACollector
+# from app.services.osint.prozorro import ProzorroCollector
+# from app.services.osint.youcontrol import YouControlCollector
 
 router = APIRouter(prefix="/osint_ua", tags=["OSINT Ukraine"])
 
-datagov = DataGovUACollector()
-prozorro = ProzorroCollector()
-youcontrol = YouControlCollector()
+# datagov = DataGovUACollector()
+# prozorro = ProzorroCollector()
+youcontrol = None # YouControlCollector()
 
 @router.get("/youcontrol/dossier/{edrpou}")
 async def search_youcontrol(edrpou: str):

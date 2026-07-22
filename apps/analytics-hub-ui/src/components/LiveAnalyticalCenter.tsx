@@ -635,6 +635,7 @@ export default function LiveAnalyticalCenter({
             {/* Quick action block buttons (Point 3) */}
             <div className="space-y-2 font-mono text-[10px] font-bold">
               {[
+                { id: 'act-8', text: '👤 Все про фізичну особу (Повний OSINT)', prompt: 'Повний аналіз фізичної особи: ПІБ, реєстри, соцмережі, активи, родичі та ШІ-психопрофіль' },
                 { id: 'act-1', text: '🔎 Проаналізувати компанію', prompt: 'ТОВ СпецТехПостач' },
                 { id: 'act-2', text: '🚛 Побудувати маршрут', prompt: 'Побудувати маршрут імпорту з Гонконгу' },
                 { id: 'act-3', text: '💰 Перевірити контрагента', prompt: 'Коваленко І.В.' },

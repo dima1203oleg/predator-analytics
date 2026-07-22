@@ -43,6 +43,7 @@ class DossierAggregator:
     def _register_collectors(self) -> None:
         """Реєстрація всіх доступних збирачів."""
         # WHITE — Публічні реєстри
+        from .collectors.dummy_person_collector import DummyPersonCollector
         from .collectors.blockchain_collector import BlockchainCollector
         from .collectors.corporate_web_collector import CorporateWebCollector
         from .collectors.court_collector import CourtCollector
@@ -68,6 +69,7 @@ class DossierAggregator:
 
         self._collectors = [
             # WHITE
+            DummyPersonCollector(),
             EdrCollector(),
             CourtCollector(),
             PropertyCollector(),
@@ -224,11 +226,11 @@ class DossierAggregator:
         """
         import json
         
-        system_prompt = \"\"\"You are an OSINT extraction tool. 
+        system_prompt = """You are an OSINT extraction tool. 
 Analyze the following text and extract ANY mentioned relationships between entities (people, companies, domains, emails, etc.).
 Return ONLY a valid JSON array of objects with the following schema:
 [{"target_id": "identifier", "target_name": "Name", "relation_type": "KNOWS|OWNS|MENTIONED_WITH", "risk": "LOW|MEDIUM|HIGH"}]
-Do not include markdown blocks, just the JSON array.\"\"\"
+Do not include markdown blocks, just the JSON array."""
 
         try:
             async with httpx.AsyncClient(timeout=10) as client:
