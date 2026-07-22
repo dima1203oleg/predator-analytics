@@ -114,7 +114,7 @@ export default function AdminBackOffice() {
       setTimeout(() => setAdipStatus('generating'), 3000);
       setTimeout(() => setAdipLogs(prev => [...prev, '[GENERATOR] Формування Python конектора...']), 3500);
 
-      const response = await fetch('http://localhost:8000/api/v1/adip/discover', {
+      const response = await fetch('/api/v1/adip/discover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: adipUrl })
