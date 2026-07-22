@@ -599,14 +599,48 @@ class UkraineRegistriesService:
         date_to: date | None = None,
         limit: int = 50,
     ) -> tuple[list[Tender], int]:
-        """Пошук тендерів у Prozorro."""
+        """Пошук тендерів у Prozorro через відкритий API."""
         tenders = []
+        try:
+            url = f"{self.prozorro_api_url}/tenders?limit={limit}"
+            resp = await self.client.get(url, timeout=10.0)
+            if resp.status_code == 200:
+                data = resp.json()
+                items = data.get("data", [])
+                for item in items:
+                    tenders.append(Tender(
+                        tender_id=item.get("id", ""),
+                        title=item.get("title", "Тендер Prozorro"),
+                        status=item.get("status", "active"),
+                        procuring_entity_name=item.get("procuringEntity", {}).get("name", "Державна установа"),
+                        procuring_entity_edrpou=item.get("procuringEntity", {}).get("identifier", {}).get("id", "00000000"),
+                        expected_value=float(item.get("value", {}).get("amount", 0.0)) if item.get("value") else None,
+                        currency=item.get("value", {}).get("currency", "UAH")
+                    ))
+                return tenders, len(tenders)
+        except Exception as err:
+            logger.warning(f"Помилка отримання даних з Prozorro API: {err}")
+
         return tenders, len(tenders)
 
     async def get_tender(self, tender_id: str) -> Tender | None:
-        """Отримати тендер за ID."""
-        tenders, _ = await self.search_tenders()
-        return tenders[0] if tenders else None
+        """Отримати тендер за ID через Prozorro API."""
+        try:
+            url = f"{self.prozorro_api_url}/tenders/{tender_id}"
+            resp = await self.client.get(url, timeout=10.0)
+            if resp.status_code == 200:
+                item = resp.json().get("data", {})
+                return Tender(
+                    tender_id=item.get("id", tender_id),
+                    title=item.get("title", ""),
+                    status=item.get("status", ""),
+                    procuring_entity_name=item.get("procuringEntity", {}).get("name", ""),
+                    procuring_entity_edrpou=item.get("procuringEntity", {}).get("identifier", {}).get("id", ""),
+                    expected_value=float(item.get("value", {}).get("amount", 0.0)) if item.get("value") else None,
+                )
+        except Exception as err:
+            logger.warning(f"Помилка отримання тендера {tender_id}: {err}")
+        return None
 
     # ======================== САНКЦІЇ ========================
 
