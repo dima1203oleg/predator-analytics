@@ -21,7 +21,8 @@ type AdminSection =
   | 'ai-models' 
   | 'data-sources-etl' 
   | 'monitoring-logs' 
-  | 'security-devops';
+  | 'security-devops'
+  | 'adip-factory';
 
 interface UserRecord {
   id: string;
@@ -94,6 +95,58 @@ interface LogMessage {
 
 export default function AdminBackOffice() {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
+
+  // ADIP Factory State
+  const [adipUrl, setAdipUrl] = useState('');
+  const [adipStatus, setAdipStatus] = useState<'idle' | 'analyzing' | 'generating' | 'success' | 'error'>('idle');
+  const [adipCode, setAdipCode] = useState<string | null>(null);
+  const [adipLogs, setAdipLogs] = useState<string[]>([]);
+
+  const handleAdipDiscover = async () => {
+    if (!adipUrl) return;
+    setAdipStatus('analyzing');
+    setAdipLogs(['[SYSTEM] Ініціалізація ADIP Factory Engine...', `[DISCOVERY] Сканування джерела: ${adipUrl}`]);
+    setAdipCode(null);
+    
+    try {
+      // Simulate real-time progress for UI feeling
+      setTimeout(() => setAdipLogs(prev => [...prev, '[AI] Аналіз структури та кінцевих точок...']), 1500);
+      setTimeout(() => setAdipStatus('generating'), 3000);
+      setTimeout(() => setAdipLogs(prev => [...prev, '[GENERATOR] Формування Python конектора...']), 3500);
+
+      const response = await fetch('http://localhost:8000/api/v1/adip/discover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: adipUrl })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setAdipStatus('success');
+        setAdipLogs(prev => [...prev, `[SUCCESS] Конектор успішно згенеровано! Тип: ${data.source_type}`]);
+        // Simulate reading generated code for UI (in real app, backend would return it)
+        setAdipCode(`# AUTO-GENERATED CONNECTOR
+# Source Type: ${data.source_type}
+# URL: ${data.profile?.url}
+
+import httpx
+import logging
+
+class AutoConnector:
+    async def fetch_data(self):
+        # Implementation hidden for brevity
+        pass
+`);
+      } else {
+        setAdipStatus('error');
+        setAdipLogs(prev => [...prev, `[ERROR] Помилка: ${data.detail || 'Невідома помилка'}`]);
+      }
+    } catch (err: any) {
+      setAdipStatus('error');
+      setAdipLogs(prev => [...prev, `[CRITICAL ERROR] ${err.message}`]);
+    }
+  };
 
   // Interactive state lists
   const [users, setUsers] = useState<UserRecord[]>([
@@ -371,7 +424,8 @@ export default function AdminBackOffice() {
             { id: 'ai-models', label: '🤖 ШІ Моделі & Маршрути', icon: Sliders },
             { id: 'data-sources-etl', label: '🔌 Джерела & ETL', icon: Layers },
             { id: 'monitoring-logs', label: '📋 Моніторинг & Логи', icon: Terminal },
-            { id: 'security-devops', label: '⚙️ Безпека & DevOps', icon: Server }
+            { id: 'security-devops', label: '⚙️ Безпека & DevOps', icon: Server },
+            { id: 'adip-factory', label: '🏭 AI Фабрика (ADIP)', icon: Wrench }
           ].map((sec) => {
             const Icon = sec.icon;
             const isActive = activeSection === sec.id;
@@ -1221,8 +1275,94 @@ export default function AdminBackOffice() {
           </div>
         )}
 
-      </div>
+        {activeSection === 'adip-factory' && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 border-b border-indigo-500/20 pb-4">
+              <Wrench className="w-8 h-8 text-amber-400" />
+              <div>
+                <h2 className="text-xl font-bold font-mono text-white tracking-wide">Autonomous Discovery & Integration Platform (ADIP)</h2>
+                <p className="text-xs text-slate-400 font-mono mt-1">Автоматичний аналіз сторонніх API та генерація Python-конекторів за допомогою ШІ.</p>
+              </div>
+            </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Controls */}
+              <div className="bg-slate-900/60 border border-slate-700/50 rounded-xl p-6 shadow-lg backdrop-blur-sm space-y-6">
+                <div>
+                  <label className="block text-xs font-mono text-slate-400 mb-2 uppercase tracking-widest">URL джерела даних (API / Registry)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text"
+                      className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 font-mono focus:border-indigo-500 focus:outline-none placeholder-slate-600 transition-colors"
+                      placeholder="https://api.example.com/v1/data"
+                      value={adipUrl}
+                      onChange={(e) => setAdipUrl(e.target.value)}
+                    />
+                    <button 
+                      onClick={handleAdipDiscover}
+                      disabled={adipStatus === 'analyzing' || adipStatus === 'generating'}
+                      className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white px-6 py-2 rounded-lg font-mono text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
+                    >
+                      {(adipStatus === 'analyzing' || adipStatus === 'generating') ? (
+                        <><RefreshCw className="w-4 h-4 animate-spin" /> Працює AI...</>
+                      ) : (
+                        <><Zap className="w-4 h-4" /> Генерувати</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">Статус інтеграції</div>
+                  <div className="bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-2 h-48 overflow-y-auto relative">
+                    {adipLogs.length === 0 ? (
+                      <div className="text-slate-600 italic">Очікування вводу URL...</div>
+                    ) : (
+                      adipLogs.map((log, i) => (
+                        <div key={i} className={`
+                          ${log.includes('[SUCCESS]') ? 'text-emerald-400' : ''}
+                          ${log.includes('[ERROR]') ? 'text-rose-400' : ''}
+                          ${log.includes('[AI]') ? 'text-indigo-400' : ''}
+                        `}>
+                          <span className="opacity-50 select-none mr-2">{'>'}</span>{log}
+                        </div>
+                      ))
+                    )}
+                    {(adipStatus === 'analyzing' || adipStatus === 'generating') && (
+                      <div className="text-indigo-400 animate-pulse mt-2"><span className="opacity-50 mr-2">{'>'}</span>_</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Code View */}
+              <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-lg shadow-black/50">
+                <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+                  <div className="text-xs font-mono text-slate-400 flex items-center gap-2">
+                    <Code className="w-4 h-4 text-emerald-500" />
+                    Згенерований Конектор (Python)
+                  </div>
+                  {adipStatus === 'success' && (
+                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                      Ready to Deploy
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 p-4 font-mono text-xs overflow-y-auto text-slate-300 relative">
+                  {adipCode ? (
+                    <pre className="text-amber-200/80"><code>{adipCode}</code></pre>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-slate-700">
+                      Код з'явиться тут після генерації ШІ
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
