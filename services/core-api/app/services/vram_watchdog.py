@@ -103,6 +103,11 @@ class VramSentinel:
             gpu_found=gpu_found
         )
 
+    @property
+    def current_mode(self) -> str:
+        """Поточний рекомендований режим на основі VRAM (SOVEREIGN, HYBRID, CLOUD)."""
+        return self._current_mode
+
     async def watchdog_loop(self):
         """Фоновий цикл моніторингу та Failover-сигналізації."""
         logger.info("📡 VRAM Sentinel Watchdog STARTED.")

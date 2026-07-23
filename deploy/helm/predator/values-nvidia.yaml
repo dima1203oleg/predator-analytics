@@ -441,7 +441,7 @@ litellm:
     failureThreshold: 3
 
 ollama:
-  enabled: false
+  enabled: true
   nodeSelector:
     accelerator: nvidia
   tolerations:

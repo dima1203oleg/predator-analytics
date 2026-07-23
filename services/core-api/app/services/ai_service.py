@@ -167,7 +167,7 @@ class AIService:
     @staticmethod
     async def get_embeddings(text: str, model: str | None = None) -> list[float]:
         """Отримання векторних ембедінгів для тексту через локальний sentence-transformers."""
-        fallback_dim = 384
+        fallback_dim = 768
 
         if not _embedding_breaker.allow_request():
             return [0.0] * fallback_dim
@@ -175,8 +175,8 @@ class AIService:
         try:
             from sentence_transformers import SentenceTransformer
             
-            # Use the same model as ingestion worker for exact vector match (384-dim)
-            embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu")
+            # Use the same model as ingestion worker for exact vector match (768-dim)
+            embedder = SentenceTransformer("sentence-transformers/all-mpnet-base-v2", device="cpu")
             embedding = embedder.encode(text).tolist()
             
             _embedding_breaker.record_success()

@@ -14,7 +14,7 @@ class QdrantSink:
     """Сінк для збереження векторів у Qdrant."""
 
     COLLECTION_NAME = "predator-embeddings"
-    VECTOR_SIZE = 384  # sentence-transformers/all-MiniLM-L6-v2
+    VECTOR_SIZE = 768  # sentence-transformers/all-mpnet-base-v2
 
     def __init__(self) -> None:
         """Ініціалізація Qdrant клієнта."""
@@ -33,7 +33,7 @@ class QdrantSink:
 
                 # Використовуємо легку модель
                 model_name = os.getenv(
-                    "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+                    "EMBEDDING_MODEL", "sentence-transformers/all-mpnet-base-v2"
                 )
                 device = os.getenv("EMBEDDING_DEVICE", "cpu")
 
