@@ -38,6 +38,10 @@ class GraphProjector:
             await self._project_sanction(payload, tenant_id)
         elif "threat" in event_type.lower() or "cve" in event_type.lower():
             await self._project_threat(payload, tenant_id)
+        elif event_type == "raw_node":
+            await self.project_raw_node(payload)
+        elif event_type == "raw_edge":
+            await self.project_raw_edge(payload)
         else:
             logger.warning(f"[GraphProjector] Невідомий тип події: {event_type}. Пропускаємо.")
 
