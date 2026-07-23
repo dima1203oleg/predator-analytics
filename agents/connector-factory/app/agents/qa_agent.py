@@ -64,6 +64,19 @@ class QAAgent:
             test_report["coverage"] = 90.0
             test_report["chaos_resilient"] = True
             
+            # Persist artifact to ingestion worker harvesters directory
+            source_url = state.get("source", {}).get("url", "default_source")
+            clean_name = "".join(c if c.isalnum() else "_" for c in source_url).strip("_")
+            output_dir = "/Users/Shared/Predator_60/services/ingestion-worker/app/harvesters/autogen"
+            os.makedirs(output_dir, exist_ok=True)
+            
+            file_path = os.path.join(output_dir, f"autogen_{clean_name}.py")
+            with open(file_path, "w") as f:
+                f.write(f"# Auto-generated connector for {source_url}\n")
+                f.write(api_code)
+                
+            logger.info(f"Persisted validated connector code to {file_path}")
+            
         except subprocess.TimeoutExpired:
             logger.error("Ghost Runtime timeout expired.")
             test_report["passed"] = False

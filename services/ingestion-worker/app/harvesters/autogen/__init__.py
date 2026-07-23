@@ -1,0 +1,1 @@
+# Auto-generated harvesters directory
