@@ -9,9 +9,11 @@ from collections.abc import AsyncGenerator
 import hashlib
 import uuid
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from app.core.security import get_current_user_payload
+from app.core.permissions import ROLE_PERMISSIONS, Role
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,6 +44,15 @@ class UploadResponse(BaseModel):
     chunks: int = 1
     progress_url: str
     estimated_completion_seconds: int | None = None
+
+
+class SourceIngestionRequest(BaseModel):
+    """Запит на моніторинг зовнішнього ресурсу (Веб, TG, FB)."""
+    type: str  # "web", "telegram", "social", "api"
+    url: str
+    config: dict = {}
+    description: str | None = None
+
 
 
 class JobStatusResponse(BaseModel):
@@ -249,13 +260,9 @@ async def upload_file(
         raise HTTPException(status_code=400, detail="Файл не вказано")
 
     # Перевірка формату
-    allowed_extensions = {".xlsx", ".xls", ".csv", ".json"}
-    file_ext = "." + file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
-    if file_ext not in allowed_extensions:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Непідтримуваний формат. Дозволені: {', '.join(allowed_extensions)}"
-        )
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    if file_ext not in [".csv", ".json", ".jsonl", ".parquet", ".xml", ".xlsx", ".xls"]:
+        raise HTTPException(status_code=400, detail=f"Непідтримуваний формат файлу: {file_ext}")
 
     # Читаємо вміст файлу
     content = await file.read()
@@ -311,12 +318,64 @@ async def upload_file(
 
     return UploadResponse(
         job_id=job_id,
-        status="queued",
         file_size_bytes=file_size,
-        estimated_rows=estimated_rows,
-        chunks=max(1, file_size // (50 * 1024 * 1024)),
+        estimated_rows=file_size // 1000,
         progress_url=f"/api/v1/ingestion/progress/{job_id}",
-        estimated_completion_seconds=max(30, estimated_rows // 500),
+    )
+
+
+@router.post("/source", response_model=UploadResponse, status_code=202)
+async def add_monitoring_source(
+    request: SourceIngestionRequest,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """Додавання ресурсу (Веб, Telegram, Соцмережі) для моніторингу."""
+    job_id = str(uuid.uuid4())
+    user_id = current_user.get("sub")
+
+    # Створюємо IngestionJob у базі (PostgreSQL)
+    new_job = IngestionJob(
+        job_id=job_id,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        file_name=f"[{request.type.upper()}] {request.url}",
+        file_size_bytes=0,
+        status="queued",
+    )
+    db.add(new_job)
+    await db.commit()
+
+    # Відправляємо подію в Kafka для відповідного воркера
+    kafka = get_kafka_service()
+    
+    # Визначаємо топік залежно від типу джерела
+    topic = f"predator.source.{request.type}.start"
+    
+    # Використовуємо існуючий метод send (publish)
+    await kafka.send(
+        topic=topic,
+        value={
+            "job_id": job_id,
+            "tenant_id": tenant_id,
+            "user_id": user_id,
+            "source_url": request.url,
+            "source_type": request.type,
+            "config": request.config,
+            "description": request.description,
+        },
+        key=job_id
+    )
+
+    logger.info(f"Додано джерело для моніторингу: {request.url} (Job ID: {job_id})")
+
+    return UploadResponse(
+        job_id=job_id,
+        file_size_bytes=0,
+        estimated_rows=0,
+        progress_url=f"/api/v1/ingestion/progress/{job_id}",
     )
 
 
@@ -359,14 +418,32 @@ async def get_job_progress(
 async def stream_job_progress(
     job_id: str,
     request: Request,
+    token: str = Query(None),
     tenant_id: str = Depends(get_tenant_id),
-    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
     """SSE стрім прогресу ingestion job. Згідно TZ §2.2.3.
 
     Повертає Server-Sent Events з оновленнями прогресу кожні 2 секунди.
     Стрім завершується коли job досягає статусу 'completed' або 'failed'.
     """
+    # Ручна перевірка токену для SSE, так як EventSource не підтримує headers
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            
+    if not token:
+        raise HTTPException(status_code=401, detail="Token required for SSE stream")
+        
+    payload = await get_current_user_payload(token)
+    user_role_str = payload.get("role", "guest")
+    try:
+        user_role = Role(user_role_str)
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Invalid role")
+        
+    if Permission.READ_CORP_DATA not in ROLE_PERMISSIONS.get(user_role, []):
+        raise HTTPException(status_code=403, detail="Forbidden")
 
     async def event_generator() -> AsyncGenerator[str, None]:
         """Генератор SSE подій."""

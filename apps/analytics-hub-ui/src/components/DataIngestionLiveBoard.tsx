@@ -16,7 +16,11 @@ import {
   Terminal,
   Layers,
   ArrowRight,
-  Network
+  Network,
+  Globe,
+  MessageCircle,
+  Users,
+  Code
 } from 'lucide-react';
 import { useToast } from './ToastProvider';
 
@@ -51,6 +55,10 @@ export default function DataIngestionLiveBoard() {
     redis: { active: false, rows: 0 }
   });
   
+  type SourceTab = 'file' | 'web' | 'telegram' | 'social' | 'api';
+  const [activeTab, setActiveTab] = useState<SourceTab>('file');
+  const [sourceUrl, setSourceUrl] = useState('');
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -70,7 +78,10 @@ export default function DataIngestionLiveBoard() {
   useEffect(() => {
     const checkActiveJobs = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/ingestion/jobs?limit=5`);
+        const token = localStorage.getItem('predator_token') || '';
+        const response = await fetch(`${API_BASE_URL}/api/v1/ingestion/jobs?limit=5`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
         if (response.ok) {
           const jobs = await response.json();
           const activeJob = jobs.find((j: any) => ['queued', 'running'].includes(j.status));
@@ -93,7 +104,8 @@ export default function DataIngestionLiveBoard() {
     if (!activeJobId) return;
 
     addLog(`Підключення до потоку подій... (Job: ${activeJobId})`, 'info');
-    const es = new EventSource(`${API_BASE_URL}/api/v1/ingestion/progress/${activeJobId}/stream`);
+    const token = localStorage.getItem('predator_token') || '';
+    const es = new EventSource(`${API_BASE_URL}/api/v1/ingestion/progress/${activeJobId}/stream?token=${token}`);
     eventSourceRef.current = es;
 
     es.addEventListener('progress', (e) => {
@@ -161,8 +173,12 @@ export default function DataIngestionLiveBoard() {
     formData.append('file', file);
 
     try {
+      const token = localStorage.getItem('predator_token') || '';
       const response = await fetch(`${API_BASE_URL}/api/v1/ingestion/upload`, {
         method: 'POST',
+        headers: token ? {
+          'Authorization': `Bearer ${token}`
+        } : {},
         body: formData
       });
 
@@ -181,12 +197,53 @@ export default function DataIngestionLiveBoard() {
     }
   };
 
+  const submitResource = async () => {
+    if (!sourceUrl.trim()) return;
+    
+    setPhase('UPLOADING');
+    setProgress(5);
+    setLogs([]);
+    addLog(`Ініціалізація підключення до джерела: ${sourceUrl}...`, 'info');
+
+    try {
+      const token = localStorage.getItem('predator_token') || '';
+      const response = await fetch(`${API_BASE_URL}/api/v1/ingestion/source`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          type: activeTab,
+          url: sourceUrl
+        })
+      });
+
+      if (!response.ok) {
+          throw new Error('Submit failed');
+      }
+      
+      const data = await response.json();
+      addLog(`Завдання зареєстровано. ID Задачі: ${data.job_id}`, 'success');
+      setActiveJobId(data.job_id);
+    } catch (err) {
+      addLog(`Помилка реєстрації джерела.`, 'warn');
+      setPhase('IDLE');
+      setProgress(0);
+    }
+  };
+
   const handleFileDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (phase !== 'IDLE' && phase !== 'DONE') return;
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
-      uploadRealFile(file);
+      const validExts = ['.csv', '.json', '.xlsx', '.xls', '.parquet', '.xml'];
+      if (validExts.some(ext => file.name.toLowerCase().endsWith(ext))) {
+        uploadRealFile(file);
+      } else {
+        alert("Підтримуються формати: CSV, JSON, XLSX, XLS, PARQUET, XML");
+      }
     }
   };
 
@@ -226,7 +283,7 @@ export default function DataIngestionLiveBoard() {
              <UploadCloud className={`w-4 h-4 ${phase !== 'IDLE' && phase !== 'DONE' ? 'animate-pulse' : ''}`} />
              {phase === 'IDLE' ? 'ОБРАТИ ФАЙЛ' : 'В ПРОЦЕСІ...'}
            </button>
-           <input id="ingest-file-upload" type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx" />
+           <input id="ingest-file-upload" type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx,.xls,.parquet,.xml" />
         </div>
       </div>
 
@@ -330,13 +387,61 @@ export default function DataIngestionLiveBoard() {
                 <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#374151 1px, transparent 1px), linear-gradient(90deg, #374151 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                 
                 {phase === 'IDLE' && (
-                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
-                    <div className="w-32 h-32 rounded-full border-2 border-dashed border-gray-700 bg-gray-900/50 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 hover:bg-cyan-950/20 transition-all duration-300" onClick={() => fileInputRef.current?.click()}>
-                      <UploadCloud className="w-8 h-8 text-gray-500 mb-2" />
-                      <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Drop File</span>
-                      <span className="text-[10px] text-gray-600">CSV, JSON, XLSX</span>
-                    </div>
-                    <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx" />
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4 md:p-8">
+                     <div className="w-full max-w-xl bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+                        <div className="flex border-b border-gray-800 bg-gray-950">
+                           <button onClick={() => setActiveTab('file')} className={`flex-1 py-3 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 ${activeTab === 'file' ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-900' : 'text-gray-500 hover:text-gray-300'}`}>
+                             <FileText className="w-4 h-4 hidden sm:block" /> Файл
+                           </button>
+                           <button onClick={() => setActiveTab('web')} className={`flex-1 py-3 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 ${activeTab === 'web' ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-900' : 'text-gray-500 hover:text-gray-300'}`}>
+                             <Globe className="w-4 h-4 hidden sm:block" /> Веб
+                           </button>
+                           <button onClick={() => setActiveTab('telegram')} className={`flex-1 py-3 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 ${activeTab === 'telegram' ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-900' : 'text-gray-500 hover:text-gray-300'}`}>
+                             <MessageCircle className="w-4 h-4 hidden sm:block" /> Telegram
+                           </button>
+                           <button onClick={() => setActiveTab('social')} className={`flex-1 py-3 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 ${activeTab === 'social' ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-900' : 'text-gray-500 hover:text-gray-300'}`}>
+                             <Users className="w-4 h-4 hidden sm:block" /> Соцмережі
+                           </button>
+                           <button onClick={() => setActiveTab('api')} className={`flex-1 py-3 text-[10px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 ${activeTab === 'api' ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-900' : 'text-gray-500 hover:text-gray-300'}`}>
+                             <Code className="w-4 h-4 hidden sm:block" /> API
+                           </button>
+                        </div>
+                        
+                        <div className="p-6">
+                           {activeTab === 'file' ? (
+                             <div className="w-full h-32 rounded-lg border-2 border-dashed border-gray-700 bg-gray-950 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 hover:bg-cyan-950/20 transition-all duration-300" onClick={() => fileInputRef.current?.click()}>
+                                <UploadCloud className="w-8 h-8 text-gray-500 mb-2" />
+                                <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Drop File (CSV, JSON, XLSX, XLS, PARQUET, XML)</span>
+                             </div>
+                           ) : (
+                             <div className="space-y-4">
+                                <div>
+                                  <label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2 block">
+                                    {activeTab === 'web' && 'URL веб-сайту для краулінгу'}
+                                    {activeTab === 'telegram' && 'Посилання на Telegram канал (t.me/...)'}
+                                    {activeTab === 'social' && 'Посилання на профіль або сторінку'}
+                                    {activeTab === 'api' && 'REST API Endpoint URL'}
+                                  </label>
+                                  <input 
+                                    type="text" 
+                                    value={sourceUrl}
+                                    onChange={(e) => setSourceUrl(e.target.value)}
+                                    placeholder="https://" 
+                                    className="w-full bg-gray-950 border border-gray-700 rounded p-3 text-sm text-white focus:outline-none focus:border-cyan-500" 
+                                  />
+                                </div>
+                                <button 
+                                  onClick={submitResource}
+                                  disabled={!sourceUrl.trim()}
+                                  className="w-full py-3 rounded bg-cyan-900/40 hover:bg-cyan-800/60 disabled:opacity-50 text-cyan-400 text-xs font-bold tracking-widest uppercase border border-cyan-800 transition-colors flex justify-center items-center gap-2"
+                                >
+                                  Почати моніторинг <ArrowRight className="w-4 h-4" />
+                                </button>
+                             </div>
+                           )}
+                           <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx,.xls,.parquet,.xml" />
+                        </div>
+                     </div>
                   </div>
                 )}
                 

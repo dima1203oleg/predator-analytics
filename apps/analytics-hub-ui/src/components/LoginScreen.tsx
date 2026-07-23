@@ -21,16 +21,32 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       // Fake delay for styling and realism
       await new Promise(r => setTimeout(r, 1200));
 
-      // MOCK LOGIN FOR DEVELOPMENT
-      // TODO: Replace with real endpoint `await apiFetch('/api/v1/auth/login', ...)`
-      if (email && password) {
-        // Fallback or Mock token generating
-        const mockToken = 'test-token';
-        localStorage.setItem('predator_token', mockToken);
-        onLoginSuccess(mockToken);
-      } else {
-        throw new Error('Усі поля є обов\'язковими для заповнення');
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      // Використовуємо глобальний API_BASE_URL (або хардкодимо для логіну якщо його тут немає)
+      // В даному випадку ми можемо використати відносний шлях, якщо налаштовано проксі, або абсолютний
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString()
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Помилка авторизації: ${response.status === 401 ? 'Невірний логін або пароль' : errText}`);
       }
+
+      const data = await response.json();
+      const realToken = data.access_token;
+      
+      localStorage.setItem('predator_token', realToken);
+      onLoginSuccess(realToken);
     } catch (err: any) {
       setError(err.message || 'Відмовлено в доступі. Невірні облікові дані.');
     } finally {

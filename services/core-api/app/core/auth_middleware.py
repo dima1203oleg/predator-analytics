@@ -32,6 +32,8 @@ class KeycloakAuthMiddleware(BaseHTTPMiddleware):
         "/api/v1/health",
         "/api/v1/ready",
         "/api/v1/metrics",
+        "/api/v1/auth/token",
+        "/api/v1/auth/login",
         "/docs",
         "/redoc",
         "/openapi.json"
@@ -43,15 +45,22 @@ class KeycloakAuthMiddleware(BaseHTTPMiddleware):
         if path in self.PUBLIC_PATHS:
             return await call_next(request)
 
-        # Отримуємо Authorization header
+        # Отримуємо Authorization header або query параметр
         auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
+        token = None
+        
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+        elif request.query_params.get("token"):
+            token = request.query_params.get("token")
+            
+        if not token:
             return JSONResponse(
                 status_code=401,
-                content={"detail": "Missing or invalid Authorization header"}
+                content={"detail": "Missing or invalid Authorization header or token query parameter"}
             )
             
-        token = auth_header.split(" ")[1]
+
         
         # Fallback for local development / testing
         if settings.ENV in ["development", "testing"] and token == "test-token":
