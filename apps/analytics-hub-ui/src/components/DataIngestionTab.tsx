@@ -448,6 +448,44 @@ export default function DataIngestionTab() {
   const [newSourceOwner, setNewSourceOwner] = useState<string>(
     "ШІ Автомат Інтеграції",
   );
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
+  // Poll ETL Status
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStatus = async () => {
+      try {
+        if (!isMounted) return;
+        const response = await fetch(`${API_BASE_URL}/etl/status`);
+        if (response.ok) {
+          const data = await response.json();
+          const pipelines = data.pipelines || {};
+          
+          setSources(prev => prev.map(source => {
+            const pipelineStatus = pipelines[source.id];
+            if (pipelineStatus) {
+              return {
+                ...source,
+                status: pipelineStatus.status === "running" ? "SYNCING" : "ACTIVE"
+              };
+            }
+            return source;
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch ETL status:", err);
+      }
+    };
+    
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   const [isSavingSource, setIsSavingSource] = useState<boolean>(false);
 
   // Load custom registries from Firestore on mount
@@ -1518,6 +1556,32 @@ class ${src.id.charAt(0).toUpperCase() + src.id.slice(1)}EntityModel(BaseModel):
                 </div>
 
                 <div className="flex justify-end gap-2 border-t border-slate-800 pt-3">
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`${API_BASE_URL}/etl/${selectedSource.id}/sync`, { method: "POST" });
+                        if (response.ok) {
+                          showToast(`Синхронізація для ${selectedSource.name} успішно запущена`);
+                          // Optimistic update
+                          setSources(prev => prev.map(s => s.id === selectedSource.id ? { ...s, status: "SYNCING" } : s));
+                        } else if (response.status === 409) {
+                          showToast(`Синхронізація для ${selectedSource.name} вже працює`, "info");
+                        } else if (response.status === 404) {
+                          showToast(`Пайплайн для ${selectedSource.name} не знайдено на сервері`, "error");
+                        } else {
+                          showToast(`Помилка запуску синхронізації`, "error");
+                        }
+                      } catch (err) {
+                        showToast(`Помилка мережі при запуску синхронізації`, "error");
+                      }
+                    }}
+                    disabled={selectedSource.status === "SYNCING"}
+                    className={`px-3 py-1.5 cursor-pointer rounded font-mono font-bold text-xs uppercase transition-all flex items-center gap-1.5 ${selectedSource.status === "SYNCING" ? "bg-slate-800 text-slate-500 cursor-not-allowed" : "bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-400 border border-cyan-500/50"}`}
+                  >
+                    <Play className="w-3.5 h-3.5" />
+                    {selectedSource.status === "SYNCING" ? "Синхронізується..." : "Запустити Sync"}
+                  </button>
                   {!initialSources.some((s) => s.id === selectedSource.id) && (
                     <button
                       onClick={async () => {
