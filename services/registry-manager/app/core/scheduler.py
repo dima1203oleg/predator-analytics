@@ -12,12 +12,31 @@ from app.etl.pipelines.nazk_pipeline import NazkPipeline
 logger = logging.getLogger(__name__)
 
 class RegistryScheduler:
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(RegistryScheduler, cls).__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
+
     def __init__(self):
+        if getattr(self, "_initialized", False):
+            return
         self.is_running = False
         self._tasks = []
+        self.status = {
+            "prozorro": {"status": "idle", "last_run": None, "error": None},
+            "spending": {"status": "idle", "last_run": None, "error": None},
+            "nazk": {"status": "idle", "last_run": None, "error": None},
+            "sanctions": {"status": "idle", "last_run": None, "error": None},
+        }
+        self._initialized = True
 
     async def start(self):
-        """Запуск фонових задач (Мок для Celery/APScheduler)."""
+        """Запуск фонових задач."""
+        if self.is_running:
+            return
         logger.info("Starting Registry Scheduler...")
         self.is_running = True
         self._tasks.append(asyncio.create_task(self._schedule_prozorro()))
@@ -30,67 +49,69 @@ class RegistryScheduler:
         self.is_running = False
         for task in self._tasks:
             task.cancel()
+        self._tasks.clear()
 
     async def _schedule_prozorro(self):
         """Імітація періодичного запуску інтеграції ProZorro (кожні 15 хвилин)."""
         pipeline = ProzorroPipeline()
         while self.is_running:
+            self.status["prozorro"]["status"] = "running"
             logger.info("Triggering ProZorro Incremental Sync...")
             try:
-                await pipeline.run_incremental_sync(max_items=50)
+                await pipeline.run_incremental_sync(max_items=100)
+                self.status["prozorro"]["error"] = None
             except Exception as e:
                 logger.error(f"Scheduled ProZorro task failed: {e}")
+                self.status["prozorro"]["error"] = str(e)
+            finally:
+                self.status["prozorro"]["status"] = "idle"
+                self.status["prozorro"]["last_run"] = datetime.now().isoformat()
             await asyncio.sleep(900)  # 15 min
 
     async def _schedule_spending(self):
         """Імітація щоденного запуску інтеграції Spending.gov.ua (вночі)."""
         pipeline = SpendingPipeline()
         while self.is_running:
+            self.status["spending"]["status"] = "running"
             logger.info("Triggering Spending Sync (Yesterday)...")
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             try:
-                await pipeline.run_sync_for_date(target_date=yesterday, max_items=50)
+                await pipeline.run_sync_for_date(target_date=yesterday, max_items=100)
+                self.status["spending"]["error"] = None
             except Exception as e:
                 logger.error(f"Scheduled Spending task failed: {e}")
+                self.status["spending"]["error"] = str(e)
+            finally:
+                self.status["spending"]["status"] = "idle"
+                self.status["spending"]["last_run"] = datetime.now().isoformat()
             await asyncio.sleep(86400)  # 24 hours
 
     async def _schedule_nazk(self):
         """Імітація періодичного запуску інтеграції НАЗК (кожні 6 годин)."""
         pipeline = NazkPipeline()
         while self.is_running:
+            self.status["nazk"]["status"] = "running"
             logger.info("Triggering NAZK Incremental Sync...")
             six_hours_ago = (datetime.now() - timedelta(hours=6)).isoformat()
             try:
-                await pipeline.run_incremental_sync(date_from=six_hours_ago, max_items=50)
+                await pipeline.run_incremental_sync(date_from=six_hours_ago, max_items=100)
+                self.status["nazk"]["error"] = None
             except Exception as e:
                 logger.error(f"Scheduled NAZK task failed: {e}")
+                self.status["nazk"]["error"] = str(e)
+            finally:
+                self.status["nazk"]["status"] = "idle"
+                self.status["nazk"]["last_run"] = datetime.now().isoformat()
             await asyncio.sleep(21600)  # 6 hours
 
     async def _schedule_sanctions(self):
         """Імітація запуску Bulk-інтеграцій санкцій (OFAC, РНБО)."""
-        logger.info("Scheduler: Triggering OFAC/RNBO Sanctions Sync...")
-        # У реальній системі тут буде виклик BulkSanctionsPipeline
-        await asyncio.sleep(2)
-        logger.info("Scheduler: OFAC/RNBO Sync Completed.")
-
-    async def _schedule_interpol(self):
-        """Імітація запуску Incremental Interpol."""
-        logger.info("Scheduler: Triggering Interpol Red Notices Sync...")
-        # У реальній системі тут буде виклик SpecialPipelines.run_interpol_sync
-        await asyncio.sleep(1)
-        logger.info("Scheduler: Interpol Sync Completed.")
-
-    async def start(self):
-        logger.info("Scheduler started.")
-        self.is_running = True
-        
         while self.is_running:
-            # Запускаємо всі наявні джерела
-            await self._schedule_prozorro()
-            await self._schedule_spending()
-            await self._schedule_nazk()
-            await self._schedule_sanctions()
-            await self._schedule_interpol()
-            
-            logger.info("Scheduler loop finished. Sleeping for 24h...")
-            await asyncio.sleep(86400)  # 24 hours
+            self.status["sanctions"]["status"] = "running"
+            logger.info("Scheduler: Triggering OFAC/RNBO Sanctions Sync...")
+            # У реальній системі тут буде виклик BulkSanctionsPipeline
+            await asyncio.sleep(2)
+            self.status["sanctions"]["status"] = "idle"
+            self.status["sanctions"]["last_run"] = datetime.now().isoformat()
+            logger.info("Scheduler: OFAC/RNBO Sync Completed.")
+            await asyncio.sleep(86400) # 24h

@@ -4,6 +4,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.core.scheduler import RegistryScheduler
+from app.api.v1 import etl
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -11,9 +14,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Setup Registry Manager dependencies (e.g., Scheduler, Vault)
     logger.info("Starting PREDATOR Registry Manager...")
+    scheduler = RegistryScheduler()
+    await scheduler.start()
     yield
     logger.info("Shutting down PREDATOR Registry Manager...")
-
+    await scheduler.stop()
 
 app = FastAPI(
     title="PREDATOR Registry Manager",
@@ -21,6 +26,8 @@ app = FastAPI(
     version="61.0.0",
     lifespan=lifespan,
 )
+
+app.include_router(etl.router, prefix="/api/v1/etl", tags=["ETL"])
 
 # CORS
 app.add_middleware(
