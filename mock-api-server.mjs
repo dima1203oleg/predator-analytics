@@ -1425,6 +1425,7 @@ app.get(['/api/v1/system/metrics', '/v1/system/metrics', '/api/v45/system/status
 });
 
 app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], (req, res) => {
+  res.set('Warning', '299 - "Deprecated API: Use AI Factory Connectors"');
   const tenders = [
     {
       id: 'UA-2024-03-05-1234',
@@ -3711,6 +3712,7 @@ app.get(['/api/v45/azr/audit', '/api/v1/azr/audit'], (req, res) => {
 // 📊 DATAGOV — Портал відкритих даних для DataGovView
 // =============================================
 app.get('/api/v1/osint_ua/datagov/search', (req, res) => {
+  res.set('Warning', '299 - "Deprecated API: Use AI Factory Connectors"');
   const q = (req.query.q || '').toString().toLowerCase();
   const rows = parseInt(req.query.rows) || 15;
 

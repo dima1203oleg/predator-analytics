@@ -5,14 +5,17 @@ from app.services.osint.datagov import DataGovUACollector
 
 router = APIRouter(prefix="/osint_ua", tags=["OSINT Ukraine"])
 
+# [DEPRECATED] Manual OSINT connectors are deprecated in favor of AI Factory
 def get_datagov() -> DataGovUACollector:
+    import logging
+    logging.warning("[DEPRECATED] DataGovUACollector is deprecated. Use AI Factory.")
     return DataGovUACollector()
 
-# TODO: Implement ProzorroCollector in app.services.osint.prozorro
+# [DEPRECATED] Manual OSINT connectors are deprecated
 def get_prozorro() -> Any:
-    raise HTTPException(status_code=501, detail="Prozorro API integration is not implemented yet")
+    raise HTTPException(status_code=501, detail="[DEPRECATED] Manual Prozorro API integration is deprecated. Use AI Factory Connectors.")
 
-@router.get("/datagov/search")
+@router.get("/datagov/search", deprecated=True)
 async def search_datagov(
     q: str = Query("", description="Пошуковий запит"),
     rows: int = Query(10, ge=1, le=100),
@@ -25,7 +28,7 @@ async def search_datagov(
         raise HTTPException(status_code=500, detail=results.get("error", "DataGov API error"))
     return results["result"]
 
-@router.get("/prozorro/tenders")
+@router.get("/prozorro/tenders", deprecated=True)
 async def get_tenders(
     offset: str = Query("", description="Зміщення для пагінації"),
     limit: int = Query(10, ge=1, le=100),
@@ -34,7 +37,7 @@ async def get_tenders(
     """Отримання списку тендерів з Prozorro"""
     return await prozorro.fetch_tenders(offset=offset, limit=limit)
 
-@router.get("/prozorro/tenders/{tender_id}")
+@router.get("/prozorro/tenders/{tender_id}", deprecated=True)
 async def get_tender_detail(
     tender_id: str,
     prozorro: Any = Depends(get_prozorro)

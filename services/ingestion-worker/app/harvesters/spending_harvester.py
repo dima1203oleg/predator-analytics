@@ -1,9 +1,12 @@
-"""Spending Harvester — Збирач транзакцій з Державного вебпорталу бюджетних коштів (E-data).
+"""[DEPRECATED] Spending Harvester — Збирач транзакцій з Державного вебпорталу бюджетних коштів (E-data).
 
 Використовує хронологічну сегментацію (мікробатчі по днях) для 
 уникнення таймаутів (HTTP 504) при завантаженні транзакцій.
 Забезпечує фінансову точність через перетворення сум транзакцій 
 у тип Decimal під час трансформації.
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -19,6 +22,8 @@ from app.core.etl_state import ETLStateManager
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion.harvesters.spending")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 # Офіційний API E-data (Spending.gov.ua)
 SPENDING_API_URL = "https://api.spending.gov.ua/api/v2/api/transactions/"

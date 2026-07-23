@@ -1,8 +1,11 @@
-"""NBU Harvester — Збирач офіційних курсів валют від Національного банку України.
+"""[DEPRECATED] NBU Harvester — Збирач офіційних курсів валют від Національного банку України.
 
 Цей модуль завантажує курси валют з API НБУ, які використовуються 
 як Dimension Table для конвертації всіх фінансових транзакцій платформи 
 у єдиний еквівалент (наприклад, для аналізу транзакцій Spending або контрактів ProZorro).
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -15,6 +18,8 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion.harvesters.nbu")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 NBU_EXCHANGE_URL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
 

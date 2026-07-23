@@ -1,9 +1,12 @@
-"""OpenSanctions Harvester — Потоковий збирач глобальних санкційних списків.
+"""[DEPRECATED] OpenSanctions Harvester — Потоковий збирач глобальних санкційних списків.
 
 Дані OpenSanctions надаються у форматі FollowTheMoney (FtM) як line-delimited JSON.
 Через великий обсяг файлів (декілька ГБ), конвеєр використовує HTTP потокове читання
 (streaming) для запобігання переповненню пам'яті (Out of Memory), обробляючи кожен
 рядок незалежно та відфільтровуючи лише релевантні сутності.
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -16,6 +19,8 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion.harvesters.opensanctions")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 # URL для завантаження FtM експорту всього набору даних (default)
 OPENSANCTIONS_FTM_URL = "https://data.opensanctions.org/datasets/latest/default/entities.ftm.json"

@@ -1,10 +1,13 @@
-"""OpenAlex Harvester — Наукометричний аналіз та інноваційний потенціал.
+"""[DEPRECATED] OpenAlex Harvester — Наукометричний аналіз та інноваційний потенціал.
 
 Використовує API OpenAlex для збору даних про наукові публікації (Works),
 авторів та інституції. Для уникнення блокування (throttling) та потрапляння
 у Polite Pool, кожен запит містить параметр `mailto` з адресою адміністратора.
 
 Архітектура пагінації: Cursor-based pagination (параметр `cursor` у відповіді).
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -17,6 +20,8 @@ from predator_common.logging import get_logger
 from app.core.etl_state import ETLStateManager
 
 logger = get_logger("ingestion.harvesters.openalex")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 OPENALEX_API_BASE = "https://api.openalex.org"
 PIPELINE_ID = "openalex_harvester"

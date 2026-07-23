@@ -1,4 +1,4 @@
-"""NAZK Harvester — ELT конвеєр для Єдиного державного реєстру декларацій.
+"""[DEPRECATED] NAZK Harvester — ELT конвеєр для Єдиного державного реєстру декларацій.
 
 Реалізує патерн Extract-Load-Transform (ELT). Замість складної нормалізації
 в пам'яті під час завантаження, цей збирач витягує "schema-less" JSON 
@@ -6,6 +6,9 @@
 для подальшої глибокої обробки та розкладання на сутності (PEP, активи).
 
 Використовує механізм відстеження ID останньої обробленої декларації.
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -18,6 +21,8 @@ from predator_common.logging import get_logger
 from app.core.etl_state import ETLStateManager
 
 logger = get_logger("ingestion.harvesters.nazk")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 # Базовий URL для відкритого API НАЗК (декларації)
 NAZK_API_URL = "https://public-api.nazk.gov.ua/v2/documents/list"

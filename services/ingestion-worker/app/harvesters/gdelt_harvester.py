@@ -1,9 +1,12 @@
-"""GDELT 2.0 Harvester — Геополітичний моніторинг новинних потоків.
+"""[DEPRECATED] GDELT 2.0 Harvester — Геополітичний моніторинг новинних потоків.
 
 Виконує безперервний глобальний моніторинг новинних потоків з усього світу.
 Дані GDELT оновлюються кожні 15 хвилин. Інтеграційний конвеєр використовує 
 мікро-пакетну обробку (micro-batching), декомпресуючи ZIP-архіви в пам'яті 
 та видобуваючи події (events), локації та тональність.
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -19,6 +22,8 @@ from predator_common.logging import get_logger
 from app.core.etl_state import ETLStateManager
 
 logger = get_logger("ingestion.harvesters.gdelt")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 GDELT_MASTER_LIST_URL = "http://data.gdeltproject.org/gdeltv2/masterfilelist.txt"
 PIPELINE_ID = "gdelt_harvester"

@@ -1,4 +1,4 @@
-"""CKAN Harvester — Збирач даних з Національного порталу відкритих даних data.gov.ua.
+"""[DEPRECATED] CKAN Harvester — Збирач даних з Національного порталу відкритих даних data.gov.ua.
 
 Використовує стандартний CKAN API v3 для:
 - Індексації розпорядників інформації
@@ -7,6 +7,9 @@
 - Пріоритетні набори: ДПС (податковий борг, ПДВ), Мінінфраструктури
 
 Ліцензія даних: Creative Commons — легальне комерційне використання.
+
+
+Цей модуль застарів. Всі нові інтеграції генеруються через AI Factory.
 """
 
 import asyncio
@@ -19,6 +22,8 @@ from pydantic import BaseModel
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion.harvesters.ckan")
+logger.warning("[DEPRECATED] Цей ручний гарвестер застарів згідно з Legacy Rule. Використовуйте Autonomous AI Factory.")
+
 
 # Базовий ендпоінт CKAN API порталу data.gov.ua
 CKAN_BASE_URL = "https://data.gov.ua/api/3/action"
