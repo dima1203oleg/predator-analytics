@@ -40,7 +40,8 @@ def create_factory_graph():
     workflow.add_edge("coding", "testing")
     
     def route_testing(state: AgentState):
-        if state.get("status") == "failed":
+        retry_count = state.get("test_report", {}).get("retry_count", 0) if state.get("test_report") else 0
+        if state.get("status") == "failed" and retry_count < 3:
             return "coding"
         return END
 

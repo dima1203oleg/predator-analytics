@@ -5,6 +5,7 @@ import ast
 import tempfile
 import subprocess
 import os
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -46,9 +47,9 @@ class QAAgent:
                 with open(test_file_path, "w") as f:
                     f.write(api_code)
                 
-                # Execute simply to check for import errors and top-level execution errors
+                # Execute using sys.executable to ensure correct Python interpreter in sandbox
                 result = subprocess.run(
-                    ["python", test_file_path],
+                    [sys.executable, test_file_path],
                     capture_output=True,
                     text=True,
                     timeout=5
