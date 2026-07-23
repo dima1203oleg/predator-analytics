@@ -1435,8 +1435,8 @@ export default function App() {
               {/* DYNAMIC SIDEBAR BASED ON SIDEBAR_GROUPS */}
               {SIDEBAR_GROUPS.map((group) => {
                 // Filter groups based on ecosystem (hide admin groups in user mode, etc., though here we can just show/hide based on group.id)
-                if (ecosystem === "user" && group.id === "admin") return null;
-                if (ecosystem === "admin" && group.id !== "admin") return null;
+                if (ecosystem === "user" && (group.id === "admin" || group.id === "architecture")) return null;
+                if (ecosystem === "admin" && (group.id !== "admin" && group.id !== "architecture")) return null;
 
                 return (
                   <div key={group.id} className="space-y-1">
@@ -1457,8 +1457,14 @@ export default function App() {
                       else if (item.id === "sandbox") Icon = Network;
                       else if (item.id === "data-ingestion") Icon = Database;
                       else if (item.id === "admin-back-office") Icon = Settings;
+                      else if (item.id === "autonomous-factory") Icon = Cpu;
                       else if (item.id === "architecture") Icon = Network;
+                      else if (item.id === "gap") Icon = Wrench;
+                      else if (item.id === "roadmap") Icon = Calendar;
                       else if (item.id === "catalog") Icon = Layers;
+                      else if (item.id === "license") Icon = ShieldAlert;
+                      else if (item.id === "volumes") Icon = Database;
+                      else if (item.id === "advisor") Icon = Cpu;
 
                       return (
                         <button
