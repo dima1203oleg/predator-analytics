@@ -5,6 +5,7 @@ export interface GraphNode {
   label?: string;
   type?: string;
   data?: any;
+  riskScore?: number;
 }
 
 export interface GraphEdge {
@@ -12,6 +13,7 @@ export interface GraphEdge {
   source: string;
   target: string;
   label?: string;
+  type?: string;
 }
 
 export function GraphViewer({ data, onNodeClick }: any) { return <div className="h-64 bg-gray-800 p-4 rounded text-white">Graph Viewer Active</div>; }

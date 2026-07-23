@@ -11,3 +11,5 @@ export interface TrainingEpochData {
   loss: number;
   accuracy: number;
 }
+
+export type RiskLevelValue = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
