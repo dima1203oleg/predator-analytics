@@ -161,7 +161,7 @@ async def register_user(
         password_hash=get_password_hash(password),
         role=role,
         is_active=True,
-        tenant_id="global-system" # Default tenant
+        tenant_id=settings.ROOT_TENANT_ID # Default tenant
     )
 
     db.add(new_user)

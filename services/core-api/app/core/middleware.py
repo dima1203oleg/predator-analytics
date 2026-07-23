@@ -11,7 +11,10 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.metrics import api_request_duration_seconds, api_requests_total
+from app.config import get_settings
 from predator_common.logging import get_logger
+
+settings = get_settings()
 
 logger = get_logger("core_api.middleware")
 
@@ -104,7 +107,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 class TenantContextMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Встановлює Tenant контекст для RLS."""
-        tenant_id = request.headers.get("X-Tenant-ID") or "global-system"
+        tenant_id = request.headers.get("X-Tenant-ID") or settings.ROOT_TENANT_ID
         request.state.tenant_id = tenant_id
 
         response = await call_next(request)

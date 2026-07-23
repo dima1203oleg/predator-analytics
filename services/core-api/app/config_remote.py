@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "REQUIRED_IN_PRODUCTION"  # noqa: S105
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    ROOT_TENANT_ID: str = "global-system"
+    ROOT_TENANT_ID: str = "a0000000-0000-0000-0000-000000000001"
     AUTH_PROVIDER: str = "keycloak"
     KEYCLOAK_URL: str = "https://keycloak.local"
     KEYCLOAK_REALM: str = "predator"

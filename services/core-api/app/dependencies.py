@@ -8,6 +8,9 @@ from fastapi import Depends, HTTPException, Request, status
 from app.core.mtls import MTLSSecurity, ServiceNodes
 from app.core.permissions import ROLE_PERMISSIONS, Permission, Role
 from app.core.security import get_current_user_payload
+from app.config import get_settings
+
+settings = get_settings()
 
 
 async def get_current_active_user(
@@ -25,7 +28,7 @@ async def get_current_active_user(
 
 async def get_tenant_id(request: Request) -> str:
     """Отримання tenant_id з контексту запиту (Middleware)."""
-    return getattr(request.state, "tenant_id", "global-system")
+    return getattr(request.state, "tenant_id", settings.ROOT_TENANT_ID)
 
 
 class PermissionChecker:
