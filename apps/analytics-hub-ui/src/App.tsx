@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { SIDEBAR_GROUPS } from "./components/SidebarGroups";
 import CatalogTab from "./components/CatalogTab";
 import LicenseTab from "./components/LicenseTab";
 import ArchitectureTab from "./components/ArchitectureTab";
