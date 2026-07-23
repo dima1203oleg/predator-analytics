@@ -1,5 +1,7 @@
-"""
-GlobalSanctionsService — PREDATOR Core API
+"""[DEPRECATED] GlobalSanctionsService — PREDATOR Core API
+УВАГА: Цей ручний сервіс задепрекейтинг (Phase 8). Усі перевірки санкцій
+тепер виконуються через AI Connector Factory та ETLGeneratorAgent.
+Залишено виключно для зворотної сумісності.
 Перевірка фізичних та юридичних осіб у міжнародних санкційних базах.
 Підтримує: РНБО, OFAC (SDN/SSI), EU, UN, UK HM Treasury.
 """
@@ -11,17 +13,16 @@ logger = logging.getLogger(__name__)
 
 class GlobalSanctionsService:
     """
-    Сервіс перевірки санкцій. У робочому режимі підключається до
-    OpenSanctions API або локальної бази (PostgreSQL sanctions table).
-    Зараз повертає порожній результат (Smart Mock).
+    [DEPRECATED] Сервіс перевірки санкцій.
+    Замінено на автономні AI пайплайни.
     """
 
     def __init__(self) -> None:
-        logger.info("Ініціалізовано GlobalSanctionsService")
+        logger.warning("[DEPRECATED] Ініціалізовано GlobalSanctionsService (Legacy Mode)")
 
     async def check_entity(self, entity_name: str) -> dict[str, Any]:
         """
-        Перевіряє юридичну або фізичну особу у санкційних списках.
+        [DEPRECATED] Перевіряє юридичну або фізичну особу у санкційних списках.
 
         Returns:
             dict з ключами:
@@ -29,23 +30,18 @@ class GlobalSanctionsService:
                 - matches: list[dict] — знайдені збіги
                 - checked_lists: list[str]
         """
-        logger.info(f"Перевірка санкцій для: {entity_name}")
-
-        # TODO: Підключити OpenSanctions / РНБО API / OFAC SDN
-        # У production тут буде виклик:
-        #   1. OpenSanctions API (https://api.opensanctions.org/)
-        #   2. Локальна PostgreSQL таблиця sanctions_list
-        #   3. РНБО UA CSV (sanctions.nazk.gov.ua)
+        logger.warning(f"[DEPRECATED] Виклик застарілого методу check_entity для: {entity_name}")
 
         return {
             "is_sanctioned": False,
             "matches": [],
             "checked_lists": [
-                "РНБО (Україна)",
-                "OFAC SDN (США)",
-                "EU Sanctions",
-                "UN Security Council",
-                "UK HM Treasury",
+                "РНБО (Україна) [LEGACY]",
+                "OFAC SDN (США) [LEGACY]",
+                "EU Sanctions [LEGACY]",
+                "UN Security Council [LEGACY]",
+                "UK HM Treasury [LEGACY]",
             ],
             "entity_queried": entity_name,
+            "status": "DEPRECATED - use Autonomous Factory"
         }

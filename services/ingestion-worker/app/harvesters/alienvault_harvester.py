@@ -1,15 +1,15 @@
-"""AlienVault OTX Harvester — Збирач індикаторів компрометації (IoC).
+"""[DEPRECATED] AlienVault OTX Harvester — Збирач індикаторів компрометації (IoC).
+
+УВАГА: Цей ручний парсер задепрекейтинг (Phase 8).
+Тепер усі дані завантажуються автономно через AI Connector Factory.
+Цей файл залишено для історії та зворотної сумісності.
 
 Інтегрується з Open Threat Exchange від AlienVault.
-Використовує API для отримання "Пульсів" (Pulses) — колекцій IoC,
-пов'язаних з певними APT-групами, кампаніями або шкідливим ПЗ.
-
-Архітектура: Time-based fetching (завантаження пульсів, змінених після
-останньої синхронізації) для підтримки актуальності бази даних кіберзагроз.
 """
 
 import asyncio
 import os
+import warnings
 from datetime import UTC, datetime, timedelta
 from typing import Any, AsyncGenerator, Dict, Optional
 

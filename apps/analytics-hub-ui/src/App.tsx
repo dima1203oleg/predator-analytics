@@ -1267,7 +1267,7 @@ export default function App() {
   const renderIpadLayout = () => {
     return (
       <div
-        className="min-h-screen w-full bg-slate-950 text-slate-200 flex flex-col items-center justify-center p-2 relative overflow-hidden select-none"
+        className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-black text-slate-200 flex flex-col items-center justify-center p-2 relative overflow-hidden select-none"
         id="ipad-simulator-view"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_100%)] pointer-events-none" />
@@ -1296,7 +1296,7 @@ export default function App() {
   const renderIphoneLayout = () => {
     return (
       <div
-        className="min-h-screen w-full bg-slate-950 text-slate-200 flex flex-col items-center justify-center p-2 relative overflow-hidden select-none"
+        className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-black text-slate-200 flex flex-col items-center justify-center p-2 relative overflow-hidden select-none"
       >
         <div className="absolute top-4 text-center z-50">
           <button
@@ -1322,11 +1322,11 @@ export default function App() {
   const renderDesktopLayout = () => {
     return (
       <div
-        className="h-full bg-slate-950 text-slate-200 flex flex-col font-sans selection:bg-blue-500/30"
+        className="h-full bg-gradient-to-br from-slate-950 via-slate-900 to-black text-slate-200 flex flex-col font-sans selection:bg-blue-500/30"
         id="nexus-hub-app"
       >
         {/* TOP NAVBAR */}
-        <header className="shrink-0 h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 z-50">
+        <header className="shrink-0 h-14 glass-panel-premium border-b border-slate-800/50 flex items-center justify-between px-4 z-50">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -1395,10 +1395,10 @@ export default function App() {
         </header>
 
         {/* MAIN CONTENT ZONE */}
-        <div className="flex-1 flex overflow-hidden relative bg-slate-950">
+        <div className="flex-1 flex overflow-hidden relative bg-transparent">
           {/* LEFT SIDEBAR */}
           <aside
-            className={`shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 z-10 ${sidebarCollapsed ? "w-[68px]" : "w-[260px]"}`}
+            className={`shrink-0 glass-panel-premium border-r border-slate-800/50 flex flex-col justify-between transition-all duration-300 z-10 ${sidebarCollapsed ? "w-[68px]" : "w-[260px]"}`}
             id="tactical-sidebar"
           >
             {/* Navigation group */}
@@ -1533,7 +1533,7 @@ export default function App() {
           </aside>
           {/* MAIN WORKSPACE (Section 8) */}
           <main
-            className="flex-1 overflow-y-auto p-2 bg-slate-950 relative"
+            className="flex-1 overflow-y-auto p-2 bg-transparent relative"
             id="workspace-main"
           >
           <div className="max-w-[1800px] mx-auto space-y-6">
@@ -1829,11 +1829,10 @@ export default function App() {
 
               {/* Modal Dialog container */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: -10 }}
+                initial={{ opacity: 0, scale: 0.95, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px] z-50"
+                exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                className="relative w-full max-w-2xl glass-panel-premium rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px] z-50"
               >
                 {/* Search input header */}
                 <div className="flex items-center gap-2 px-2 py-1.5 border-b border-slate-800 bg-slate-950/50">
@@ -1969,7 +1968,7 @@ export default function App() {
     <>
       <AnimatePresence mode="wait">
         {deviceMode === "iphone" ? renderIphoneLayout() : deviceMode === "ipad" ? renderIpadLayout() : (
-    <div className="h-screen w-full bg-slate-950 overflow-hidden">
+    <div className="h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-black overflow-hidden">
       {renderDesktopLayout()}
     </div>
   )}
