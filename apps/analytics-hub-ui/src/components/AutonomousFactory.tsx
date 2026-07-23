@@ -218,6 +218,22 @@ export default function AutonomousFactory() {
     return () => clearInterval(interval);
   }, [isFactoryRunning, killSwitchActive]);
 
+  // Seed initial data if collections are empty
+  const handleSeedData = async () => {
+    try {
+      // 1. Seed some tasks (no longer seeding Firestore agent_tasks as they are loaded from API)
+      
+      // 2. Seed some council votes
+      const sampleVotes: CouncilVote[] = [
+        {
+          id: "vote_1",
+          scenario:
+            "Додавання нового джерела: Реєстр Декларацій НАЗК (Україна). Виявлення PEP та аналіз активів.",
+          verdict: "СХВАЛЕНО (Консенсус 3/3 моделями)",
+          models: [
+            {
+              name: "DeepSeek-R1-Local",
+              vote: "APPROVE",
               reason:
                 "Специфікація OpenAPI повністю валідна, джерело державне та офіційне, високий рівень довіри.",
               confidence: 98,
