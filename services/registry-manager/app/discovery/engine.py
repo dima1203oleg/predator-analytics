@@ -89,16 +89,9 @@ class APIDiscoveryEngine:
             try:
                 logger.info("Starting new discovery cycle...")
                 
-                # 1. Скануємо APIs.guru
-                async for source in self.scanner.scan_apis_guru():
-                    await self._process_discovered_source(source)
-                    
-                # 2. Скануємо CKAN (data.gov.ua)
-                async for source in self.scanner.scan_ckan("https://data.gov.ua"):
-                    await self._process_discovered_source(source)
-                    
-                # 3. Скануємо OSINT (OpenSanctions, CISA KEV)
-                async for source in self.scanner.scan_osint_sources():
+                # 1. Скануємо Глобальний Маніфест (20+ категорій джерел)
+                manifest_path = "config/global_discovery_manifest.yaml"
+                async for source in self.scanner.scan_global_manifest(manifest_path):
                     await self._process_discovered_source(source)
                     
                 # Скидаємо backoff після успішного циклу

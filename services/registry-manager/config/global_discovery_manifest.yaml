@@ -1,0 +1,131 @@
+categories:
+  - id: 1_ua_gov_registries
+    name: "Українські державні реєстри"
+    sources:
+      - { id: data_gov_ua, name: "Data.gov.ua", type: ckan, url: "https://data.gov.ua" }
+      - { id: opendatabot, name: "Opendatabot", type: api, instruction: "Search for Opendatabot public API or bulk dumps" }
+      - { id: youcontrol, name: "YouControl", type: api, instruction: "Search for YouControl Open Data API" }
+      - { id: prozorro, name: "Prozorro", type: openapi, instruction: "Prozorro API endpoints" }
+      - { id: nazk_declarations, name: "Реєстр декларацій НАЗК", type: api, url: "https://public-api.nazk.gov.ua/" }
+
+  - id: 2_global_corp_registries
+    name: "Світові корпоративні реєстри"
+    sources:
+      - { id: opencorporates, name: "OpenCorporates", type: api, url: "https://api.opencorporates.com" }
+      - { id: companies_house, name: "Companies House", type: api, url: "https://developer.company-information.service.gov.uk/" }
+      - { id: sec_edgar, name: "SEC EDGAR", type: api, url: "https://www.sec.gov/edgar/sec-api-documentation" }
+
+  - id: 3_sanctions
+    name: "Санкції"
+    sources:
+      - { id: opensanctions, name: "OpenSanctions", type: osint_dataset, url: "https://data.opensanctions.org/datasets/latest/index.json" }
+      - { id: ofac, name: "OFAC", type: csv, instruction: "Find OFAC SDN and Consolidated lists bulk downloads" }
+      - { id: un_sc_sanctions, name: "ООН", type: xml, instruction: "UN Security Council Consolidated List XML" }
+
+  - id: 4_pep
+    name: "PEP"
+    sources:
+      - { id: everypolitician, name: "EveryPolitician", type: json, url: "https://github.com/everypolitician/everypolitician-data" }
+      - { id: wikidata_pep, name: "Wikidata PEPs", type: sparql, instruction: "SPARQL query for PEPs on Wikidata" }
+      - { id: occrp, name: "OCCRP", type: api, instruction: "OCCRP Aleph API" }
+
+  - id: 5_courts
+    name: "Судові системи"
+    sources:
+      - { id: courtlistener, name: "CourtListener", type: api, url: "https://www.courtlistener.com/help/api/" }
+      - { id: pacer, name: "PACER", type: web_scrape, instruction: "PACER public access APIs or RSS feeds" }
+
+  - id: 6_procurement
+    name: "Закупівлі"
+    sources:
+      - { id: ted_europe, name: "TED Europe", type: api, instruction: "Tenders Electronic Daily API" }
+      - { id: sam_gov, name: "SAM.gov", type: api, url: "https://open.gsa.gov/api/sam/" }
+
+  - id: 7_customs
+    name: "Митниця"
+    sources:
+      - { id: un_comtrade, name: "UN Comtrade", type: api, url: "https://comtradeapi.un.org/" }
+      - { id: eurostat, name: "Eurostat", type: api, url: "https://ec.europa.eu/eurostat/web/main/data/web-services" }
+
+  - id: 8_logistics
+    name: "Логістика"
+    sources:
+      - { id: ais_openseamap, name: "OpenSeaMap", type: api, instruction: "OpenSeaMap APIs" }
+      - { id: opensky, name: "OpenSky", type: api, url: "https://opensky-network.org/apidoc/" }
+
+  - id: 9_finance
+    name: "Банківські та фінансові системи"
+    sources:
+      - { id: openfigi, name: "OpenFIGI", type: api, url: "https://www.openfigi.com/api" }
+      - { id: ecb, name: "ECB", type: api, url: "https://data.ecb.europa.eu/help/api/overview" }
+      - { id: world_bank, name: "World Bank", type: api, url: "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation" }
+
+  - id: 10_crypto
+    name: "Криптовалюта"
+    sources:
+      - { id: bitcoin_rpc, name: "Bitcoin RPC", type: json_rpc, instruction: "Bitcoin JSON-RPC standard" }
+      - { id: ethereum_rpc, name: "Ethereum RPC", type: json_rpc, instruction: "Ethereum JSON-RPC standard" }
+
+  - id: 11_geo
+    name: "Геодані"
+    sources:
+      - { id: openstreetmap, name: "OpenStreetMap", type: api, url: "https://wiki.openstreetmap.org/wiki/API_v0.6" }
+      - { id: openweather, name: "OpenWeather", type: api, url: "https://openweathermap.org/api" }
+
+  - id: 12_real_estate
+    name: "Нерухомість"
+    sources:
+      - { id: open_cadastres, name: "Open Cadastres", type: directory, instruction: "Global list of open cadastres" }
+
+  - id: 13_internet
+    name: "Інтернет"
+    sources:
+      - { id: rdap, name: "RDAP", type: api, instruction: "RDAP bootstrap data" }
+      - { id: crt_sh, name: "crt.sh", type: api, url: "https://crt.sh/?q=example.com&output=json" }
+      - { id: shodan, name: "Shodan", type: api, url: "https://developer.shodan.io/" }
+
+  - id: 14_git
+    name: "Git-екосистема"
+    sources:
+      - { id: github, name: "GitHub", type: api, url: "https://docs.github.com/en/rest" }
+      - { id: gitlab, name: "GitLab", type: api, url: "https://docs.gitlab.com/ee/api/" }
+
+  - id: 15_opensource
+    name: "Open Source каталоги"
+    sources:
+      - { id: huggingface, name: "HuggingFace", type: api, url: "https://huggingface.co/docs/hub/api" }
+      - { id: arxiv, name: "arXiv", type: api, url: "https://info.arxiv.org/help/api/index.html" }
+      - { id: openalex, name: "OpenAlex", type: api, url: "https://docs.openalex.org/" }
+
+  - id: 16_social
+    name: "Соціальні мережі"
+    proxy_strategy: "tor_network"
+    sources:
+      - { id: reddit, name: "Reddit", type: api, url: "https://www.reddit.com/dev/api" }
+      - { id: mastodon, name: "Mastodon", type: api, url: "https://docs.joinmastodon.org/api/" }
+      - { id: telegram, name: "Telegram", type: api, instruction: "Telegram MTProto or Bot API for open channels" }
+
+  - id: 17_news
+    name: "Новини"
+    sources:
+      - { id: gdelt, name: "GDELT", type: csv, url: "http://data.gdeltproject.org/gdeltv2/masterfilelist.txt" }
+      - { id: common_crawl, name: "Common Crawl", type: s3, url: "https://commoncrawl.org/get-started" }
+
+  - id: 18_darkweb
+    name: "Dark Web та витоки даних"
+    proxy_strategy: "tor_network"
+    sources:
+      - { id: ahmia, name: "Ahmia", type: web_scrape, url: "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion" }
+      - { id: have_i_been_pwned, name: "Have I Been Pwned", type: api, url: "https://haveibeenpwned.com/API/v3" }
+
+  - id: 19_osint_framework
+    name: "OSINT Framework"
+    sources:
+      - { id: spiderfoot, name: "SpiderFoot", type: tool_wrapper, instruction: "Integrate via SpiderFoot CLI/API" }
+      - { id: theharvester, name: "theHarvester", type: tool_wrapper, instruction: "Integrate via theHarvester CLI" }
+
+  - id: 20_ai_knowledge
+    name: "AI Knowledge Sources"
+    sources:
+      - { id: wikidata, name: "Wikidata", type: sparql, url: "https://query.wikidata.org/sparql" }
+      - { id: dbpedia, name: "DBpedia", type: sparql, url: "https://dbpedia.org/sparql" }

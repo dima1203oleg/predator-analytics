@@ -4,6 +4,8 @@ Crawler Engine — PREDATOR Analytics
 """
 import asyncio
 import logging
+import yaml
+from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, List, Optional
 import httpx
 from bs4 import BeautifulSoup
@@ -143,7 +145,6 @@ class DirectoryScanner:
                     "publisher": dataset.get("publisher", {}).get("name"),
                     "last_updated": dataset.get("last_change")
                 }
-                
         # Можна також додати CISA KEV:
         yield {
             "source_type": "osint_dataset",
@@ -153,3 +154,35 @@ class DirectoryScanner:
             "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
             "publisher": "CISA",
         }
+
+    async def scan_global_manifest(self, manifest_path: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """Парсить глобальний маніфест YAML і генерує джерела для Factory."""
+        logger.info(f"Scanning global manifest: {manifest_path}")
+        
+        path = Path(manifest_path)
+        if not path.exists():
+            logger.error(f"Manifest file not found: {manifest_path}")
+            return
+            
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                manifest = yaml.safe_load(f)
+        except Exception as e:
+            logger.error(f"Error loading YAML manifest: {e}")
+            return
+            
+        for category in manifest.get("categories", []):
+            category_id = category.get("id")
+            category_name = category.get("name")
+            proxy_strategy = category.get("proxy_strategy")
+            
+            for source in category.get("sources", []):
+                yield {
+                    "source_type": source.get("type", "unknown"),
+                    "id": f"{category_id}__{source.get('id')}",
+                    "name": source.get("name"),
+                    "category": category_name,
+                    "url": source.get("url"),
+                    "instruction": source.get("instruction"),
+                    "proxy_strategy": proxy_strategy
+                }

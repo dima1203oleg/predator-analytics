@@ -9,3 +9,4 @@ sqlalchemy[asyncio]
 asyncpg
 celery
 redis
+pyyaml
