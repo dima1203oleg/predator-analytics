@@ -55,11 +55,12 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       
-      {/* Background Grid & Lights */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.08)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
+      {/* Dynamic Background Elements */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.15)_0%,transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(56,189,248,0.1)_0%,transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(circle_800px_at_50%_50%,#000_20%,transparent_100%)] opacity-20 pointer-events-none" />
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -67,21 +68,25 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="w-full max-w-md z-10"
       >
-        <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-[0_0_80px_rgba(79,70,229,0.15)] relative overflow-hidden">
+        <div className="glass-panel-premium relative overflow-hidden p-10">
           
           {/* Top Edge Glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50" />
+          <div className="absolute top-0 left-1/4 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent opacity-80 shadow-[0_0_15px_rgba(99,102,241,1)]" />
 
           {/* Logo Section */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(79,70,229,0.2)] mb-4 relative">
-              <ShieldAlert className="w-8 h-8 text-indigo-400" />
-              <div className="absolute inset-0 rounded-2xl border border-indigo-400 animate-ping opacity-20" />
-            </div>
-            <h1 className="text-3xl font-black text-white tracking-widest font-mono text-center">
+          <div className="flex flex-col items-center mb-10 relative">
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: 180 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/10 border border-indigo-400/30 flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.3)] mb-6 relative group cursor-pointer"
+            >
+              <ShieldAlert className="w-10 h-10 text-indigo-300 drop-shadow-[0_0_10px_rgba(165,180,252,0.8)] group-hover:text-white transition-colors" />
+              <div className="absolute inset-0 rounded-3xl border border-indigo-400/50 animate-ping opacity-20" />
+            </motion.div>
+            <h1 className="text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-indigo-300 tracking-[0.2em] text-center drop-shadow-lg">
               PREDATOR
             </h1>
-            <p className="text-[10px] text-indigo-400 font-mono tracking-[0.3em] uppercase mt-1">
+            <p className="text-[11px] text-indigo-400 font-mono tracking-[0.4em] uppercase mt-2 font-semibold">
               Analytics Hub v57.0
             </p>
           </div>
@@ -103,9 +108,9 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             </AnimatePresence>
 
             <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold font-mono pl-1 flex items-center gap-1.5">
-                  <User className="w-3 h-3" />
+              <div className="space-y-1.5 group">
+                <label className="text-[10px] uppercase tracking-[0.15em] text-slate-400 font-bold font-mono pl-1 flex items-center gap-1.5 transition-colors group-focus-within:text-indigo-400">
+                  <User className="w-3.5 h-3.5" />
                   Ідентифікатор оператора (Email)
                 </label>
                 <div className="relative">
@@ -113,19 +118,19 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-950/50 border border-slate-800 text-slate-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono"
+                    className="w-full bg-slate-950/40 border border-slate-700/50 text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 focus:bg-slate-900/60 hover:bg-slate-900/40 transition-all font-mono shadow-inner"
                     placeholder="operator@predator.gov"
                     required
                   />
-                  <div className="absolute inset-y-0 right-3 flex items-center justify-center opacity-30">
+                  <div className="absolute inset-y-0 right-4 flex items-center justify-center opacity-40 group-focus-within:opacity-100 group-focus-within:text-indigo-400 transition-all">
                     <TerminalSquare className="w-4 h-4" />
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold font-mono pl-1 flex items-center gap-1.5">
-                  <Lock className="w-3 h-3" />
+              <div className="space-y-1.5 group">
+                <label className="text-[10px] uppercase tracking-[0.15em] text-slate-400 font-bold font-mono pl-1 flex items-center gap-1.5 transition-colors group-focus-within:text-indigo-400">
+                  <Lock className="w-3.5 h-3.5" />
                   Код доступу
                 </label>
                 <div className="relative">
@@ -133,34 +138,37 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-950/50 border border-slate-800 text-slate-200 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono tracking-widest"
+                    className="w-full bg-slate-950/40 border border-slate-700/50 text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 focus:bg-slate-900/60 hover:bg-slate-900/40 transition-all font-mono tracking-widest shadow-inner"
                     placeholder="••••••••"
                     required
                   />
-                  <div className="absolute inset-y-0 right-3 flex items-center justify-center opacity-30">
+                  <div className="absolute inset-y-0 right-4 flex items-center justify-center opacity-40 group-focus-within:opacity-100 group-focus-within:text-indigo-400 transition-all">
                     <Fingerprint className="w-4 h-4" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-3.5 text-sm font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group mt-2 shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full relative group overflow-hidden bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl py-4 text-sm font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4 shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_35px_rgba(99,102,241,0.6)] cursor-pointer"
             >
+              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%,100%_100%] bg-[position:-100%_0,0_0] bg-no-repeat group-hover:animate-[shimmer_2s_infinite]" />
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Авторизація...
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Ініціалізація...</span>
                 </>
               ) : (
                 <>
-                  Ініціалізувати сесію
-                  <ShieldAlert className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="relative z-10 drop-shadow-md">Підключитись до матриці</span>
+                  <ShieldAlert className="w-5 h-5 relative z-10 group-hover:scale-110 transition-transform" />
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
 
           {/* Footer details */}

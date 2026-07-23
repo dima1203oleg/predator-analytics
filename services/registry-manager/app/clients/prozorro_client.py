@@ -1,6 +1,10 @@
 """
 ProZorro API Client — PREDATOR Registry Manager
-Автогенерується та підтримується Discovery Engine.
+
+[DEPRECATED]
+УВАГА: Цей модуль є застарілим і замінений на автоматично згенеровані клієнти 
+від `ConnectorAgent` (Автономної Фабрики). 
+Використовуйте `ETLManager` для обробки тендерів.
 """
 import logging
 import httpx
@@ -17,8 +21,9 @@ class ProzorroClient:
 
     async def fetch_tenders_incremental(self, offset: str = None) -> AsyncGenerator[dict[str, Any], None]:
         """
-        Завантажує тендери інкрементально (Incremental REST) за допомогою курсору (offset).
+        [DEPRECATED] Завантажує тендери інкрементально (Incremental REST) за допомогою курсору (offset).
         """
+        logger.warning("ProzorroClient: [DEPRECATED] Викликано застарілий ручний клієнт. Будь ласка, використовуйте Автономну Фабрику.")
         params = {"offset": offset} if offset else {}
         url = self.BASE_URL
 
