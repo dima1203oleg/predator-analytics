@@ -19,7 +19,7 @@ const FAQ_ITEMS: PredefinedQA[] = [
   {
     question: "Як правильно інтегрувати Neo4j та BBOT без ризику зараження GPL-3.0 ліцензією?",
     category: "Ліцензії",
-    answer: "Пряма лінковка або імпорт бібліотек під ліцензією GPL-3.0 у комерційний пропрієтарний софт створює ефект 'зараження' (копілефт). Щоб повністю нейтралізувати цей ризик, використовуйте шаблон Microservice Isolation (Ізоляція мікросервісу). Запустіть BBOT або Neo4j в окремому Docker-контейнері під управлінням Kubernetes. Зв’язуйтеся з ними виключно через мережеві протоколи — HTTP REST API, gRPC або Bolt protocol у випадку Neo4j. Мережева взаємодія між незалежними процесами НЕ вважається лінкуванням коду за трактуванням Free Software Foundation (FSF), що гарантує юридичну безпеку закритих джерел платформи PREDATOR.",
+    answer: "Пряма лінковка або імпорт бібліотек під ліцензією GPL-3.0 у комерційний пропрієтарний софт створює ефект 'зараження' (копілефт). Щоб повністю нейтралізувати цей ризик, використовуйте шаблон Microservice Isolation (Ізоляція мікросервісу). Запустіть BBOT або Neo4j в окремому Docker-контейнері під управлінням Kubernetes. Зв’язуйтеся з ними виключно через мережеві протоколи — HTTP REST API, gRPC або Bolt protocol у випадку Neo4j. Мережева взаємодія між незалежними процесами НЕ вважається лінкуванням коду за трактуванням Free Software Foundation (FSF), що гарантує юридичну безпеку закритих джерел платформи NEXUS.",
     codeSnippet: `# Приклад безпечної архітектурної ізоляції у FastAPI Core
 import httpx
 
@@ -75,16 +75,16 @@ def fetch_registry_data_task(self, company_code: str):
 `
   },
   {
-    question: "Чому Elasticsearch замінено на OpenSearch в архітектурі PREDATOR?",
+    question: "Чому Elasticsearch замінено на OpenSearch в архітектурі NEXUS?",
     category: "Інфраструктура",
-    answer: "Elasticsearch змінив ліцензію з вільної Apache 2.0 на обмежувальні SSPL (Server Side Public License) та Elastic License. Це створює серйозний ризик при комерціалізації PREDATOR як хмарної SaaS-платформи, оскільки SSPL забороняє надавати Elasticsearch як сервіс або використовувати його у закритих комерційних ланцюжках SaaS без придбання дорогої комерційної ліцензії.\nOpenSearch є чистим, повністю відкритим форком Elasticsearch під ліцензією Apache 2.0, яка підтримується AWS та Linux Foundation. Це дає PREDATOR 100% юридичну свободу, сумісність з існуючим кодом Elasticsearch та K8s-native зрілість без жодних фінансових чи ліцензійних зобов’язань перед Elastic Co.",
+    answer: "Elasticsearch змінив ліцензію з вільної Apache 2.0 на обмежувальні SSPL (Server Side Public License) та Elastic License. Це створює серйозний ризик при комерціалізації NEXUS як хмарної SaaS-платформи, оскільки SSPL забороняє надавати Elasticsearch як сервіс або використовувати його у закритих комерційних ланцюжках SaaS без придбання дорогої комерційної ліцензії.\nOpenSearch є чистим, повністю відкритим форком Elasticsearch під ліцензією Apache 2.0, яка підтримується AWS та Linux Foundation. Це дає NEXUS 100% юридичну свободу, сумісність з існуючим кодом Elasticsearch та K8s-native зрілість без жодних фінансових чи ліцензійних зобов’язань перед Elastic Co.",
     codeSnippet: `# docker-compose конфіг для OpenSearch замість Elasticsearch
 services:
   opensearch-node:
     image: opensearchproject/opensearch:2.12.0
-    container_name: predator-search-node
+    container_name: nexus-search-node
     environment:
-      - cluster.name=predator-cluster
+      - cluster.name=nexus-cluster
       - node.name=opensearch-node
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -96,7 +96,7 @@ services:
   {
     question: "Які вимоги до розміщення ШІ та моделей vLLM в On-premise (Air-gapped) контурі?",
     category: "Штучний інтелект",
-    answer: "Для розгортання PREDATOR в ізольованому військовому чи державному контурі (Air-gapped mode, Phase 5) без доступу до Інтернету:\n1. Локальні ваги моделей: Моделі (Llama 3, Mistral) повинні бути завантажені заздалегідь у форматі ваг HuggingFace (safetensors) та збережені у локальному реєстрі MinIO S3.\n2. Локальний сервер vLLM: vLLM розгортається на локальних серверах з GPU (напр., RTX A6000 або A100) та забезпечує OpenAI-сумісний API всередині Kubernetes кластера.\n3. Офлайн Ембедінги: Модель генерації векторів (наприклад, text-embedding-ada-002 еквіваленти на кшталт BGE-M3) повинна виконуватися на локальному воркері, а вектори зберігатися в локальний Qdrant.",
+    answer: "Для розгортання NEXUS в ізольованому військовому чи державному контурі (Air-gapped mode, Phase 5) без доступу до Інтернету:\n1. Локальні ваги моделей: Моделі (Llama 3, Mistral) повинні бути завантажені заздалегідь у форматі ваг HuggingFace (safetensors) та збережені у локальному реєстрі MinIO S3.\n2. Локальний сервер vLLM: vLLM розгортається на локальних серверах з GPU (напр., RTX A6000 або A100) та забезпечує OpenAI-сумісний API всередині Kubernetes кластера.\n3. Офлайн Ембедінги: Модель генерації векторів (наприклад, text-embedding-ada-002 еквіваленти на кшталт BGE-M3) повинна виконуватися на локальному воркері, а вектори зберігатися в локальний Qdrant.",
     codeSnippet: `# Запуск локального vLLM контейнера в закритому контурі
 # vLLM підвантажує ваги з локального змонтонаного диска
 docker run --gpus all \\
@@ -119,7 +119,7 @@ export default function AdvisorTab() {
   const [chatHistory, setChatHistory] = useState<Array<{ sender: 'user' | 'bot'; text: string; code?: string }>>([
     {
       sender: 'bot',
-      text: "Вітаю! Я — ШІ-консультант платформи PREDATOR Analytics. Я володію вичерпними знаннями про ліцензування, сумісність open-source технологій, розробку конекторів та інфраструктурні аспекти впровадження платформи. Оберіть одне з технічних питань ліворуч, або запитайте мене безпосередньо!"
+      text: "Вітаю! Я — ШІ-консультант платформи NEXUS Analytics. Я володію вичерпними знаннями про ліцензування, сумісність open-source технологій, розробку конекторів та інфраструктурні аспекти впровадження платформи. Оберіть одне з технічних питань ліворуч, або запитайте мене безпосередньо!"
     }
   ]);
 
@@ -163,11 +163,11 @@ export default function AdvisorTab() {
     <div className="space-y-6" id="advisor-tab-root">
       
       {/* Sub navigation buttons */}
-      <div className="flex border-b border-indigo-500/10 pb-1 gap-1" id="advisor-subnav">
+      <div className="flex border-b border-slate-800 pb-1 gap-1" id="advisor-subnav">
         <button
           type="button"
           onClick={() => setActiveTab('ske')}
-          className={`px-4 py-2 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
+          className={`px-2 py-1.5 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
             activeTab === 'ske' 
               ? 'border-cyan-400 text-cyan-400 bg-cyan-500/5' 
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
@@ -178,9 +178,9 @@ export default function AdvisorTab() {
         <button
           type="button"
           onClick={() => setActiveTab('architecture')}
-          className={`px-4 py-2 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
+          className={`px-2 py-1.5 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
             activeTab === 'architecture' 
-              ? 'border-indigo-400 text-indigo-400 bg-indigo-500/5' 
+              ? 'border-blue-400 text-blue-400 bg-blue-500/5' 
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
           } rounded-t-xl`}
         >
@@ -209,17 +209,17 @@ export default function AdvisorTab() {
             className="space-y-6"
           >
             {/* Intro Header */}
-            <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md">
-              <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-2 mb-2">
-                <Bot className="w-5 h-5 text-indigo-400" id="advisor-title-icon" />
-                Інтерактивний ШІ-Архітектор PREDATOR
+            <div className="glass-panel-premium border-slate-800 rounded-2xl p-2 backdrop-blur-md">
+              <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2 mb-2">
+                <Bot className="w-4 h-4 text-blue-400" id="advisor-title-icon" />
+                Інтерактивний ШІ-Архітектор NEXUS
               </h2>
-              <p className="text-slate-300 text-sm leading-relaxed">
+              <p className="text-slate-300 text-xs leading-relaxed">
                 Отримайте детальні технічні відповіді на найскладніші виклики архітектури та інтеграції open-source систем від нашого вбудованого експертного консультанта. Оберіть питання зі списку або задайте власне у чаті.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
               
               {/* Left Column: Common Dilemmas / FAQ selection */}
               <div className="lg:col-span-1 space-y-4" id="faq-dilemmas-list">
@@ -236,10 +236,10 @@ export default function AdvisorTab() {
                         id={`faq-item-btn-${idx}`}
                         type="button"
                         onClick={() => handleSelectPredefined(item)}
-                        className={`w-full text-left p-4 rounded-xl border transition-all text-xs flex flex-col justify-between space-y-3 ${isSelected ? 'bg-indigo-500/10 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.04)] text-white' : 'bg-slate-900/40 border-slate-850 hover:border-indigo-500/10 text-slate-300'}`}
+                        className={`w-full text-left p-2 rounded-2xl border transition-all text-xs flex flex-col justify-between space-y-3 ${isSelected ? 'bg-blue-500/10 border-slate-800 shadow-[0_0_15px_rgba(99,102,241,0.04)] text-white' : 'bg-slate-900/40 border-slate-800 hover:border-slate-800 text-slate-300'}`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider font-mono bg-indigo-500/10 px-2 py-0.5 rounded">
+                          <span className="text-xs font-bold text-blue-400 uppercase tracking-wider font-mono bg-blue-500/10 px-2 py-1 rounded">
                             {item.category}
                           </span>
                           <HelpCircle className="w-4 h-4 text-slate-500" />
@@ -255,11 +255,11 @@ export default function AdvisorTab() {
               </div>
 
               {/* Right Column: Conversational Advisor Console */}
-              <div className="lg:col-span-2 flex flex-col justify-center items-center bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/10 rounded-2xl p-10 text-center h-[620px]">
-                <Bot className="w-16 h-16 text-indigo-400/50 mb-4" />
-                <h3 className="text-lg font-bold text-slate-200 mb-2">Глобальний ШІ-Асистент MARIARTI</h3>
-                <p className="text-sm text-slate-300 max-w-md">
-                  Чат-бот архітектора інтегровано в єдиний глобальний комунікаційний модуль PREDATOR (внизу праворуч). 
+              <div className="lg:col-span-2 flex flex-col justify-center items-center bg-black/30 border border-slate-800 backdrop-blur-md rounded-2xl p-10 text-center h-[620px]">
+                <Bot className="w-16 h-12 text-blue-400/50 mb-4" />
+                <h3 className="text-base font-bold text-slate-200 mb-2">Глобальний ШІ-Асистент MARIARTI</h3>
+                <p className="text-xs text-slate-300 max-w-md">
+                  Чат-бот архітектора інтегровано в єдиний глобальний комунікаційний модуль NEXUS (внизу праворуч). 
                   Використовуйте плаваючий віджет для текстового та голосового спілкування з MARIARTI з будь-какого екрану.
                 </p>
               </div>

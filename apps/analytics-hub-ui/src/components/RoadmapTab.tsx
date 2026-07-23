@@ -106,18 +106,18 @@ export default function RoadmapTab() {
   return (
     <div className="space-y-6" id="roadmap-tab-root">
       {/* Top Header */}
-      <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md">
-        <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-2 mb-2">
-          <Calendar className="w-5 h-5 text-indigo-400" id="roadmap-title-icon" />
+      <div className="glass-panel-premium border-slate-800 rounded-2xl p-2 backdrop-blur-md">
+        <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2 mb-2">
+          <Calendar className="w-4 h-4 text-blue-400" id="roadmap-title-icon" />
           Дорожня карта розгортання платформи (Enterprise Roadmap)
         </h2>
-        <p className="text-slate-300 text-sm leading-relaxed">
-          Покроковий 12-місячний план розгортання та розвитку PREDATOR Analytics. Відстежуйте завершення віх у реальному часі та скористайтеся калькулятором інфраструктурних вимог до ШІ-підсистеми для планування бюджетів.
+        <p className="text-slate-300 text-xs leading-relaxed">
+          Покроковий 12-місячний план розгортання та розвитку NEXUS Analytics. Відстежуйте завершення віх у реальному часі та скористайтеся калькулятором інфраструктурних вимог до ШІ-підсистеми для планування бюджетів.
         </p>
       </div>
 
       {/* Main Roadmap Timeline Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
         
         {/* Left Side: Timeline Navigation Nodes */}
         <div className="lg:col-span-1 space-y-4">
@@ -133,25 +133,25 @@ export default function RoadmapTab() {
                   key={phase.id}
                   id={`roadmap-phase-btn-${phase.id}`}
                   onClick={() => setActivePhaseId(phase.id)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all relative overflow-hidden flex flex-col justify-between ${isActive ? 'bg-indigo-500/10 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.05)]' : 'bg-slate-900/40 border-slate-850 hover:border-indigo-500/10'}`}
+                  className={`w-full text-left p-2 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${isActive ? 'bg-blue-500/10 border-slate-800 shadow-[0_0_15px_rgba(99,102,241,0.05)]' : 'bg-slate-900/40 border-slate-800 hover:border-slate-800'}`}
                 >
                   {/* Phase top tag */}
-                  <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                  <div className="flex items-center justify-between text-xs uppercase font-bold tracking-wider text-slate-500">
                     <span>{phase.timeframe}</span>
-                    <span className={progress === 100 ? 'text-emerald-400' : progress > 0 ? 'text-indigo-400' : 'text-slate-600'}>
+                    <span className={progress === 100 ? 'text-emerald-400' : progress > 0 ? 'text-blue-400' : 'text-slate-600'}>
                       {progress}%
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h4 className={`text-sm font-bold mt-1.5 ${isActive ? 'text-white' : 'text-slate-300'}`}>
+                  <h4 className={`text-xs font-bold mt-1.5 ${isActive ? 'text-white' : 'text-slate-300'}`}>
                     {phase.title}
                   </h4>
 
                   {/* Tiny progress bar */}
-                  <div className="w-full bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] h-1 rounded-full mt-3 overflow-hidden">
+                  <div className="w-full bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] h-1 rounded-full mt-3 overflow-hidden">
                     <div
-                      className={`h-full transition-all duration-500 ${progress === 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`}
+                      className={`h-full transition-all duration-500 ${progress === 100 ? 'bg-emerald-500' : 'bg-blue-500'}`}
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -163,15 +163,15 @@ export default function RoadmapTab() {
 
         {/* Middle Columns: Active Phase Detail & Milestones */}
         <div className="lg:col-span-2 space-y-4" id="active-phase-details">
-          <div className="bg-slate-900/40 border border-indigo-500/10 rounded-2xl p-6 space-y-5">
-            <div className="flex items-start justify-between border-b border-indigo-500/10 pb-4">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-2 space-y-5">
+            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
               <div>
-                <span className="text-xs text-indigo-400 font-mono font-bold uppercase">{activePhase.timeframe}</span>
-                <h3 className="text-xl font-bold text-white mt-1">{activePhase.title}</h3>
+                <span className="text-xs text-blue-400 font-mono font-bold uppercase">{activePhase.timeframe}</span>
+                <h3 className="text-lg font-bold text-white mt-1">{activePhase.title}</h3>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-slate-500 uppercase block font-mono">Прогрес етапу</span>
-                <span className="text-2xl font-mono font-bold text-indigo-400">
+                <span className="text-xs text-slate-500 uppercase block font-mono">Прогрес етапу</span>
+                <span className="text-2xl font-mono font-bold text-blue-400">
                   {getPhaseProgress(activePhase.id)}%
                 </span>
               </div>
@@ -179,21 +179,21 @@ export default function RoadmapTab() {
 
             {/* Main Focus */}
             <div className="space-y-1.5">
-              <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wider block">Основний фокус етапу:</span>
-              <p className="text-xs text-slate-300 bg-slate-950/60 p-3.5 rounded-xl border border-indigo-500/5 leading-relaxed font-medium">
+              <span className="text-xs uppercase text-slate-500 font-bold tracking-wider block">Основний фокус етапу:</span>
+              <p className="text-xs text-slate-300 bg-slate-950/60 p-2.5 rounded-2xl border border-slate-800 leading-relaxed font-medium">
                 {activePhase.focus}
               </p>
             </div>
 
             {/* Components & Milestones Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
               {/* Core components introduced */}
               <div className="space-y-2">
-                <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wider block">Архітектурні компоненти:</span>
+                <span className="text-xs uppercase text-slate-500 font-bold tracking-wider block">Архітектурні компоненти:</span>
                 <div className="space-y-1.5">
                   {activePhase.components.map((comp, idx) => (
-                    <div key={idx} className="bg-slate-950/80 border border-indigo-500/5 p-2 rounded-lg flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                    <div key={idx} className="bg-slate-950/80 border border-slate-800 p-2 rounded-2xl flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                       <span className="text-xs text-slate-300 font-medium">{comp}</span>
                     </div>
                   ))}
@@ -202,7 +202,7 @@ export default function RoadmapTab() {
 
               {/* Checkable Milestones */}
               <div className="space-y-2">
-                <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wider block">Віхи та Завдання (можна клацати):</span>
+                <span className="text-xs uppercase text-slate-500 font-bold tracking-wider block">Віхи та Завдання (можна клацати):</span>
                 <div className="space-y-2" id="milestones-checkboxes">
                   {(milestonesState[activePhase.id] || []).map((m, idx) => (
                     <button
@@ -210,7 +210,7 @@ export default function RoadmapTab() {
                       id={`milestone-toggle-${activePhase.id}-${idx}`}
                       type="button"
                       onClick={() => handleToggleMilestone(activePhase.id, idx)}
-                      className="w-full text-left bg-slate-950/40 hover:bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5/50 hover:border-indigo-500/10 p-2.5 rounded-lg flex items-start gap-2.5 transition-all"
+                      className="w-full text-left bg-slate-950/40 hover:bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] border border-slate-800/50 hover:border-slate-800 p-2.5 rounded-2xl flex items-start gap-2.5 transition-all"
                     >
                       {m.done ? (
                         <CheckSquare className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
@@ -227,14 +227,14 @@ export default function RoadmapTab() {
             </div>
 
             {/* Active Phase Risks & Mitigations */}
-            <div className="border-t border-indigo-500/10/80 pt-4 space-y-2">
-              <span className="text-[10px] uppercase text-rose-400 font-bold tracking-wider flex items-center gap-1">
+            <div className="border-t border-slate-800/80 pt-4 space-y-2">
+              <span className="text-xs uppercase text-rose-400 font-bold tracking-wider flex items-center gap-1">
                 <AlertTriangle className="w-4 h-4 text-rose-400" />
                 Ризики та Ключові виклики етапу:
               </span>
               <div className="grid grid-cols-1 gap-2">
                 {activePhase.risks.map((risk, idx) => (
-                  <div key={idx} className="bg-rose-950/10 border border-rose-950/20 rounded-lg p-2.5 text-xs text-rose-300">
+                  <div key={idx} className="bg-rose-950/10 border border-rose-950/20 rounded-2xl p-2.5 text-xs text-rose-300">
                     <span className="font-bold mr-1">•</span> {risk}
                   </div>
                 ))}
@@ -242,8 +242,8 @@ export default function RoadmapTab() {
             </div>
 
             {/* GPU Requirements spec */}
-            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-xl p-3 border border-indigo-500/5 flex items-center gap-2 text-xs text-slate-300">
-              <Cpu className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] rounded-2xl p-2 border border-slate-800 flex items-center gap-2 text-xs text-slate-300">
+              <Cpu className="w-4 h-4 text-blue-400 flex-shrink-0" />
               <span>
                 <strong>Вимоги до GPU:</strong> {activePhase.gpuRequirements || 'Немає вимог.'}
               </span>
@@ -253,67 +253,67 @@ export default function RoadmapTab() {
 
         {/* Right Column: AI Infrastructure Cluster Planner */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-slate-900/40 border border-indigo-500/10 rounded-xl p-5 space-y-5" id="ai-gpu-cluster-planner">
-            <div className="flex items-center gap-2 border-b border-indigo-500/10 pb-3">
+          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-2 space-y-5" id="ai-gpu-cluster-planner">
+            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
               <Server className="w-4 h-4 text-teal-400" />
-              <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">
+              <h3 className="text-xs font-semibold text-slate-200 uppercase tracking-wider">
                 Планувальник ШІ-кластера
               </h3>
             </div>
             
-            <p className="text-[11px] text-slate-300 leading-normal">
+            <p className="text-xs text-slate-300 leading-normal">
               Моделюйте необхідну апаратну інфраструктуру для Phase 3 та 5. Оцінюйте потребу у відеопам’яті VRAM та орієнтовні хмарні витрати.
             </p>
 
             {/* Checkbox Models to host locally */}
             <div className="space-y-2.5 text-xs">
-              <span className="text-[10px] uppercase text-slate-500 font-bold tracking-wider block">Моделі для локального запуску:</span>
+              <span className="text-xs uppercase text-slate-500 font-bold tracking-wider block">Моделі для локального запуску:</span>
               
-              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-lg border border-slate-850 cursor-pointer hover:border-indigo-500/10">
+              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-2xl border border-slate-800 cursor-pointer hover:border-slate-800">
                 <input
                   type="checkbox"
                   checked={runLlama}
                   onChange={(e) => setRunLlama(e.target.checked)}
-                  className="accent-indigo-500 rounded"
+                  className="accent-blue-500 rounded"
                 />
                 <div>
-                  <span className="font-bold text-slate-300 block text-[11px]">Llama 3 (8B Instruct)</span>
-                  <span className="text-[9px] text-slate-500">Генерація звітів, RAG пошук</span>
+                  <span className="font-bold text-slate-300 block text-xs">Llama 3 (8B Instruct)</span>
+                  <span className="text-xs text-slate-500">Генерація звітів, RAG пошук</span>
                 </div>
               </label>
 
-              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-lg border border-slate-850 cursor-pointer hover:border-indigo-500/10">
+              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-2xl border border-slate-800 cursor-pointer hover:border-slate-800">
                 <input
                   type="checkbox"
                   checked={runWhisper}
                   onChange={(e) => setRunWhisper(e.target.checked)}
-                  className="accent-indigo-500 rounded"
+                  className="accent-blue-500 rounded"
                 />
                 <div>
-                  <span className="font-bold text-slate-300 block text-[11px]">faster-whisper (STT)</span>
-                  <span className="text-[9px] text-slate-500">Транскрибування аудіо</span>
+                  <span className="font-bold text-slate-300 block text-xs">faster-whisper (STT)</span>
+                  <span className="text-xs text-slate-500">Транскрибування аудіо</span>
                 </div>
               </label>
 
-              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-lg border border-slate-850 cursor-pointer hover:border-indigo-500/10">
+              <label className="flex items-center gap-2 p-2 bg-slate-950/60 rounded-2xl border border-slate-800 cursor-pointer hover:border-slate-800">
                 <input
                   type="checkbox"
                   checked={runDocTR}
                   onChange={(e) => setRunDocTR(e.target.checked)}
-                  className="accent-indigo-500 rounded"
+                  className="accent-blue-500 rounded"
                 />
                 <div>
-                  <span className="font-bold text-slate-300 block text-[11px]">docTR (OCR ШІ)</span>
-                  <span className="text-[9px] text-slate-500">Розпізнавання сканів</span>
+                  <span className="font-bold text-slate-300 block text-xs">docTR (OCR ШІ)</span>
+                  <span className="text-xs text-slate-500">Розпізнавання сканів</span>
                 </div>
               </label>
             </div>
 
             {/* Concurrency parameters */}
-            <div className="space-y-1 text-xs pt-2 border-t border-indigo-500/10/60">
-              <div className="flex justify-between text-[11px]">
+            <div className="space-y-1 text-xs pt-2 border-t border-slate-800/60">
+              <div className="flex justify-between text-xs">
                 <span className="text-slate-300">Паралельні аналітики</span>
-                <span className="text-indigo-400 font-bold font-mono">{userConcurrency} чол.</span>
+                <span className="text-blue-400 font-bold font-mono">{userConcurrency} чол.</span>
               </div>
               <input
                 id="concurrency-range"
@@ -322,21 +322,21 @@ export default function RoadmapTab() {
                 max="20"
                 value={userConcurrency}
                 onChange={(e) => setUserConcurrency(parseInt(e.target.value))}
-                className="w-full accent-indigo-500 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                className="w-full accent-blue-500 h-1 bg-slate-800 rounded-2xl appearance-none cursor-pointer"
               />
-              <span className="text-[9px] text-slate-500 italic block mt-1">
+              <span className="text-xs text-slate-500 italic block mt-1">
                 Збільшує об’єм KV-Cache та вимоги до паралельних потоків у VRAM.
               </span>
             </div>
 
             {/* CALCULATOR OUTPUTS */}
-            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-xl p-4 border border-slate-850 space-y-3" id="cluster-planner-results">
-              <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Конфігурація GPU ноди</h4>
+            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] rounded-2xl p-2 border border-slate-800 space-y-3" id="cluster-planner-results">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest text-center">Конфігурація GPU ноди</h4>
               
               <div className="space-y-1.5 text-xs text-slate-300">
                 <div className="flex justify-between">
                   <span>Об’єм VRAM:</span>
-                  <span className="font-mono text-indigo-400 font-bold">{gpuCalculations.vram} GB</span>
+                  <span className="font-mono text-blue-400 font-bold">{gpuCalculations.vram} GB</span>
                 </div>
                 <div className="flex justify-between items-start gap-2">
                   <span className="whitespace-nowrap">Рекомендовано:</span>
@@ -345,14 +345,14 @@ export default function RoadmapTab() {
               </div>
 
               {gpuCalculations.cost > 0 ? (
-                <div className="bg-teal-500/5 border border-teal-500/15 p-2.5 rounded-lg text-center">
-                  <span className="text-[9px] text-slate-500 uppercase block">Оренда заліза (місяць)</span>
-                  <span className="text-sm font-mono font-bold text-teal-400">
+                <div className="bg-teal-500/5 border border-teal-500/15 p-2.5 rounded-2xl text-center">
+                  <span className="text-xs text-slate-500 uppercase block">Оренда заліза (місяць)</span>
+                  <span className="text-xs font-mono font-bold text-teal-400">
                     ~ ${gpuCalculations.cost.toLocaleString()} / міс
                   </span>
                 </div>
               ) : (
-                <div className="bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 p-2.5 rounded-lg text-center text-slate-500 text-[10px]">
+                <div className="bg-black/40 backdrop-blur-md border border-slate-800 p-2.5 rounded-2xl text-center text-slate-500 text-xs">
                   ШІ сервіси не активовано
                 </div>
               )}

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 

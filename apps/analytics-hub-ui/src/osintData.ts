@@ -10,7 +10,7 @@ export interface OsintEntity {
   code: string; // EDRPOU, IPN, Passport, or Wallet Address
   status: 'ACTIVE' | 'LIQUIDATED' | 'SANCTIONED' | 'SUSPICIOUS';
   riskScore: number; // 0-100
-  address?: string;
+  address: string;
   phone?: string;
   email?: string;
   founders?: { name: string; share: string; role: string; riskLevel: 'HIGH' | 'MEDIUM' | 'LOW' }[];
@@ -23,19 +23,23 @@ export interface OsintEntity {
   aiRecommendations: string;
   lastActivityDate?: string; // YYYY-MM-DD
   rawContext?: any;
-  risk_level?: string;
-  socialMediaProfiles?: any[];
-  telegramData?: any;
-  cryptoData?: any;
-  leakData?: any;
-  familyTies?: any[];
-  assets?: any[];
-  psychologicalPortrait?: any;
-  compromat?: any[];
-  interpol?: any;
-  cyber?: any;
-  leaks?: any[];
-  timeline?: any[];
+  cryptoData?: {
+    balance: string;
+    totalReceived: string;
+    totalSent: string;
+    firstSeen: string;
+    lastSeen: string;
+    exposureIndex: string;
+    knownClusters: string[];
+    riskIndicators: string[];
+    recentTransactions: { txHash: string; date: string; amount: string; type: 'IN' | 'OUT'; relatedAddress: string }[];
+  };
+  leakData?: {
+    totalBreaches: number;
+    breaches: { source: string; date: string; compromisedData: string[]; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' }[];
+    darknetMentions: number;
+    lastDarknetMention: string;
+  };
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
@@ -167,6 +171,20 @@ export const OSINT_ENTITIES: OsintEntity[] = [
     riskScore: 89,
     address: "Blockhain Ledger Network (Bitcoin Core)",
     description: "Криптовалютний гаманець, зафіксований у транзакціях із транзитними крипто-міксерами (Tornado Cash аналогами) та пов'язаний із виведенням коштів з рахунків ТОВ 'СпецТехПостач' без сплати податків.",
+    cryptoData: {
+      balance: "14.285 BTC",
+      totalReceived: "89.412 BTC",
+      totalSent: "75.127 BTC",
+      firstSeen: "2023-04-12",
+      lastSeen: "2024-11-28",
+      exposureIndex: "Darknet 64%, Mixer 31%, Exchange 5%",
+      knownClusters: ["Garantex (RU)", "Lazarus Group (heuristic)"],
+      riskIndicators: ["Використання міксера", "Прямий зв'язок з підсанкційними суб'єктами", "Darknet-маркетплейс депозити"],
+      recentTransactions: [
+        { txHash: "4a5e1e4baab...3819", date: "2024-11-28", amount: "2.500 BTC", type: 'OUT', relatedAddress: "bc1qxy...8x2" },
+        { txHash: "9812cc121a9...a291", date: "2024-11-15", amount: "5.100 BTC", type: 'IN', relatedAddress: "1A1zP1...q29" }
+      ]
+    },
     relationships: [
       { targetId: 'person-1', targetName: 'Коваленко Ігор Вікторович', type: 'CONTROLLED_BY', risk: 'HIGH' },
       { targetId: 'comp-1', targetName: 'ТОВ "СпецТехПостач"', type: 'RECEIVED_FUNDS_FROM', risk: 'HIGH' }

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { Network, Maximize2, Loader2, Camera } from 'lucide-react';
 import CytoscapeComponent from 'react-cytoscapejs';

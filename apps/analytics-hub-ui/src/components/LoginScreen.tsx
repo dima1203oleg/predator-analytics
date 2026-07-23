@@ -25,7 +25,7 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       // TODO: Replace with real endpoint `await apiFetch('/api/v1/auth/login', ...)`
       if (email && password) {
         // Fallback or Mock token generating
-        const mockToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.predator.mock.token.${Date.now()}`;
+        const mockToken = 'test-token';
         localStorage.setItem('predator_token', mockToken);
         onLoginSuccess(mockToken);
       } else {

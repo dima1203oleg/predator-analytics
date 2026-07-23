@@ -18,7 +18,7 @@ export default defineConfig(() => {
         '/api/v1/dossier/person/scan': {
           target: process.env.VITE_API_MODE === 'mock'
             ? 'http://localhost:9080'
-            : 'http://194.177.1.240:8888',
+            : 'http://localhost:8888',
           changeOrigin: true,
           secure: false,
         },
@@ -27,7 +27,7 @@ export default defineConfig(() => {
           // Основний Compute Node — NVIDIA (194.177.1.240)
           target: process.env.VITE_API_MODE === 'mock'
             ? 'http://localhost:9080'
-            : 'http://194.177.1.240:8888',
+            : 'http://localhost:8888',
           changeOrigin: true,
           secure: false,
           // Kaggle/zrok fallback — замінити вручну при активному тунелі:

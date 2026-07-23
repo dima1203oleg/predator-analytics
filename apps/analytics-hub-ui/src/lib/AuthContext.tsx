@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db, testFirestoreConnection } from './firebase';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db, testFirestoreConnection, handleFirestoreError, OperationType } from './firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -32,14 +32,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentUser) {
         try {
           const userRef = doc(db, 'users', currentUser.uid);
-          await setDoc(userRef, {
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-            lastLogin: serverTimestamp()
-          }, { merge: true });
+          const snap = await getDoc(userRef);
+          if (!snap.exists()) {
+            await setDoc(userRef, {
+              email: currentUser.email || '',
+              displayName: currentUser.displayName || '',
+              createdAt: serverTimestamp()
+            });
+          }
         } catch (e) {
           console.error("Failed to update user record in Firestore:", e);
+          handleFirestoreError(e, OperationType.WRITE, `users/${currentUser.uid}`);
         }
       }
     });

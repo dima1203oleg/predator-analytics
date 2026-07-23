@@ -12,15 +12,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   background-color: #020617;
-  background-image: 
-    radial-gradient(circle at top center, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
-    radial-gradient(circle at bottom center, rgba(15, 23, 42, 0.4) 0%, transparent 80%),
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-  background-attachment: fixed;
+    background-image: 
+      radial-gradient(circle at top center, rgba(59, 130, 246, 0.1) 0%, transparent 80%),
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
+    background-attachment: fixed;
   color: #f3f4f6;
   font-family: var(--font-sans);
+  background-image: 
+    radial-gradient(circle at top center, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
+    radial-gradient(circle at bottom center, rgba(15, 23, 42, 0.4) 0%, transparent 80%);
+  background-attachment: fixed;
 }
 
 ::selection {
@@ -91,6 +94,7 @@ body {
   border-radius: 0.75rem;
 }
 
+
 .glass-panel-premium {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(3, 7, 18, 0.8) 100%);
   backdrop-filter: blur(24px);
@@ -117,6 +121,23 @@ body {
 }
 
 @layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4);
+  }
+}
+
+@layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-300;
   }
@@ -127,6 +148,20 @@ body {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300;
   }
   .border-glow {
-    box-shadow: 0 0 15px -3px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px -3px rgba(255, 255, 255, 0.1);
+}
+}
+
+@layer utilities {
+  .bg-glass {
+    @apply bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-xl;
+  }
+  .bg-glass-strong {
+    @apply bg-slate-950/60 backdrop-blur-xl border border-slate-800 shadow-2xl;
+  }
+  .text-glow {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
   }
 }
+
+@layer utilities { .font-display { font-family: var(--font-display); } }

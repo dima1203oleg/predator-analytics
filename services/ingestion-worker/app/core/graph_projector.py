@@ -143,3 +143,46 @@ class GraphProjector:
                 await session.run(cypher, params)
         except Exception as e:
             logger.error(f"[GraphProjector] Помилка виконання Cypher: {e}")
+
+    async def project_raw_node(self, node_data: dict[str, Any]) -> None:
+        """Зберігає абстрактний вузол (FtM формат)."""
+        label = node_data.get("label", "Entity")
+        node_id = node_data.get("id")
+        props = node_data.get("props", {})
+
+        if not node_id:
+            return
+
+        # Формуємо динамічний SET
+        set_clauses = ["n.last_updated = datetime()"]
+        for k in props.keys():
+            set_clauses.append(f"n.`{k}` = ${k}")
+
+        cypher = f"""
+        MERGE (n:`{label}` {{id: $node_id}})
+        SET {', '.join(set_clauses)}
+        """
+        params = {"node_id": node_id, **props}
+        await self._execute_cypher(cypher, params)
+
+    async def project_raw_edge(self, edge_data: dict[str, Any]) -> None:
+        """Зберігає абстрактний зв'язок (FtM формат)."""
+        rel_type = edge_data.get("rel_type", "RELATED_TO")
+        source_id = edge_data.get("source_id")
+        target_id = edge_data.get("target_id")
+        props = edge_data.get("props", {})
+
+        if not source_id or not target_id:
+            return
+
+        set_clauses = ["r.last_updated = datetime()"]
+        for k in props.keys():
+            set_clauses.append(f"r.`{k}` = ${k}")
+
+        cypher = f"""
+        MATCH (s {{id: $source_id}}), (t {{id: $target_id}})
+        MERGE (s)-[r:`{rel_type}`]->(t)
+        SET {', '.join(set_clauses)}
+        """
+        params = {"source_id": source_id, "target_id": target_id, **props}
+        await self._execute_cypher(cypher, params)

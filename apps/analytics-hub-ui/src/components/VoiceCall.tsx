@@ -144,14 +144,14 @@ export function VoiceCall() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <div className="flex flex-col items-end gap-3">
+      <div className="flex flex-col items-end gap-2">
         <AnimatePresence>
           {error && (
             <motion.div
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-red-950/90 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md max-w-[280px] text-xs font-mono"
+              className="bg-red-950/90 border border-red-500/50 text-red-200 px-2 py-1.5 rounded-2xl shadow-2xl backdrop-blur-md max-w-[210px] text-xs font-mono"
             >
               <div className="flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
@@ -165,13 +165,13 @@ export function VoiceCall() {
               initial={{ opacity: 0, scale: 0.8, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: 20 }}
-              className="bg-slate-950/95 border border-fuchsia-500/30 px-4 py-3 rounded-xl shadow-[0_0_30px_rgba(217,70,239,0.15)] backdrop-blur-md flex items-center gap-3"
+              className="bg-slate-950/95 border border-slate-800 px-2 py-1.5 rounded-2xl shadow-[0_0_30px_rgba(217,70,239,0.15)] backdrop-blur-md flex items-center gap-2"
             >
               <div className="relative flex h-3 w-3 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-fuchsia-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
               </div>
-              <div className="text-[10px] font-mono font-bold tracking-widest text-fuchsia-400 uppercase">
+              <div className="text-xs font-mono font-bold tracking-widest text-sky-400 uppercase">
                 MARIARTI LIVE
               </div>
             </motion.div>
@@ -182,13 +182,13 @@ export function VoiceCall() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={isActive ? stopCall : startCall}
-          className={`h-14 w-14 rounded-full flex items-center justify-center shadow-2xl transition-all border ${
+          className={`h-10 w-14 rounded-full flex items-center justify-center shadow-2xl transition-all border ${
             isActive 
               ? 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30' 
-              : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-800 text-slate-300 border-slate-700'
+              : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(30,58,138,0.1)] hover:bg-slate-800 text-slate-300 border-slate-800'
           }`}
         >
-          {isActive ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+          {isActive ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </motion.button>
       </div>
     </div>

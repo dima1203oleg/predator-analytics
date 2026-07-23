@@ -40,8 +40,8 @@ const VOLUMES_DATA: Volume[] = [
     category: "Strategic",
     chapters: [
       {
-        title: "1.1 Концепція та мета системи PREDATOR Analytics",
-        description: "PREDATOR Analytics розробляється як суверенна платформа стратегічної розвідки та аналізу зв'язків (Link Analysis) класу Enterprise, покликана забезпечувати повномасштабний OSINT, аналіз транзакцій, виявлення бенефіціарів та інтелектуальну дедуплікацію даних.",
+        title: "1.1 Концепція та мета системи NEXUS Analytics",
+        description: "NEXUS Analytics розробляється як суверенна платформа стратегічної розвідки та аналізу зв'язків (Link Analysis) класу Enterprise, покликана забезпечувати повномасштабний OSINT, аналіз транзакцій, виявлення бенефіціарів та інтелектуальну дедуплікацію даних.",
         requirements: ["REQ-VIS-001: Забезпечення Link Analysis корпоративних зв'язків", "REQ-VIS-002: Підтримка локальної роботи (Air-gapped mode)"]
       },
       {
@@ -73,7 +73,7 @@ const VOLUMES_DATA: Volume[] = [
     chapters: [
       {
         title: "2.1 C4 Model: Контекст та Контейнери (Level 1 & 2)",
-        description: "Опис взаємодії PREDATOR із зовнішніми реєстрами, Telegram-ботами та клієнтськими веб-браузерами через API Gateway. Розподіл на UI клієнт та групу сервісів (Core API, OSINT Engine, Graph Database, Search Index).",
+        description: "Опис взаємодії NEXUS із зовнішніми реєстрами, Telegram-ботами та клієнтськими веб-браузерами через API Gateway. Розподіл на UI клієнт та групу сервісів (Core API, OSINT Engine, Graph Database, Search Index).",
         technicalDetails: "Архітектура використовує API Gateway на базі Envoy/Kong для балансування та автентифікації.",
         codeSnippet: {
           lang: "yaml",
@@ -81,8 +81,8 @@ const VOLUMES_DATA: Volume[] = [
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-gateway
-  namespace: predator-core
+  name: nexus-gateway
+  namespace: nexus-core
 spec:
   replicas: 3
   template:
@@ -212,7 +212,7 @@ RETURN path, p.fullname as BeneficiaryName;
 from telethon import TelegramClient
 
 async def monitor_channels(api_id, api_hash, channel_username):
-    async with TelegramClient('predator_session', api_id, api_hash) as client:
+    async with TelegramClient('nexus_session', api_id, api_hash) as client:
         async for message in client.iter_messages(channel_username, limit=100):
             if "санкції" in message.text.lower():
                 print(f"Знайдено згадку: {message.text}")
@@ -236,7 +236,7 @@ async def monitor_channels(api_id, api_hash, channel_username):
           lang: "python",
           code: `# Конфігурація Агента розслідувань санкцій
 SYSTEM_PROMPT = """
-You are PREDATOR AML-Sanction Agent.
+You are NEXUS AML-Sanction Agent.
 Your task is to analyze company networks and identify hidden PEP ownership (>25% share).
 Use neo4j_query tool to find connected entities.
 Report ownership structures in Markdown format.
@@ -269,7 +269,7 @@ Report ownership structures in Markdown format.
         technicalDetails: "Рендеринг Canvas/SVG з підтримкою зуму, фільтрації ребер та виділенням кластерів.",
         codeSnippet: {
           lang: "javascript",
-          code: `// Ініціалізація d3 Force-directed Layout для графу PREDATOR
+          code: `// Ініціалізація d3 Force-directed Layout для графу NEXUS
 const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(links).id(d => d.id).distance(150))
   .force("charge", d3.forceManyBody().strength(-300))
@@ -326,7 +326,7 @@ YIELD communityCount, modularity;
         codeSnippet: {
           lang: "rego",
           code: `# OPA Rego правило контролю доступу до OSINT
-package predator.authz
+package nexus.authz
 
 default allow = false
 
@@ -362,12 +362,12 @@ allow {
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: predator-api-monitor
-  namespace: predator-core
+  name: nexus-api-monitor
+  namespace: nexus-core
 spec:
   selector:
     matchLabels:
-      app: predator-api
+      app: nexus-api
   endpoints:
   - port: metrics
     interval: 15s
@@ -392,7 +392,7 @@ spec:
           code: `# Специфікація OpenAPI v3
 openapi: 3.0.3
 info:
-  title: PREDATOR Analytics Core API
+  title: NEXUS Analytics Core API
   version: 1.0.0
 paths:
   /api/v1/entities/{id}:
@@ -443,7 +443,7 @@ paths:
           code: `# Сценарій навантаження API на Python Locust
 from locust import HttpUser, task, between
 
-class PredatorUser(HttpUser):
+class NexusUser(HttpUser):
     wait_time = between(1, 5)
 
     @task
@@ -476,7 +476,7 @@ class PredatorUser(HttpUser):
     category: "Security",
     chapters: [
       {
-        title: "15.1 Панель супер-адміністратора PREDATOR",
+        title: "15.1 Панель супер-адміністратора NEXUS",
         description: "Консоль керування клієнтськими організаціями (тенантність/Multi-tenancy), моніторинг спожитих токенів ШІ та API запитів.",
         requirements: ["REQ-ADM-001: Ізоляція даних організацій-клієнтів на рівні окремих баз (Database-per-tenant)", "REQ-ADM-002: Моніторинг активності воркерів у реальному часі"]
       }
@@ -533,13 +533,13 @@ export default function VolumesTab() {
   return (
     <div className="space-y-6" id="volumes-tab-root">
       {/* Intro Header banner */}
-      <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="glass-panel-premium border-slate-800 rounded-2xl p-2 backdrop-blur-md relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2 mb-2">
-              <BookOpen className="w-5 h-5 text-indigo-400" />
-              Комплект документації PREDATOR Analytics Enterprise
+            <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <BookOpen className="w-4 h-4 text-blue-400" />
+              Комплект документації NEXUS Analytics Enterprise
             </h2>
             <p className="text-slate-300 text-xs leading-relaxed max-w-3xl">
               Повний еталонний пакет системної архітектури, розроблений для масштабування OSINT платформи. 
@@ -547,27 +547,27 @@ export default function VolumesTab() {
             </p>
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-slate-850 px-4 py-3 rounded-xl shrink-0">
+          <div className="flex items-center gap-2 text-xs font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] border border-slate-800 px-2 py-1.5 rounded-2xl shrink-0">
             <div>
               <span className="text-slate-500 block">ТОМИ ТЗ</span>
-              <span className="text-indigo-400 font-bold text-base">16</span>
+              <span className="text-blue-400 font-bold text-sm">16</span>
             </div>
             <div className="w-[1px] h-8 bg-slate-850"></div>
             <div>
               <span className="text-slate-500 block">ВИМОГИ (REQ)</span>
-              <span className="text-emerald-400 font-bold text-base">450+</span>
+              <span className="text-emerald-400 font-bold text-sm">450+</span>
             </div>
             <div className="w-[1px] h-8 bg-slate-850"></div>
             <div>
               <span className="text-slate-500 block">СПЕЦИФІКАЦІЇ</span>
-              <span className="text-amber-400 font-bold text-base">100% Verified</span>
+              <span className="text-amber-400 font-bold text-sm">100% Verified</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-slate-900/30 border border-indigo-500/5 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-2 flex flex-col md:flex-row items-center justify-between gap-2">
         {/* Category Pill Filters */}
         <div className="flex flex-wrap gap-1.5 items-center w-full md:w-auto" id="volume-category-filters">
           <Filter className="w-4 h-4 text-slate-500 mr-1 shrink-0" />
@@ -575,7 +575,7 @@ export default function VolumesTab() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-slate-900/60 text-slate-300 hover:text-slate-200 hover:bg-slate-850'}`}
+              className={`px-3 py-1.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat ? 'bg-blue-600 text-white' : 'bg-slate-900/60 text-slate-300 hover:text-slate-200 hover:bg-slate-850'}`}
             >
               {cat === 'All' ? 'Всі Категорії' : cat}
             </button>
@@ -589,14 +589,14 @@ export default function VolumesTab() {
             placeholder="Шукати у 16 томах..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-slate-850 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500"
+            className="w-full bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] border border-slate-800 rounded-2xl pl-9 pr-4 py-2 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-500"
           />
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
         </div>
       </div>
 
       {/* Active Area: Volumes List left, Active Volume Details right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2">
         
         {/* Left Column: Volumes Selector */}
         <div className="lg:col-span-4 space-y-2.5 overflow-y-auto max-h-[650px] pr-2" id="volumes-selectors-pane">
@@ -610,55 +610,55 @@ export default function VolumesTab() {
                   setActiveVolume(vol.id);
                   setExpandedChapter(null);
                 }}
-                className={`w-full text-left p-3.5 rounded-xl border transition-all text-xs flex items-start gap-3.5 relative cursor-pointer ${isActive ? 'bg-indigo-500/10 border-indigo-500/40 text-white shadow-lg shadow-indigo-500/5' : 'bg-slate-900/40 border-indigo-500/5/80 text-slate-300 hover:text-slate-200 hover:border-indigo-500/10'}`}
+                className={`w-full text-left p-2.5 rounded-2xl border transition-all text-xs flex items-start gap-2.5 relative cursor-pointer ${isActive ? 'bg-blue-500/10 border-slate-800 text-white shadow-2xl shadow-black/40 shadow-blue-500/5' : 'bg-slate-900/40 border-slate-800/80 text-slate-300 hover:text-slate-200 hover:border-slate-800'}`}
               >
-                <div className={`p-2 rounded-lg shrink-0 ${isActive ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] text-slate-500'}`}>
+                <div className={`p-2 rounded-2xl shrink-0 ${isActive ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] text-slate-500'}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 
                 <div className="space-y-1 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[10px] text-slate-500 uppercase tracking-wide font-mono">
+                    <span className="font-bold text-xs text-slate-500 uppercase tracking-wide font-mono">
                       {vol.category}
                     </span>
-                    <span className="text-[10px] text-indigo-400 font-mono font-bold">
+                    <span className="text-xs text-blue-400 font-mono font-bold">
                       {vol.chapters.length} розділів
                     </span>
                   </div>
                   <h4 className="font-bold leading-tight text-slate-200">{vol.title}</h4>
-                  <p className="text-[10px] text-slate-500 line-clamp-1 leading-normal">{vol.subtitle}</p>
+                  <p className="text-xs text-slate-500 line-clamp-1 leading-normal">{vol.subtitle}</p>
                 </div>
 
                 {isActive && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <ChevronRight className="w-4 h-4 text-indigo-400 animate-pulse" />
+                    <ChevronRight className="w-4 h-4 text-blue-400 animate-pulse" />
                   </div>
                 )}
               </button>
             );
           })}
           {filteredVolumes.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-xs border border-dashed border-slate-850 rounded-xl">
+            <div className="p-4 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-2xl">
               Нічого не знайдено за вказаними параметрами пошуку.
             </div>
           )}
         </div>
 
         {/* Right Column: Detailed Chapter Browser */}
-        <div className="lg:col-span-8 space-y-5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl p-6" id="volume-details-workspace">
+        <div className="lg:col-span-8 space-y-5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] border border-slate-800 rounded-2xl p-2" id="volume-details-workspace">
           
           {/* Active Volume Header */}
-          <div className="border-b border-indigo-500/5 pb-5">
+          <div className="border-b border-slate-800 pb-5">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] bg-indigo-500/10 text-indigo-400 font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded">
+              <span className="text-xs bg-blue-500/10 text-blue-400 font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded">
                 {currentVolumeObj.category} специфікація
               </span>
-              <span className="text-[10px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-300 font-mono px-2 py-0.5 rounded">
+              <span className="text-xs bg-black/40 backdrop-blur-md text-slate-300 font-mono px-2 py-1 rounded">
                 Verified
               </span>
             </div>
             
-            <h3 className="text-lg font-bold text-white mb-1.5">{currentVolumeObj.title}</h3>
+            <h3 className="text-base font-bold text-white mb-1.5">{currentVolumeObj.title}</h3>
             <p className="text-xs text-slate-300 leading-relaxed">{currentVolumeObj.subtitle}</p>
           </div>
 
@@ -673,15 +673,15 @@ export default function VolumesTab() {
               return (
                 <div 
                   key={idx}
-                  className={`border rounded-xl transition-all ${isOpen ? 'bg-slate-900/40 border-indigo-500/10' : 'bg-slate-900/10 border-indigo-500/5 hover:border-slate-850'}`}
+                  className={`border rounded-2xl transition-all ${isOpen ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-900/10 border-slate-800 hover:border-slate-800'}`}
                 >
                   {/* Title Toggle bar */}
                   <button
                     onClick={() => setExpandedChapter(isOpen ? null : ch.title)}
-                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 cursor-pointer"
+                    className="w-full text-left px-2 py-1.5 flex items-center justify-between gap-2 cursor-pointer"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
                       <span className="font-semibold text-xs text-slate-200 leading-snug">
                         {ch.title}
                       </span>
@@ -703,21 +703,21 @@ export default function VolumesTab() {
                         transition={{ duration: 0.15 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 pt-1 border-t border-indigo-500/5 space-y-4 text-xs">
+                        <div className="px-3 pb-5 pt-1 border-t border-slate-800 space-y-4 text-xs">
                           
                           {/* Core Description */}
                           <div className="space-y-1">
-                            <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest block">Функціональний опис:</span>
-                            <p className="text-slate-300 leading-relaxed text-[11px] whitespace-pre-line">
+                            <span className="text-xs text-slate-500 font-mono uppercase tracking-widest block">Функціональний опис:</span>
+                            <p className="text-slate-300 leading-relaxed text-xs whitespace-pre-line">
                               {ch.description}
                             </p>
                           </div>
 
                           {/* Technical details (if exists) */}
                           {ch.technicalDetails && (
-                            <div className="bg-slate-950/60 border border-slate-850/40 rounded-lg p-3 space-y-1">
-                              <span className="text-[9px] text-amber-400 font-mono uppercase tracking-widest block font-bold">Архітектурні особливості:</span>
-                              <p className="text-slate-300 text-[10px] leading-relaxed">
+                            <div className="bg-slate-950/60 border border-slate-800/40 rounded-2xl p-2 space-y-1">
+                              <span className="text-xs text-amber-400 font-mono uppercase tracking-widest block font-bold">Архітектурні особливості:</span>
+                              <p className="text-slate-300 text-xs leading-relaxed">
                                 {ch.technicalDetails}
                               </p>
                             </div>
@@ -727,12 +727,12 @@ export default function VolumesTab() {
                           {ch.codeSnippet && (
                             <div className="space-y-1.5">
                               <div className="flex items-center justify-between">
-                                <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">
+                                <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">
                                   Еталонна конфігурація ({ch.codeSnippet.lang}):
                                 </span>
                                 <button
                                   onClick={() => handleCopyCode(ch.codeSnippet!.code)}
-                                  className="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-2 py-0.5 rounded border border-slate-850"
+                                  className="text-xs text-blue-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] px-2 py-1 rounded border border-slate-800"
                                 >
                                   {copiedText === ch.codeSnippet.code ? (
                                     <>
@@ -747,8 +747,8 @@ export default function VolumesTab() {
                                   )}
                                 </button>
                               </div>
-                              <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-lg p-3.5 border border-indigo-500/5 overflow-x-auto">
-                                <pre className="text-[10px] font-mono text-indigo-300 leading-relaxed">
+                              <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_40px_rgba(30,58,138,0.15)] rounded-2xl p-2.5 border border-slate-800 overflow-x-auto">
+                                <pre className="text-xs font-mono text-indigo-300 leading-relaxed">
                                   <code>{ch.codeSnippet.code}</code>
                                 </pre>
                               </div>
@@ -758,16 +758,16 @@ export default function VolumesTab() {
                           {/* Associated Requirements */}
                           {ch.requirements && ch.requirements.length > 0 && (
                             <div className="space-y-1.5">
-                              <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest block">
+                              <span className="text-xs text-slate-500 font-mono uppercase tracking-widest block">
                                 Пов'язані системні вимоги ({ch.requirements.length}):
                               </span>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 {ch.requirements.map((req, rIdx) => (
                                   <div 
                                     key={rIdx}
-                                    className="bg-slate-950/40 border border-indigo-500/5 rounded-lg p-2.5 flex items-start gap-2 text-[10px] text-slate-300"
+                                    className="bg-slate-950/40 border border-slate-800 rounded-2xl p-2.5 flex items-start gap-2 text-xs text-slate-300"
                                   >
-                                    <CheckCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                                    <CheckCircle className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
                                     <span className="leading-tight">{req}</span>
                                   </div>
                                 ))}
@@ -785,12 +785,12 @@ export default function VolumesTab() {
           </div>
 
           {/* Quick Informational Box */}
-          <div className="bg-slate-900/20 border border-indigo-500/5 rounded-xl p-4 flex items-start gap-3 text-xs">
-            <Info className="w-4.5 h-4.5 text-indigo-400 shrink-0 mt-0.5" />
+          <div className="bg-slate-900/20 border border-slate-800 rounded-2xl p-2 flex items-start gap-2 text-xs">
+            <Info className="w-4.5 h-4.5 text-blue-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <span className="font-bold text-slate-200">Довідка розробника:</span>
               <p className="text-slate-300 leading-normal">
-                Кожен том містить точні, затверджені в ТЗ специфікації, які є обов'язковими для дотримання при побудові PREDATOR OSINT. Натисніть на розділи вище для детального ознайомлення, копіювання коду та перевірки системних вимог (REQ).
+                Кожен том містить точні, затверджені в ТЗ специфікації, які є обов'язковими для дотримання при побудові NEXUS OSINT. Натисніть на розділи вище для детального ознайомлення, копіювання коду та перевірки системних вимог (REQ).
               </p>
             </div>
           </div>

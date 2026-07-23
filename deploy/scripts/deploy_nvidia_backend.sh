@@ -7,9 +7,9 @@
 set -euo pipefail
 
 NVIDIA_IP="194.177.1.240"
-NVIDIA_USER="dmytrokizima"
+NVIDIA_USER="dima"
 SSH_KEY="$HOME/.ssh/id_ed25519_dev"
-SSH_CMD="ssh -i $SSH_KEY -o StrictHostKeyChecking=no $NVIDIA_USER@$NVIDIA_IP"
+SSH_CMD="ssh -i $SSH_KEY -p 6666 -o StrictHostKeyChecking=no $NVIDIA_USER@$NVIDIA_IP"
 SUDO_PASS="1204"
 
 # Допоміжна функція: виконати команду на NVIDIA з sudo
@@ -80,7 +80,7 @@ rsync -az --delete \
     --exclude='coverage' \
     --exclude='.pytest_cache' \
     --exclude='mlruns' \
-    -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" \
+    -e "ssh -i $SSH_KEY -p 6666 -o StrictHostKeyChecking=no" \
     /Users/Shared/Predator_60/ \
     $NVIDIA_USER@$NVIDIA_IP:~/Predator_60/
 

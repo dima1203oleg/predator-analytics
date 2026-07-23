@@ -244,7 +244,7 @@ export const LICENSE_MATRIX: LicenseMatrixItem[] = [
     modification: 'Вимагає відкриття коду модифікованої версії',
     dynamicLinking: 'Вимагає відкриття вашого коду під тією ж ліцензією',
     riskLevel: 'Середній',
-    solution: 'Суворо ізолювати компонент як окремий мікросервіс у Docker-контейнері. Комунікувати виключно через REST API / gRPC або черги повідомлень (Kafka). Уникати імпортування чи лінкування бібліотеки у закрите ядро PREDATOR.',
+    solution: 'Суворо ізолювати компонент як окремий мікросервіс у Docker-контейнері. Комунікувати виключно через REST API / gRPC або черги повідомлень (Kafka). Уникати імпортування чи лінкування бібліотеки у закрите ядро NEXUS.',
     details: 'Класичний "копілефт". Пряме використання (імпорт у Python) заразить ліцензією все ядро.'
   },
   {
@@ -262,7 +262,7 @@ export const LICENSE_MATRIX: LicenseMatrixItem[] = [
     modification: 'Дозволено',
     dynamicLinking: 'Дозволено',
     riskLevel: 'Середній',
-    solution: 'Використовувати Airbyte чи Elasticsearch як внутрішню інфраструктурну утиліту для потреб PREDATOR. Заборонено продавати "Airbyte API як послугу" чи створювати прямий SaaS-аналог. Тільки для внутрішніх пайплайнів.',
+    solution: 'Використовувати Airbyte чи Elasticsearch як внутрішню інфраструктурну утиліту для потреб NEXUS. Заборонено продавати "Airbyte API як послугу" чи створювати прямий SaaS-аналог. Тільки для внутрішніх пайплайнів.',
     details: 'Ліцензії, створені для захисту вендорів від зловживання з боку хмарних гігантів (AWS).'
   },
   {
@@ -299,7 +299,7 @@ export const ARCHITECTURE_NODES: ArchitectureNode[] = [
   },
   {
     id: 'core_api',
-    label: 'PREDATOR Core API',
+    label: 'NEXUS Core API',
     group: 'Core',
     description: 'Центральний мікросервіс на FastAPI, що містить основну бізнес-логіку, автентифікацію та API для клієнта.',
     details: 'Обробляє запити аналітиків, координує роботу баз даних, ставить завдання у чергу Kafka, управляє RAG-запитами.',
@@ -369,62 +369,62 @@ export const ARCHITECTURE_NODES: ArchitectureNode[] = [
   },
   {
     id: 'osint_worker',
-    label: 'OSINT Worker',
+    label: 'Discovery Engine',
     group: 'Worker',
-    description: 'Асинхронний Python мікросервіс, який запускає BBOT, SpiderFoot та Tor Proxies.',
-    details: 'Реагує на чергу Kafka, збирає дані, парсить результати у структурований JSON та відправляє назад до Kafka.',
-    tech: 'Python Asyncio, BBOT Wrapper, SpiderFoot modules, Tor proxy rotation',
+    description: 'Автоматичний парсинг Swagger, OpenAPI, WSDL, GraphQL та JSON/XML специфікацій.',
+    details: 'Семантичний аналіз веб-сторінок або реєстрів у разі відсутності API-документації. Виявляє Rate Limits та Auth типи.',
+    tech: 'Python, Beautiful Soup, httpx, AI Schema Extraction',
     security: 'Ізольований Docker контейнер, non-root user, обмежений вихідний трафік',
     scaling: 'KEDA (Kubernetes Event-driven Autoscaling) за довжиною черги Kafka'
   },
   {
     id: 'ai_worker',
-    label: 'AI Pipelines Worker',
+    label: 'Validation Engine',
     group: 'Worker',
-    description: 'Воркер для виконання RAG, генерації ембедінгів та вилучення сутностей (NER).',
-    details: 'Комунікує з vLLM, docTR та іншими ML сервісами для обробки документів та структурування даних.',
-    tech: 'Python, PyTorch, LangChain / LlamaIndex',
-    security: 'Обмежений доступ до внутрішніх ML ендпоінтів',
-    scaling: 'KEDA масштабування подів, бажано на нодах з GPU'
+    description: 'Виконує статичний аналіз, юніт-тести та QA валідацію.',
+    details: 'Запускає Ruff, Semgrep, MyPy, Bandit. Генерує Contract Tests та перевіряє Schema Drift перед деплоєм.',
+    tech: 'Pytest, Playwright, Static Analyzers, Chaos Tests',
+    security: 'Обмежений доступ до внутрішніх ендпоінтів',
+    scaling: 'KEDA масштабування подів'
   },
   {
     id: 'etl_worker',
-    label: 'ETL Worker (Airbyte)',
+    label: 'Intelligence Acquisition',
     group: 'Worker',
-    description: 'Менеджер завантаження даних із зовнішніх офіційних реєстрів та API.',
-    details: 'Виконує регулярну синхронізацію з відкритими реєстрами (ЄДР, судові рішення) та зберігає дані в базу.',
-    tech: 'Airbyte connectors, Custom Python SDK adapters for Gov API',
+    description: 'Авто-генерація Python-клієнтів та інкрементальних ETL-конвеєрів.',
+    details: 'Створює Pydantic-схеми, SQL DDL, Neo4j Graph Loaders, та Qdrant Embedding Loaders без участі людини.',
+    tech: 'Jinja2, AST, Pydantic, SQLAlchemy, Custom Gen',
     security: 'Безпечне збереження API-ключів у HashiCorp Vault',
     scaling: 'Окремі події за розкладом (CronJobs у Kubernetes)'
   },
   {
     id: 'vllm',
-    label: 'vLLM Serving',
+    label: 'Self-Healing Engine',
     group: 'AI',
-    description: 'Сервіс хостингу локальних великих мовних моделей (Llama-3, Mistral) на GPU нодах.',
-    details: 'Обробляє RAG запити та структурує неструктуровані тексти за запитом AI воркера.',
-    tech: 'vLLM, CUDA, Nvidia drivers, Llama 3 / Mistral-7B',
+    description: 'Агент автоматичного відновлення після змін API (Schema Drift).',
+    details: 'Самостійно виявляє зміну в JSON, переписує конектор, генерує нову міграцію БД та створює PR.',
+    tech: 'Google Antigravity Agent, AST parsing',
     security: 'Доступний виключно зсередини кластера Kubernetes (no public IP)',
     scaling: 'Тензорний паралелізм (Tensor Parallelism) на кількох GPU нодах'
   },
   {
     id: 'whisper',
-    label: 'faster-whisper',
+    label: 'ArgoCD GitOps',
     group: 'AI',
-    description: 'Сервіс перекладу аудіозаписів та дзвінків у текст (STT).',
-    details: 'Обробляє аудіофайли з MinIO та повертає текстові транскрипції з таймкодами.',
-    tech: 'CTranslate2, ONNX Runtime, Whisper Large V3',
-    security: 'Повна ізоляція, робота offline (без запитів до OpenAI API)',
-    scaling: 'Масштабування подів на CPU або GPU нодах'
+    description: 'Система безперервного автономного розгортання оновлених конекторів.',
+    details: 'Створює GitHub Actions пайплайни, деплоїть Helm чарти в K8s після успішного проходження Validation Engine.',
+    tech: 'ArgoCD, Helm, Kubernetes, Docker',
+    security: 'Жорсткий RBAC, відсутність прямих kubectl доступів',
+    scaling: 'Масштабування контролерів ArgoCD'
   },
   {
     id: 'doctr',
-    label: 'docTR OCR',
+    label: 'Knowledge Graph Builder',
     group: 'AI',
-    description: 'Сервіс вилучення тексту з відсканованих документів та зображень.',
-    details: 'Аналізує зображення, розпізнає символи (OCR) та визначає структуру сторінок.',
-    tech: 'docTR (TensorFlow/PyTorch), OpenCV',
-    security: 'Внутрішній мікросервіс, файли передаються у бінарному форматі через gRPC',
+    description: 'Автоматичне формування онтології та вузлів у Neo4j.',
+    details: 'Витягує сутності Company, Person, PEP, Tender, Contract зі схем. Генерує зв\'язки Ownership, Control.',
+    tech: 'Neo4j, Cypher Auto-Generator, LangChain',
+    security: 'Внутрішній мікросервіс',
     scaling: 'Реплікація за запитами за допомогою Kubernetes HPA'
   }
 ];
@@ -525,7 +525,7 @@ export const GAP_ITEMS: GapItem[] = [
     title: 'Власна експертиза (Develop from scratch)',
     category: 'in_house',
     categoryLabel: 'Власна розробка з нуля',
-    description: 'Ядро унікальності платформи PREDATOR. Компоненти, для яких не існує готових open-source рішень на ринку, і які формують інтелектуальну власність компанії.',
+    description: 'Ядро унікальності платформи NEXUS. Компоненти, для яких не існує готових open-source рішень на ринку, і які формують інтелектуальну власність компанії.',
     actionItems: [
       'Конектори до Українських реєстрів — стабільні асинхронні адаптери для роботи з державними API та реєстрами (Дія, ЄДР, судові рішення Prozorro, Data.gov.ua) з обходом обмежень та кешуванням.',
       'Entity Resolution Engine (Алгоритм злиття сутностей) — інтелектуальна логіка дедуплікації (наприклад, об’єднання записів "Іванов І.І." з судового реєстру та санкційного списку за допомогою ШІ-ембедінгів та онтологічного порівняння).',
@@ -650,7 +650,7 @@ export const ROADMAP_PHASES: RoadmapPhase[] = [
       'Складність оновлення баз даних у повністю ізольованих державних військових мережах'
     ],
     milestones: [
-      { text: 'Створено офлайн Helm-пакет для розгортання PREDATOR в один клік', done: false },
+      { text: 'Створено офлайн Helm-пакет для розгортання NEXUS в один клік', done: false },
       { text: 'Реалізовано механізм диференційних офлайн-оновлень реєстрів', done: false },
       { text: 'Підготовлено комплект документів для сертифікації КСЗІ', done: false },
       { text: 'Успішно впроваджено першу інсталяцію у закритому військовому контурі', done: false }

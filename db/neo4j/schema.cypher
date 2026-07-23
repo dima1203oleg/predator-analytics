@@ -290,3 +290,21 @@ MATCH (c:Company)-[:FILED]->(d:Declaration)
 WITH c, MIN(d.date) AS first_decl_date
 WHERE duration.inDays(date(c.registration_date), date(first_decl_date)).days < 7
 RETURN c.name, c.registration_date, first_decl_date;
+
+// ============================================================
+// Source Meta-Graph (Discovery Engine)
+// ============================================================
+CREATE CONSTRAINT source_url IF NOT EXISTS
+    FOR (s:DataSource) REQUIRE s.url IS UNIQUE;
+
+CREATE CONSTRAINT api_url IF NOT EXISTS
+    FOR (a:API) REQUIRE a.endpoint IS UNIQUE;
+
+CREATE CONSTRAINT dataset_id IF NOT EXISTS
+    FOR (d:Dataset) REQUIRE d.dataset_id IS UNIQUE;
+
+CREATE CONSTRAINT registry_name IF NOT EXISTS
+    FOR (r:Registry) REQUIRE r.name IS UNIQUE;
+
+CREATE INDEX source_status IF NOT EXISTS FOR (s:DataSource) ON (s.status);
+CREATE INDEX dataset_format IF NOT EXISTS FOR (d:Dataset) ON (d.format);

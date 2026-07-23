@@ -1,98 +1,59 @@
-"""OpenSanctions Bulk Streaming Pipeline.
-
-Забезпечує потокове викачування, нормалізацію та масовий запис OpenSanctions в Neo4j
-без переповнення оперативної пам'яті (OOM).
-"""
-import json
+import asyncio
 import logging
-from typing import Any
+from typing import Optional
 
-import httpx
-
+from app.harvesters.open_sanctions_harvester import OpenSanctionsHarvester
 from app.normalizers.opensanctions_normalizer import OpenSanctionsNormalizer
+from app.core.graph_projector import GraphProjector
 
-logger = logging.getLogger("ingestion_worker.opensanctions_pipeline")
-
-DATASET_URL = "https://data.opensanctions.org/datasets/latest/default/entities.ftm.json"
-BATCH_SIZE = 1000
-
+logger = logging.getLogger("ingestion.pipelines.opensanctions")
 
 class OpenSanctionsPipeline:
-    """Пайплайн для повної синхронізації OpenSanctions."""
+    """End-to-End Pipeline для OpenSanctions.
+    
+    Запускає Harvester (читання з потоку), передає дані в Normalizer,
+    а потім завантажує нормалізовані вузли та зв'язки в Neo4j через GraphProjector.
+    """
 
-    def __init__(self, neo4j_sink: Any) -> None:
-        self.neo4j_sink = neo4j_sink
+    def __init__(self):
+        self.harvester = OpenSanctionsHarvester()
         self.normalizer = OpenSanctionsNormalizer()
-        
-        # Буфери для пакетного запису
-        self._nodes_buffer: dict[str, list[dict[str, Any]]] = {}
-        self._edges_buffer: dict[str, list[dict[str, Any]]] = {}
-        self._processed_count = 0
+        self.projector = GraphProjector()
 
-    async def process(self, msg_value: dict[str, Any]) -> None:
-        """Обробляє повідомлення про запуск та стартує стрімінг."""
-        url = msg_value.get("dataset_url", DATASET_URL)
-        logger.info(f"opensanctions_pipeline.start", extra={"url": url})
+    async def run(self, limit: Optional[int] = None) -> None:
+        """Запуск пайплайну."""
+        logger.info("Починаємо OpenSanctions Pipeline...")
+        processed_entities = 0
+        nodes_created = 0
+        edges_created = 0
 
         try:
-            async with httpx.AsyncClient(timeout=None) as client:
-                async with client.stream("GET", url) as response:
-                    response.raise_for_status()
-                    
-                    async for line in response.aiter_lines():
-                        if not line:
-                            continue
+            async for raw_entity in self.harvester.stream_entities(limit=limit):
+                processed_entities += 1
+                
+                # Нормалізація (перетворення на формат вузлів та зв'язків)
+                for item_type, item_data in self.normalizer.normalize(raw_entity):
+                    if item_type == "node":
+                        # Запис вузла в Neo4j
+                        await self.projector.project_raw_node(item_data)
+                        nodes_created += 1
+                    elif item_type == "edge":
+                        # Запис зв'язку в Neo4j
+                        await self.projector.project_raw_edge(item_data)
+                        edges_created += 1
                         
-                        try:
-                            entity = json.loads(line)
-                        except json.JSONDecodeError:
-                            continue
-                        
-                        # Нормалізація (FtM -> Neo4j)
-                        for item_type, item_data in self.normalizer.normalize(entity):
-                            if item_type == "node":
-                                label = item_data["label"]
-                                if label not in self._nodes_buffer:
-                                    self._nodes_buffer[label] = []
-                                self._nodes_buffer[label].append(item_data)
-                                
-                                if len(self._nodes_buffer[label]) >= BATCH_SIZE:
-                                    await self._flush_nodes(label)
-                                    
-                            elif item_type == "edge":
-                                rel_type = item_data["rel_type"]
-                                if rel_type not in self._edges_buffer:
-                                    self._edges_buffer[rel_type] = []
-                                self._edges_buffer[rel_type].append(item_data)
-                                
-                                if len(self._edges_buffer[rel_type]) >= BATCH_SIZE:
-                                    await self._flush_edges(rel_type)
-
-                        self._processed_count += 1
-                        if self._processed_count % 10000 == 0:
-                            logger.info(f"opensanctions_pipeline.progress", extra={"processed": self._processed_count})
-
-            # Запис залишків
-            await self._flush_all()
-            logger.info(f"opensanctions_pipeline.completed", extra={"total_processed": self._processed_count})
+                if processed_entities % 1000 == 0:
+                    logger.info(f"[Pipeline] Оброблено {processed_entities} сутностей (Вузлів: {nodes_created}, Зв'язків: {edges_created})")
 
         except Exception as e:
-            logger.error("opensanctions_pipeline.failed", extra={"error": str(e)}, exc_info=True)
+            logger.error(f"Помилка під час виконання OpenSanctions Pipeline: {e}")
+            raise
+        finally:
+            await self.harvester.close()
+            logger.info(f"OpenSanctions Pipeline завершено. Оброблено: {processed_entities}. Згенеровано вузлів: {nodes_created}, зв'язків: {edges_created}.")
 
-    async def _flush_nodes(self, label: str) -> None:
-        batch = self._nodes_buffer.get(label, [])
-        if batch and self.neo4j_sink:
-            await self.neo4j_sink.merge_bulk_nodes(label, batch)
-        self._nodes_buffer[label] = []
-
-    async def _flush_edges(self, rel_type: str) -> None:
-        batch = self._edges_buffer.get(rel_type, [])
-        if batch and self.neo4j_sink:
-            await self.neo4j_sink.merge_bulk_edges(rel_type, batch)
-        self._edges_buffer[rel_type] = []
-
-    async def _flush_all(self) -> None:
-        for label in list(self._nodes_buffer.keys()):
-            await self._flush_nodes(label)
-        for rel_type in list(self._edges_buffer.keys()):
-            await self._flush_edges(rel_type)
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    pipeline = OpenSanctionsPipeline()
+    # Запускаємо з лімітом для тестування
+    asyncio.run(pipeline.run(limit=100))
