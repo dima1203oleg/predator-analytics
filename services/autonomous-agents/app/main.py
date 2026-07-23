@@ -8,6 +8,7 @@ import json
 
 from app.agents.connector_agent import ConnectorAgent
 from app.agents.schema_intelligence import SchemaIntelligenceAgent
+from app.core.memory_ingestor import memory_ingestor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("autonomous_agents.main")
@@ -57,6 +58,9 @@ async def consume_discovery_events():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Initialize Memory
+    asyncio.create_task(memory_ingestor.ingest_memory())
+    
     task = asyncio.create_task(consume_discovery_events())
     yield
     task.cancel()
