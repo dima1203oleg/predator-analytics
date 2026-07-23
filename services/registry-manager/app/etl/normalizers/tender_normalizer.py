@@ -1,32 +1,30 @@
-"""
-Tender Normalizer — PREDATOR Registry Manager
+"""Tender Normalizer — PREDATOR Registry Manager
 Розділ 9. Нормалізація
 Перетворює сирі дані (напр. OCDS від ProZorro) в універсальну модель Tender та Company.
 """
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class TenderNormalizer:
     @staticmethod
-    def normalize_prozorro(raw_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Нормалізує сирий OCDS JSON від ProZorro.
+    def normalize_prozorro(raw_data: dict[str, Any]) -> dict[str, Any]:
+        """Нормалізує сирий OCDS JSON від ProZorro.
         """
         tender_id = raw_data.get("id")
         tender_number = raw_data.get("tenderID")
         title = raw_data.get("title", "")
         description = raw_data.get("description", "")
         status = raw_data.get("status", "unknown")
-        
+
         value_data = raw_data.get("value", {})
         value = value_data.get("amount", 0.0)
         currency = value_data.get("currency", "UAH")
-        
+
         procuring_entity = raw_data.get("procuringEntity", {})
         identifier = procuring_entity.get("identifier", {})
-        
+
         # Нормалізація Замовника (Company)
         organizer = {
             "ueid": f"UA-EDR-{identifier.get('id', 'unknown')}",
@@ -35,7 +33,7 @@ class TenderNormalizer:
             "edrpou": identifier.get("id", ""),
             "role": "organizer"
         }
-        
+
         # Нормалізація Учасників (Bidders) - може бути відсутнім на етапі fetch_tenders
         bids = raw_data.get("bids", [])
         participants = []
@@ -51,6 +49,30 @@ class TenderNormalizer:
                     "bid_value": bid.get("value", {}).get("amount", 0.0)
                 })
 
+        relations = []
+        if organizer.get("edrpou"):
+            relations.append({
+                "type": "ORGANIZER_OF",
+                "target": {
+                    "entity_type": "Company",
+                    "ueid": organizer["ueid"],
+                    "name": organizer["name"],
+                    "edrpou": organizer["edrpou"],
+                }
+            })
+
+        for p in participants:
+            if p.get("edrpou"):
+                relations.append({
+                    "type": "PARTICIPATES_IN",
+                    "target": {
+                        "entity_type": "Company",
+                        "ueid": p["ueid"],
+                        "name": p["name"],
+                        "edrpou": p["edrpou"],
+                    }
+                })
+
         normalized_tender = {
             "ueid": f"UA-TENDER-{tender_id}",
             "entity_type": "Tender",
@@ -64,8 +86,9 @@ class TenderNormalizer:
             "currency": currency,
             "organizer": organizer,
             "participants": participants,
+            "relations": relations,
             "raw_data_ref": f"minio://raw/prozorro/{tender_id}.json"
         }
-        
+
         logger.debug(f"Normalized tender {tender_id}")
         return normalized_tender
