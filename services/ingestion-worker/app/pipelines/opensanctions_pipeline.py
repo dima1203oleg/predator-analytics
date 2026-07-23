@@ -9,16 +9,21 @@ from app.core.graph_projector import GraphProjector
 logger = logging.getLogger("ingestion.pipelines.opensanctions")
 
 class OpenSanctionsPipeline:
-    """End-to-End Pipeline для OpenSanctions.
-    
-    Запускає Harvester (читання з потоку), передає дані в Normalizer,
-    а потім завантажує нормалізовані вузли та зв'язки в Neo4j через GraphProjector.
+    """OpenSanctions Pipeline.
+
+    [DEPRECATED]
+    УВАГА: Цей конвеєр є застарілим і використовувався для ручного імпорту санкцій.
+    Оновлення та імпорт санкційних баз тепер виконується Автономною Фабрикою Конекторів.
     """
 
     def __init__(self, harvester: OpenSanctionsHarvester | None = None, normalizer: OpenSanctionsNormalizer | None = None, projector: GraphProjector | None = None):
         self.harvester = harvester or OpenSanctionsHarvester()
         self.normalizer = normalizer or OpenSanctionsNormalizer()
         self.projector = projector or GraphProjector()
+
+    async def process(self, event: dict[str, Any]) -> None:
+        """[DEPRECATED] Запускає обробку датасету OpenSanctions."""
+        logger.warning("OpenSanctionsPipeline: [DEPRECATED] Цей пайплайн застарів. Використовуйте Autonomous Factory.")
 
     async def run(self, limit: Optional[int] = None) -> None:
         """Запуск пайплайну."""

@@ -1,6 +1,13 @@
-# ProZorro API Integration
+# Prozorro Integration
 
-Цей документ описує автоматичну інтеграцію з державним реєстром ProZorro (Open Contracting Data Standard - OCDS) у системі PREDATOR Analytics.
+> [!WARNING]  
+> **[DEPRECATED]**  
+> Ручна інтеграція з Prozorro (через `prozorro_client.py`) скасована.  
+> У версії PREDATOR Analytics v61.0+ забір та обробка державних закупівель 
+> відбувається **АВТОМАТИЧНО** через `ConnectorAgent` (Автономну Фабрику Конекторів).  
+> Цей документ залишено для історії архітектури.
+
+Цей документ описує (застарілу) інтеграцію з API публічних закупівель Prozorro. (Open Contracting Data Standard - OCDS) у системі PREDATOR Analytics.
 
 ## Архітектура (ETL Flow)
 
