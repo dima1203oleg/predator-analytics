@@ -88,6 +88,34 @@ export interface ProfilerPerson {
 
 const PROFILER_PEOPLE: ProfilerPerson[] = [
   {
+    id: 'kyzyma-dmytro',
+    name: 'Кізима Дмитро Миколайович',
+    role: 'Засновник / Кінцевий бенефіціарний власник (Бенефіціар)',
+    age: 40,
+    dob: '12.03.1985',
+    passport: 'КМ 381940',
+    taxId: '3111724753',
+    address: 'Львівська обл., Стрийський р-н, с. Угерсько',
+    phone: '+380 (97) 807-76-79',
+    email: 'd.kyzyma@predator.analytics',
+    riskScore: 12,
+    status: 'ACTIVE',
+    isNomineeProxy: false,
+    psychoProfile: {
+      riskTolerance: 'Висока / Стратегічний архітектор систем аналітики та AI-платформ.',
+      travelPattern: 'Регулярні відрядження по Україні та країнах ЄС (Львів, Київ, Варшава).',
+      spendingHabits: 'Інвестиції в нерухомість, автотранспорт та інфраструктурні AI-технології.',
+      unexplainedWealthRatio: 15
+    },
+    sourcesOfWealth: {
+      officialSalary: '185,000 UAH / місяць (IT & Аналітичні системи)',
+      unofficialIncomeEst: '0 UAH',
+      dividends: 'Офіційні дивіденди від корпоративних прав та IT-проєктів',
+      foreignTransfers: 'Легальні інвестиційні та грантові перекази'
+    },
+    narrative: "Кізима Дмитро Миколайович — головний архітектор та бенефіціар аналітичних систем. Володіє об'єктами нерухомого майна у м. Львові та с. Сокільники, а також автотранспортом преміум-класу (Toyota Land Cruiser 300, Mercedes-Benz S500). Перевірений за усіма державними реєстрами (ЄРБ, ЄДРСР, ДРРП, МВС)."
+  },
+  {
     id: 'kovalenko-ihor',
     name: 'Коваленко Ігор Вікторович',
     role: 'Екс-чиновник / Головний бенефіціар ТОВ "СпецТехПостач" (PEP)',
@@ -230,6 +258,72 @@ const PROFILER_PEOPLE: ProfilerPerson[] = [
 ];
 
 const PROFILER_ASSETS: ProfilerAsset[] = [
+  // Kyzyma Dmytro assets
+  {
+    id: 'asset-kyzyma-lviv-apt',
+    type: 'real_estate',
+    name: 'Квартира, м. Львів, вул. Стрийська (85.5 кв.м.)',
+    value: '$120,000',
+    valueNum: 120000,
+    registeredToId: 'kyzyma-dmytro',
+    registeredToName: 'Кізима Дмитро Миколайович',
+    relationType: 'Пряме володіння',
+    isNominee: false,
+    legalIncomeDisparity: false,
+    details: 'ДРРП: Квартира у м. Львів, вул. Стрийська, буд. 45, кв. 112. Зареєстровано 22.08.2019.'
+  },
+  {
+    id: 'asset-kyzyma-sokilnyky-house',
+    type: 'real_estate',
+    name: 'Житловий будинок, с. Сокільники (210 кв.м.)',
+    value: '$350,000',
+    valueNum: 350000,
+    registeredToId: 'kyzyma-dmytro',
+    registeredToName: 'Кізима Дмитро Миколайович',
+    relationType: 'Пряме володіння',
+    isNominee: false,
+    legalIncomeDisparity: false,
+    details: 'ДРРП: Житловий будинок у с. Сокільники, вул. Садова, 15. Зареєстровано 10.04.2021.'
+  },
+  {
+    id: 'asset-kyzyma-sokilnyky-land',
+    type: 'real_estate',
+    name: 'Земельна ділянка, с. Сокільники (12 соток)',
+    value: '$60,000',
+    valueNum: 60000,
+    registeredToId: 'kyzyma-dmytro',
+    registeredToName: 'Кізима Дмитро Миколайович',
+    relationType: 'Пряме володіння',
+    isNominee: false,
+    legalIncomeDisparity: false,
+    details: 'ДРРП: Кадастровий № 4623685900:01:002:0345 (1200 кв.м). Зареєстровано 05.03.2021.'
+  },
+  {
+    id: 'asset-kyzyma-lc300',
+    type: 'vehicle',
+    name: 'TOYOTA LAND CRUISER 300 (2022)',
+    value: '$110,000',
+    valueNum: 110000,
+    registeredToId: 'kyzyma-dmytro',
+    registeredToName: 'Кізима Дмитро Миколайович',
+    relationType: 'Пряме володіння',
+    isNominee: false,
+    legalIncomeDisparity: false,
+    details: 'Реєстр МВС: Чорний колір, ДНЗ: BC0001AM. Зареєстровано 05.11.2022.'
+  },
+  {
+    id: 'asset-kyzyma-mb-s500',
+    type: 'vehicle',
+    name: 'MERCEDES-BENZ S-CLASS 500 (2020)',
+    value: '$135,000',
+    valueNum: 135000,
+    registeredToId: 'kyzyma-dmytro',
+    registeredToName: 'Кізима Дмитро Миколайович',
+    relationType: 'Пряме володіння',
+    isNominee: false,
+    legalIncomeDisparity: false,
+    details: 'Реєстр МВС: Білий колір, ДНЗ: BC7777OO. Зареєстровано 15.01.2021.'
+  },
   // Kovalenko direct assets
   {
     id: 'asset-kozin-house',
@@ -369,7 +463,7 @@ const PROFILER_ASSETS: ProfilerAsset[] = [
 
 export default function PersonProfiler() {
   const { showToast } = useToast();
-  const [selectedPersonId, setSelectedPersonId] = useState<string>('kovalenko-ihor');
+  const [selectedPersonId, setSelectedPersonId] = useState<string>('kyzyma-dmytro');
   const [activeTab, setActiveTab] = useState<'profile' | 'assets' | 'nominees' | 'audit'>('profile');
   const [auditLog, setAuditLog] = useState<string[]>([]);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
@@ -499,16 +593,23 @@ export default function PersonProfiler() {
         clearInterval(interval);
         setIsAiSearching(false);
         
+        // Check if searching for Kyzyma Dmytro
+        const lowerQ = customSearchName.toLowerCase();
+        if (lowerQ.includes('3111724753') || lowerQ.includes('кізима') || lowerQ.includes('дмитро') || lowerQ.includes('угерсько')) {
+          setSelectedPersonId('kyzyma-dmytro');
+          return;
+        }
+
         // Add a virtual person to selection or just update narrative
         const newPersonId = `virtual-${Date.now()}`;
         const newPerson: ProfilerPerson = {
           id: newPersonId,
           name: customSearchName,
           role: 'Об\'єкт ШІ-синтезу (Результати розвідки)',
-          age: 41,
-          dob: '29.08.1985',
-          passport: 'КМ 102948',
-          taxId: '3129401824',
+          age: 40,
+          dob: '12.03.1985',
+          passport: 'КМ 381940',
+          taxId: customSearchName.includes('3111724753') ? '3111724753' : '3129401824',
           address: 'м. Київ, вул. Шота Руставелі, буд. 22, кв. 14',
           phone: '+380 (50) 998-12-34',
           email: `${customSearchName.toLowerCase().replace(/ /g, '.')}@gmail.com`,
