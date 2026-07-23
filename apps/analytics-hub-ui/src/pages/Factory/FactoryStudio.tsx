@@ -35,9 +35,11 @@ import { factoryApi } from '@/services/api/factory';
 import { PipelineTable } from './components/PipelineTable';
 import { TrainingChart } from './components/TrainingChart';
 import { KnowledgeMapGraph } from './components/KnowledgeMapGraph';
+import { AgentTerminal } from './components/AgentTerminal';
+import { ActiveRuns } from './components/ActiveRuns';
 
 export default function FactoryStudio() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'knowledge-map' | 'patterns' | 'training' | 'test'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'runs' | 'terminal' | 'knowledge-map' | 'patterns' | 'training' | 'test'>('overview');
   const queryClient = useQueryClient();
 
   // ─── Queries ────────────────────────────────────────────────────────────────
@@ -133,7 +135,7 @@ export default function FactoryStudio() {
       <div className="relative w-full h-screen bg-slate-950 overflow-hidden">
         {/* Background Effects */}
         <AdvancedBackground />
-        <CyberGrid opacity={0.05} />
+        <CyberGrid />
 
         {/* Main Container */}
         <motion.div
@@ -154,7 +156,7 @@ export default function FactoryStudio() {
           {/* Tabs */}
           <div className="px-6 pt-4 border-b border-white/5 bg-black/20 ">
             <div className="flex items-center gap-4 pb-4 overflow-x-auto no-scrollbar">
-              {(['overview', 'knowledge-map', 'patterns', 'training', 'test'] as const).map((tab) => (
+              {(['overview', 'runs', 'terminal', 'knowledge-map', 'patterns', 'training', 'test'] as const).map((tab) => (
                 <Button variant="cyber"
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
@@ -167,12 +169,16 @@ export default function FactoryStudio() {
                 >
                   {tab === 'overview'
                     ? '📊 Огляд'
+                    : tab === 'runs'
+                    ? '🚀 Активні Запуски'
+                    : tab === 'terminal'
+                    ? '💻 Термінал Агентів'
                     : tab === 'knowledge-map'
                     ? '🕸️ Карта Знань'
                     : tab === 'patterns'
                     ? '⭐ Золоті Патерни'
                     : tab === 'training'
-                    ? '  Тренування'
+                    ? '🧠 Тренування'
                     : '🧪 Тест'}
                 </Button>
               ))}
@@ -195,54 +201,82 @@ export default function FactoryStudio() {
                 </div>
               </div>
             ) : activeTab === 'overview' && stats ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Stats Cards */}
-                {[
-                  {
-                    icon: Database,
-                    label: 'Всього Патернів',
-                    value: stats.total_patterns,
-                    color: 'yellow',
-                  },
-                  {
-                    icon: Star,
-                    label: 'Золоті Патерни',
-                    value: stats.gold_patterns,
-                    color: 'amber',
-                  },
-                  {
-                    icon: TrendingUp,
-                    label: 'Середня Оцінка',
-                    value: `${stats.avg_score.toFixed(1)}%`,
-                    color: 'emerald',
-                  },
-                  {
-                    icon: Zap,
-                    label: 'Запусків',
-                    value: stats.total_runs,
-                    color: 'violet',
-                  },
-                ].map((stat, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className={`bg-${stat.color}-500/10 border border-${stat.color}-500/20 rounded-lg p-4`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className={`text-${stat.color}-400 text-xs font-bold uppercase`}>
-                          {stat.label}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Stats Cards */}
+                  {[
+                    {
+                      icon: Database,
+                      label: 'Всього Патернів',
+                      value: stats.total_patterns,
+                      color: 'yellow',
+                    },
+                    {
+                      icon: Star,
+                      label: 'Золоті Патерни',
+                      value: stats.gold_patterns,
+                      color: 'amber',
+                    },
+                    {
+                      icon: TrendingUp,
+                      label: 'Середня Оцінка',
+                      value: `${stats.avg_score.toFixed(1)}%`,
+                      color: 'emerald',
+                    },
+                    {
+                      icon: Zap,
+                      label: 'Запусків',
+                      value: stats.total_runs,
+                      color: 'violet',
+                    },
+                  ].map((stat, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={`bg-${stat.color}-500/10 border border-${stat.color}-500/20 rounded-lg p-4`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className={`text-${stat.color}-400 text-xs font-bold uppercase`}>
+                            {stat.label}
+                          </div>
+                          <div className="text-2xl font-bold text-white mt-2">
+                            {stat.value}
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold text-white mt-2">
-                          {stat.value}
-                        </div>
+                        <stat.icon className={`w-8 h-8 text-${stat.color}-400`} />
                       </div>
-                      <stat.icon className={`w-8 h-8 text-${stat.color}-400`} />
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Manual Discovery Trigger */}
+                <div className="bg-black/40 border border-white/10 rounded-lg p-6 max-w-3xl">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
+                    <Zap className="text-yellow-400 w-5 h-5" /> Нове Джерело (Discovery)
+                  </h3>
+                  <p className="text-sm text-slate-400 mb-4">
+                    Введіть URL для автоматичного аналізу та генерації конектора. ШІ-агенти перевірять доступність, витягнуть схему та створять необхідний код.
+                  </p>
+                  <div className="flex gap-4">
+                    <input 
+                      type="url"
+                      placeholder="https://api.example.com/v1"
+                      className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm focus:border-yellow-500 focus:outline-none"
+                    />
+                    <Button variant="cyber" className="bg-yellow-600 hover:bg-yellow-500 text-white font-bold px-6">
+                      Запустити Фабрику
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : activeTab === 'runs' ? (
+              <ActiveRuns />
+            ) : activeTab === 'terminal' ? (
+              <div className="h-[600px] w-full max-w-5xl">
+                <AgentTerminal />
               </div>
             ) : activeTab === 'knowledge-map' ? (
               <KnowledgeMapGraph patterns={patterns} />
