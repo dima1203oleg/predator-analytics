@@ -44,6 +44,10 @@ class CoreConsumer:
             "predator.factory.opensanctions.start",
             "predator.factory.prozorro.start",
             "predator.factory.edr.start",
+            "predator.source.web.start",
+            "predator.source.telegram.start",
+            "predator.source.social.start",
+            "predator.source.api.start",
             # Старі топіки
             getattr(self.settings, "KAFKA_TOPIC_EDR", "registry.edr.events"),
             getattr(self.settings, "KAFKA_TOPIC_PROZORRO", "registry.prozorro.events"),
@@ -84,6 +88,15 @@ class CoreConsumer:
 
                 if topic == "predator.factory.prozorro.start" or topic == "predator.factory.edr.start":
                     asyncio.create_task(self._handle_pipeline_start(topic, event))
+                    continue
+                    
+                if topic in [
+                    "predator.source.web.start", 
+                    "predator.source.telegram.start", 
+                    "predator.source.social.start", 
+                    "predator.source.api.start"
+                ]:
+                    asyncio.create_task(self._handle_custom_source_start(topic, event))
                     continue
 
                 # Делегування обробки події в Graph Projector
@@ -207,3 +220,37 @@ class CoreConsumer:
             logger.info(f"CoreConsumer: Pipeline {topic} завершив роботу.")
         except Exception as e:
             logger.error(f"CoreConsumer: Помилка Pipeline {topic}: {e}", exc_info=True)
+
+    async def _handle_custom_source_start(self, topic: str, event: dict[str, Any]) -> None:
+        """Обробник запуску кастомних джерел."""
+        job_id = event.get("job_id")
+        source_type = event.get("source_type")
+        source_url = event.get("source_url")
+        config = event.get("config", {})
+        
+        logger.info(f"CoreConsumer: Початок обробки кастомного джерела [{source_type}] {source_url} (Job: {job_id})")
+        
+        try:
+            if source_type == "web":
+                from app.harvesters.generic_web_harvester import GenericWebHarvester
+                harvester = GenericWebHarvester(job_id=job_id, url=source_url, config=config)
+                await harvester.run()
+            elif source_type == "telegram":
+                from app.harvesters.telegram_harvester import TelegramHarvester
+                harvester = TelegramHarvester(job_id=job_id, url=source_url, config=config)
+                await harvester.run()
+            elif source_type == "social":
+                from app.harvesters.social_harvester import SocialHarvester
+                harvester = SocialHarvester(job_id=job_id, url=source_url, config=config)
+                await harvester.run()
+            elif source_type == "api":
+                from app.harvesters.api_harvester import APIHarvester
+                harvester = APIHarvester(job_id=job_id, url=source_url, config=config)
+                await harvester.run()
+            else:
+                logger.warning(f"Невідомий тип джерела: {source_type}")
+        except Exception as e:
+            logger.error(f"CoreConsumer: Помилка обробки кастомного джерела {source_type}: {e}")
+            from app.core.minio_client import MinioClient
+            minio = MinioClient()
+            await minio.update_job_progress(job_id, 0, "failed", 0, 1)

@@ -58,6 +58,11 @@ export default function DataIngestionLiveBoard() {
   type SourceTab = 'file' | 'web' | 'telegram' | 'social' | 'api';
   const [activeTab, setActiveTab] = useState<SourceTab>('file');
   const [sourceUrl, setSourceUrl] = useState('');
+  
+  const [webConfig, setWebConfig] = useState({ depth: 1, jsRender: false });
+  const [telegramConfig, setTelegramConfig] = useState({ limit: 100, includeComments: false });
+  const [socialConfig, setSocialConfig] = useState({ network: 'facebook', extractProfiles: true });
+  const [apiConfig, setApiConfig] = useState({ method: 'GET', headers: '{}' });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -215,7 +220,11 @@ export default function DataIngestionLiveBoard() {
         },
         body: JSON.stringify({
           type: activeTab,
-          url: sourceUrl
+          url: sourceUrl,
+          config: activeTab === 'web' ? webConfig :
+                  activeTab === 'telegram' ? telegramConfig :
+                  activeTab === 'social' ? socialConfig :
+                  activeTab === 'api' ? { ...apiConfig, headers: (() => { try { return JSON.parse(apiConfig.headers || '{}'); } catch(e) { return {}; } })() } : {}
         })
       });
 
@@ -426,14 +435,78 @@ export default function DataIngestionLiveBoard() {
                                     type="text" 
                                     value={sourceUrl}
                                     onChange={(e) => setSourceUrl(e.target.value)}
-                                    placeholder="https://" 
+                                    placeholder={activeTab === 'api' ? "https://api.example.com/v1/data" : "https://"} 
                                     className="w-full bg-gray-950 border border-gray-700 rounded p-3 text-sm text-white focus:outline-none focus:border-cyan-500" 
                                   />
                                 </div>
+                                
+                                {/* Dynamic Configuration Options */}
+                                <div className="grid grid-cols-2 gap-4">
+                                  {activeTab === 'web' && (
+                                    <>
+                                      <div>
+                                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">Глибина скрейпінгу</label>
+                                        <input type="number" min="1" max="10" value={webConfig.depth} onChange={(e) => setWebConfig({...webConfig, depth: parseInt(e.target.value) || 1})} className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-xs text-white" />
+                                      </div>
+                                      <div className="flex items-center gap-2 mt-5">
+                                        <input type="checkbox" checked={webConfig.jsRender} onChange={(e) => setWebConfig({...webConfig, jsRender: e.target.checked})} id="jsRender" className="rounded bg-gray-900 border-gray-700" />
+                                        <label htmlFor="jsRender" className="text-[10px] uppercase text-gray-400">Рендерити JS (SPA)</label>
+                                      </div>
+                                    </>
+                                  )}
+                                  
+                                  {activeTab === 'telegram' && (
+                                    <>
+                                      <div>
+                                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">Ліміт постів</label>
+                                        <input type="number" min="10" max="1000" step="10" value={telegramConfig.limit} onChange={(e) => setTelegramConfig({...telegramConfig, limit: parseInt(e.target.value) || 100})} className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-xs text-white" />
+                                      </div>
+                                      <div className="flex items-center gap-2 mt-5">
+                                        <input type="checkbox" checked={telegramConfig.includeComments} onChange={(e) => setTelegramConfig({...telegramConfig, includeComments: e.target.checked})} id="includeComments" className="rounded bg-gray-900 border-gray-700" />
+                                        <label htmlFor="includeComments" className="text-[10px] uppercase text-gray-400">Включати коментарі</label>
+                                      </div>
+                                    </>
+                                  )}
+
+                                  {activeTab === 'social' && (
+                                    <>
+                                      <div>
+                                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">Мережа</label>
+                                        <select value={socialConfig.network} onChange={(e) => setSocialConfig({...socialConfig, network: e.target.value})} className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-xs text-white">
+                                          <option value="facebook">Facebook</option>
+                                          <option value="twitter">X (Twitter)</option>
+                                          <option value="linkedin">LinkedIn</option>
+                                          <option value="instagram">Instagram</option>
+                                        </select>
+                                      </div>
+                                      <div className="flex items-center gap-2 mt-5">
+                                        <input type="checkbox" checked={socialConfig.extractProfiles} onChange={(e) => setSocialConfig({...socialConfig, extractProfiles: e.target.checked})} id="extractProfiles" className="rounded bg-gray-900 border-gray-700" />
+                                        <label htmlFor="extractProfiles" className="text-[10px] uppercase text-gray-400">Витягувати профілі (Entity Extraction)</label>
+                                      </div>
+                                    </>
+                                  )}
+
+                                  {activeTab === 'api' && (
+                                    <>
+                                      <div>
+                                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">HTTP Метод</label>
+                                        <select value={apiConfig.method} onChange={(e) => setApiConfig({...apiConfig, method: e.target.value})} className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-xs text-white">
+                                          <option value="GET">GET</option>
+                                          <option value="POST">POST</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1 block">Headers (JSON)</label>
+                                        <input type="text" value={apiConfig.headers} onChange={(e) => setApiConfig({...apiConfig, headers: e.target.value})} placeholder='{"Authorization": "Bearer token"}' className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-xs text-white font-mono" />
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+
                                 <button 
                                   onClick={submitResource}
                                   disabled={!sourceUrl.trim()}
-                                  className="w-full py-3 rounded bg-cyan-900/40 hover:bg-cyan-800/60 disabled:opacity-50 text-cyan-400 text-xs font-bold tracking-widest uppercase border border-cyan-800 transition-colors flex justify-center items-center gap-2"
+                                  className="w-full mt-4 py-3 rounded bg-cyan-900/40 hover:bg-cyan-800/60 disabled:opacity-50 text-cyan-400 text-xs font-bold tracking-widest uppercase border border-cyan-800 transition-colors flex justify-center items-center gap-2"
                                 >
                                   Почати моніторинг <ArrowRight className="w-4 h-4" />
                                 </button>
