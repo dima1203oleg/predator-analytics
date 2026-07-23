@@ -52,6 +52,7 @@ class TenderNormalizer:
                 })
 
         normalized_tender = {
+            "ueid": f"UA-TENDER-{tender_id}",
             "entity_type": "Tender",
             "source": "prozorro",
             "id": tender_id,

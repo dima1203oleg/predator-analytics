@@ -39,6 +39,7 @@ class SpendingNormalizer:
         }
 
         normalized_tx = {
+            "ueid": f"UA-TX-{tx_id}",
             "entity_type": "Transaction",
             "source": "spending",
             "id": tx_id,

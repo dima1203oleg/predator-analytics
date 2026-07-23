@@ -48,6 +48,7 @@ class NazkNormalizer:
                     })
 
         normalized_doc = {
+            "ueid": f"UA-DECL-{doc_id}",
             "entity_type": "Declaration",
             "source": "nazk",
             "id": doc_id,

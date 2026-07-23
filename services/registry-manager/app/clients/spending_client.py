@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 class SpendingClient:
-    BASE_URL = "https://api.spending.gov.ua/api/v2/api/transactions"
+    BASE_URL = "https://api.spending.gov.ua/api/v2/api/transactions/"
 
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=45.0)
