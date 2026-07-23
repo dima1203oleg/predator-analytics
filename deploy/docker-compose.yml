@@ -241,6 +241,34 @@ services:
     networks:
       - predator_net
 
+  # 5. REGISTRY MANAGER (ETL Pipelines & Storage Router)
+  registry-manager:
+    build:
+      context: ../services/registry-manager
+      dockerfile: Dockerfile
+    container_name: predator_registry_manager
+    environment:
+      - POSTGRES_URL=postgresql+asyncpg://predator:predator_secret@postgres:5432/predator_analytics
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - REDIS_URL=redis://redis:6379/0
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=predator_neo4j
+      - QDRANT_URL=http://qdrant:6333
+      - OPENSEARCH_URL=http://opensearch:9200
+      - LITELLM_URL=http://api-gateway:4000/v1/embeddings
+    depends_on:
+      - postgres
+      - neo4j
+      - qdrant
+      - redis
+    networks:
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
 #  # 5. MOCK DATA GENERATOR
 #  mock-generator:
 #    build:
