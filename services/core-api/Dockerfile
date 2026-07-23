@@ -51,7 +51,8 @@ COPY --chown=predator:predator libs/predator-common /libs/predator-common
 
 # Копіюємо application code
 COPY --chown=predator:predator services/core-api/app/ ./app/
-COPY --chown=predator:predator services/core-api/alembic/ ./alembic/ 
+# 12. Копіюємо міграції
+COPY --chown=predator:predator services/core-api/migrations/ ./migrations/
 COPY --chown=predator:predator services/core-api/alembic.ini ./alembic.ini
 
 # Створити директорію для offline Kafka повідомлень

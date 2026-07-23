@@ -427,9 +427,12 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
     if (!queryText.trim()) return;
     
     // Check if there is an exact or partial match
+    const lowerQuery = queryText.toLowerCase();
     const found = entities.find(e => 
-      e.name.toLowerCase().includes(queryText.toLowerCase()) || 
-      e.code.includes(queryText)
+      lowerQuery.includes(e.name.toLowerCase()) || 
+      lowerQuery.includes(e.code.toLowerCase()) ||
+      e.name.toLowerCase().includes(lowerQuery) || 
+      e.code.toLowerCase().includes(lowerQuery)
     );
 
     if (found) {
@@ -441,36 +444,64 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
       setIsSearchingLive(true);
       setLiveSearchError(null);
       try {
-        const response = await fetch("/api/osint/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: queryText, type: activeFilter === 'all' ? undefined : activeFilter }),
+        const { apiFetch } = await import('@/api');
+        const urlParams = new URLSearchParams({ q: queryText });
+        if (activeFilter !== 'all') urlParams.append('type', activeFilter);
+        const response = await apiFetch(`/api/v1/osint/search?${urlParams.toString()}`, {
+          method: "GET",
         });
         if (!response.ok) {
           let errMsg = "Не вдалося отримати дані з OSINT API";
           try {
             const errBody = await response.json();
             if (errBody.error) errMsg = errBody.error;
+            else if (errBody.detail) errMsg = typeof errBody.detail === 'string' ? errBody.detail : JSON.stringify(errBody.detail);
           } catch(e) {}
           throw new Error(errMsg);
         }
-        const data: OsintEntity = await response.json();
-        if (data && data.name) { // Use name to check valid data
-          // Ensure ID uniqueness
-          data.id = (data.id || `osint-entity-${Date.now()}`) + `-${Date.now()}`;
-          // Add newly generated entity to entities state
+        const responseData = await response.json();
+        
+        let entitiesToAdd: OsintEntity[] = [];
+        if (Array.isArray(responseData)) {
+          entitiesToAdd = responseData.filter(d => d && d.name);
+        } else if (responseData && responseData.name) {
+          entitiesToAdd = [responseData];
+        }
+
+        if (entitiesToAdd.length > 0) {
+          const idsToAdd: string[] = [];
+          
           setEntities(prev => {
-            const existing = prev.find(e => e.id === data.id);
-            if (existing) return prev;
-            return [data, ...prev];
+            const newEntities = [...prev];
+            entitiesToAdd.forEach(data => {
+              // Ensure ID uniqueness if not provided
+              data.id = (data.id || `osint-entity-${Date.now()}`) + `-${Math.random().toString(36).substr(2, 5)}`;
+              // Adapt data structure if it came from Company search (which might use edrpou instead of code, company_name instead of name)
+              if (!data.code && data.edrpou) data.code = data.edrpou;
+              if (data.company_name && !data.name) data.name = data.company_name;
+              if (!data.type) data.type = "company";
+              
+              if (!newEntities.find(e => e.id === data.id)) {
+                newEntities.unshift(data as OsintEntity);
+                idsToAdd.push(data.id);
+              }
+            });
+            return newEntities;
           });
-          // Also automatically select it in selectedEntityIds
+          
           setSelectedEntityIds(prev => {
-            if (prev.includes(data.id)) return prev;
-            return [data.id, ...prev];
+            const newIds = [...prev];
+            idsToAdd.forEach(id => {
+              if (!newIds.includes(id)) newIds.unshift(id);
+            });
+            return newIds;
           });
-          // Select it in parent/inspector
-          onSelectEntityForInspector(data);
+          
+          // Select the first one in parent/inspector
+          if (entitiesToAdd[0]) {
+             onSelectEntityForInspector(entitiesToAdd[0] as OsintEntity);
+          }
+          
           setSearchQuery(queryText);
           setShowSuggestions(false);
         } else {
@@ -731,7 +762,7 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
       </div>
 
       {osintMode === 'person-profiler' ? (
-        <PersonProfiler />
+        <PersonProfiler initialPersonId={activeEntity?.id} />
       ) : (
         <>
           {/* Top OSINT filter options */}

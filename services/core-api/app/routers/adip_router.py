@@ -3,6 +3,8 @@ from pydantic import BaseModel, HttpUrl
 import logging
 
 from app.services.adip.adip_core import adip_core
+from app.services.adip.task_tracker import task_tracker
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -25,3 +27,27 @@ async def discover_source(request: DiscoverRequest):
     except Exception as e:
         logger.error(f"ADIP discovery failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+class TaskCreateRequest(BaseModel):
+    name: str
+    agent: str
+    priority: str = "MEDIUM"
+
+class TaskUpdateRequest(BaseModel):
+    progress: int
+    log: Optional[str] = None
+    status: str = "RUNNING"
+
+@adip_router.post("/tasks")
+async def create_task(request: TaskCreateRequest):
+    task_id = task_tracker.start_task(name=request.name, agent=request.agent, priority=request.priority)
+    return {"task_id": task_id}
+
+@adip_router.patch("/tasks/{task_id}")
+async def update_task(task_id: str, request: TaskUpdateRequest):
+    task_tracker.update_task(task_id, progress=request.progress, log=request.log, status=request.status)
+    return {"status": "ok"}
+
+@adip_router.get("/tasks")
+async def get_tasks():
+    return task_tracker.get_all_tasks()

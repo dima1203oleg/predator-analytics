@@ -1,7 +1,10 @@
 import logging
 import httpx
 from typing import Dict, Any
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None  # type: ignore
 import json
 from app.services.ai_service import AIService
 

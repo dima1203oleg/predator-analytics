@@ -88,7 +88,7 @@ export interface ProfilerPerson {
 
 const PROFILER_PEOPLE: ProfilerPerson[] = [
   {
-    id: 'kyzyma-dmytro',
+    id: 'person-kyzyma',
     name: 'Кізима Дмитро Миколайович',
     role: 'Засновник / Кінцевий бенефіціарний власник (Бенефіціар)',
     age: 40,
@@ -265,7 +265,7 @@ const PROFILER_ASSETS: ProfilerAsset[] = [
     name: 'Квартира, м. Львів, вул. Стрийська (85.5 кв.м.)',
     value: '$120,000',
     valueNum: 120000,
-    registeredToId: 'kyzyma-dmytro',
+    registeredToId: 'person-kyzyma',
     registeredToName: 'Кізима Дмитро Миколайович',
     relationType: 'Пряме володіння',
     isNominee: false,
@@ -278,7 +278,7 @@ const PROFILER_ASSETS: ProfilerAsset[] = [
     name: 'Житловий будинок, с. Сокільники (210 кв.м.)',
     value: '$350,000',
     valueNum: 350000,
-    registeredToId: 'kyzyma-dmytro',
+    registeredToId: 'person-kyzyma',
     registeredToName: 'Кізима Дмитро Миколайович',
     relationType: 'Пряме володіння',
     isNominee: false,
@@ -291,7 +291,7 @@ const PROFILER_ASSETS: ProfilerAsset[] = [
     name: 'Земельна ділянка, с. Сокільники (12 соток)',
     value: '$60,000',
     valueNum: 60000,
-    registeredToId: 'kyzyma-dmytro',
+    registeredToId: 'person-kyzyma',
     registeredToName: 'Кізима Дмитро Миколайович',
     relationType: 'Пряме володіння',
     isNominee: false,
@@ -461,9 +461,13 @@ const PROFILER_ASSETS: ProfilerAsset[] = [
   }
 ];
 
-export default function PersonProfiler() {
+export interface PersonProfilerProps {
+  initialPersonId?: string;
+}
+
+export default function PersonProfiler({ initialPersonId }: PersonProfilerProps) {
   const { showToast } = useToast();
-  const [selectedPersonId, setSelectedPersonId] = useState<string>('kyzyma-dmytro');
+  const [selectedPersonId, setSelectedPersonId] = useState<string>(initialPersonId || 'person-kyzyma');
   const [activeTab, setActiveTab] = useState<'profile' | 'assets' | 'nominees' | 'audit'>('profile');
   const [auditLog, setAuditLog] = useState<string[]>([]);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
@@ -596,7 +600,7 @@ export default function PersonProfiler() {
         // Check if searching for Kyzyma Dmytro
         const lowerQ = customSearchName.toLowerCase();
         if (lowerQ.includes('3111724753') || lowerQ.includes('кізима') || lowerQ.includes('дмитро') || lowerQ.includes('угерсько')) {
-          setSelectedPersonId('kyzyma-dmytro');
+          setSelectedPersonId('person-kyzyma');
           return;
         }
 

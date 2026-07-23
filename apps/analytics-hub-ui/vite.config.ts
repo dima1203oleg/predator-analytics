@@ -8,7 +8,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     server: {
@@ -16,18 +16,14 @@ export default defineConfig(() => {
       proxy: {
         // OSINT scan → Core API (FastAPI на порту 8000)
         '/api/v1/dossier/person/scan': {
-          target: process.env.VITE_API_MODE === 'mock'
-            ? 'http://localhost:9080'
-            : 'http://localhost:8888',
+          target: 'http://localhost:8000',
           changeOrigin: true,
           secure: false,
         },
         // Загальний fallback → NVIDIA Compute Node або Mock API
         '/api': {
           // Основний Compute Node — NVIDIA (194.177.1.240)
-          target: process.env.VITE_API_MODE === 'mock'
-            ? 'http://localhost:9080'
-            : 'http://localhost:8888',
+          target: 'http://localhost:8000',
           changeOrigin: true,
           secure: false,
           // Kaggle/zrok fallback — замінити вручну при активному тунелі:

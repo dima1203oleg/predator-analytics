@@ -112,35 +112,47 @@ export default function AutonomousFactory() {
     "connected" | "syncing" | "error"
   >("connected");
 
-  // Load agent tasks in realtime from Firestore
-  useEffect(() => {
-    setSyncStatus("syncing");
-    const unsubscribe = onSnapshot(
-      collection(db, "agent_tasks"),
-      (snapshot) => {
-        const items: AgentTask[] = [];
-        snapshot.forEach((doc) => {
-          items.push({ id: doc.id, ...doc.data() } as AgentTask);
-        });
-        // Sort tasks by priority and timestamp
-        const sorted = items.sort((a, b) => {
-          const priorityWeight = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
-          const aWeight = priorityWeight[a.priority] || 0;
-          const bWeight = priorityWeight[b.priority] || 0;
-          if (bWeight !== aWeight) return bWeight - aWeight;
-          return (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0);
-        });
-        setTasks(sorted);
-        setSyncStatus("connected");
-      },
-      (error) => {
-        console.error("Error syncing agent_tasks:", error);
-        setSyncStatus("error");
-        handleFirestoreError(error, OperationType.LIST, "agent_tasks");
-      },
-    );
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
-    return () => unsubscribe();
+  // Load agent tasks in realtime from Core API
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchTasks = async () => {
+      try {
+        if (!isMounted) return;
+        const response = await fetch(`${API_BASE_URL}/adip/tasks`);
+        if (!response.ok) throw new Error("Failed to fetch tasks");
+        const data = await response.json();
+        
+        // Data should be an array of tasks
+        if (Array.isArray(data)) {
+          // Priority weighting
+          const sorted = data.sort((a, b) => {
+            const priorityWeight: any = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+            const aWeight = priorityWeight[a.priority] || 0;
+            const bWeight = priorityWeight[b.priority] || 0;
+            if (bWeight !== aWeight) return bWeight - aWeight;
+            
+            // Fallback to timestamp sort
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          });
+          setTasks(sorted);
+          setSyncStatus("connected");
+        }
+      } catch (error) {
+        console.error("Error fetching agent_tasks:", error);
+        setSyncStatus("error");
+      }
+    };
+
+    fetchTasks();
+    const intervalId = setInterval(fetchTasks, 2000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, []);
 
   // Load Council Votes in realtime from Firestore
@@ -192,130 +204,20 @@ export default function AutonomousFactory() {
     return () => unsubscribe();
   }, []);
 
-  // Simulated live factory progress loops
+  // Simulated live factory progress loops removed (now fetching real data from backend)
+
+  // Fluctuate VRAM
   useEffect(() => {
     if (!isFactoryRunning || killSwitchActive) return;
-
-    const interval = setInterval(async () => {
-      // Find a running or queued task to advance progress
-      const activeTask = tasks.find(
-        (t) => t.status === "RUNNING" || t.status === "QUEUED",
-      );
-      if (activeTask) {
-        const newProgress = Math.min(
-          100,
-          activeTask.progress + Math.floor(Math.random() * 15) + 5,
-        );
-        const newStatus = newProgress >= 100 ? "COMPLETED" : "RUNNING";
-
-        let newLogs = [...activeTask.logs];
-        if (newProgress < 30 && newLogs.length === 1) {
-          newLogs.push(
-            `[${new Date().toLocaleTimeString()}] Агент ініціював OODA циклічне сканування.`,
-          );
-        } else if (newProgress < 75 && newLogs.length === 2) {
-          newLogs.push(
-            `[${new Date().toLocaleTimeString()}] Крос-кореляція джерел виявила додаткові закономірності.`,
-          );
-        } else if (newProgress >= 100 && newLogs.length === 3) {
-          newLogs.push(
-            `[${new Date().toLocaleTimeString()}] Аналіз завершено. Вердикт записано в базу.`,
-          );
-        }
-
-        try {
-          await setDoc(
-            doc(db, "agent_tasks", activeTask.id),
-            {
-              ...activeTask,
-              progress: newProgress,
-              status: newStatus,
-              logs: newLogs,
-            },
-            { merge: true },
-          );
-        } catch (e) {
-          console.error("Failed to update simulation task: ", e);
-          handleFirestoreError(
-            e,
-            OperationType.WRITE,
-            `agent_tasks/${activeTask.id}`,
-          );
-        }
-      }
-
-      // Slightly fluctuate VRAM
+    const interval = setInterval(() => {
       setVramUsage((prev) => {
         const delta = (Math.random() - 0.5) * 0.4;
         return Math.max(3.2, Math.min(7.9, prev + delta));
       });
     }, 4500);
-
     return () => clearInterval(interval);
-  }, [tasks, isFactoryRunning, killSwitchActive]);
+  }, [isFactoryRunning, killSwitchActive]);
 
-  // Seed initial data if collections are empty
-  const handleSeedData = async () => {
-    try {
-      // 1. Seed some tasks
-      const sampleTasks: AgentTask[] = [
-        {
-          id: "task_1",
-          name: "Регулярне сканування оновлень схеми OpenAPI OpenSanctions",
-          status: "RUNNING",
-          priority: "HIGH",
-          agent: "Discovery_Engine",
-          progress: 65,
-          logs: [
-            `[${new Date().toLocaleTimeString()}] Запущено перевірку OpenAPI endpoint'а.`,
-            `[${new Date().toLocaleTimeString()}] Схему завантажено, вилучено 124 визначення.`,
-            `[${new Date().toLocaleTimeString()}] Виявлено зміну (Schema Drift) у полі 'birth_date'. Формат змінено з Date на String(ISO8601).`,
-          ],
-          timestamp: new Date(),
-        },
-        {
-          id: "task_2",
-          name: "Авто-ремонт (Self-Healing) конектора NAZK після зміни схеми",
-          status: "QUEUED",
-          priority: "CRITICAL",
-          agent: "SelfHealing_Engine",
-          progress: 0,
-          logs: [
-            `[${new Date().toLocaleTimeString()}] Очікування підтвердження від Validation Engine.`,
-          ],
-          timestamp: new Date(),
-        },
-        {
-          id: "task_3",
-          name: "Генерація Unit та Integration тестів для ProZorro API",
-          status: "COMPLETED",
-          priority: "MEDIUM",
-          agent: "Validation_Engine",
-          progress: 100,
-          logs: [
-            `[${new Date().toLocaleTimeString()}] Згенеровано 45 test_cases через Pytest.`,
-            `[${new Date().toLocaleTimeString()}] Coverage досяг 98.4%.`,
-            `[${new Date().toLocaleTimeString()}] Contract tests passed. Запуск статичного аналізу (Ruff, Bandit).`,
-          ],
-          timestamp: new Date(),
-        },
-      ];
-
-      for (const t of sampleTasks) {
-        await setDoc(doc(db, "agent_tasks", t.id), t);
-      }
-
-      // 2. Seed some council votes
-      const sampleVotes: CouncilVote[] = [
-        {
-          id: "vote_1",
-          scenario:
-            "Авто-інтеграція нового державного реєстру ліцензій на корисні копалини",
-          verdict: "РЕКОМЕНДОВАНО ДО ІНТЕГРАЦІЇ (Консенсус досягнуто)",
-          models: [
-            {
-              name: "DeepSeek-R1-Local",
-              vote: "APPROVE",
               reason:
                 "Специфікація OpenAPI повністю валідна, джерело державне та офіційне, високий рівень довіри.",
               confidence: 98,
@@ -409,37 +311,26 @@ export default function AutonomousFactory() {
     e.preventDefault();
     if (!newTaskName) return;
     setIsSavingTask(true);
-    const id = "task_" + Date.now();
     try {
-      const newTask: AgentTask = {
-        id,
-        name: newTaskName,
-        status: "QUEUED",
-        priority: newTaskPriority,
-        agent: newTaskAgent,
-        progress: 0,
-        logs: [
-          `[${new Date().toLocaleTimeString()}] Завдання додано користувачем через панель фабрики.`,
-        ],
-        timestamp: new Date(),
-      };
-      await setDoc(doc(db, "agent_tasks", id), newTask);
+      await fetch(`${API_BASE_URL}/adip/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTaskName,
+          agent: newTaskAgent,
+          priority: newTaskPriority
+        })
+      });
       setNewTaskName("");
     } catch (err) {
       console.error("Failed to add task: ", err);
-      handleFirestoreError(err, OperationType.WRITE, `agent_tasks/${id}`);
     } finally {
       setIsSavingTask(false);
     }
   };
 
   const handleDeleteTask = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, "agent_tasks", id));
-    } catch (err) {
-      console.error("Failed to delete task: ", err);
-      handleFirestoreError(err, OperationType.DELETE, `agent_tasks/${id}`);
-    }
+    console.log("Delete is not implemented on Backend yet for task: ", id);
   };
 
   const handleSendTelegramMessage = async (e: React.FormEvent) => {
@@ -554,14 +445,7 @@ export default function AutonomousFactory() {
             </span>
           </div>
 
-          {tasks.length === 0 && (
-            <button
-              onClick={handleSeedData}
-              className="px-3 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-slate-800 rounded text-xs font-bold uppercase transition-all cursor-pointer"
-            >
-              Ініціювати Демо-Дані
-            </button>
-          )}
+
 
           <button
             onClick={() => setKillSwitchActive(!killSwitchActive)}

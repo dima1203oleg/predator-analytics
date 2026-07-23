@@ -6,22 +6,22 @@ import asyncio
 import datetime
 import json
 import logging
-import uuid
 from typing import Any
+import uuid
 
 from aiokafka import AIOKafkaProducer
 
 from app.config import get_settings
-from app.harvesters.prozorro_sync import ProzorroSynchronizer
-from app.harvesters.edr_aggregator import EDRAggregator
-from app.harvesters.nbu_harvester import NBUHarvester
-from app.harvesters.cisa_kev_harvester import CisaKevHarvester
-from app.harvesters.open_sanctions_harvester import OpenSanctionsHarvester
-from app.harvesters.spending_harvester import SpendingHarvester
-from app.harvesters.openalex_harvester import OpenAlexHarvester
-from app.harvesters.gdelt_harvester import GDELTHarvester
 from app.harvesters.alienvault_harvester import AlienVaultHarvester
+from app.harvesters.cisa_kev_harvester import CisaKevHarvester
+from app.harvesters.edr_aggregator import EDRAggregator
+from app.harvesters.gdelt_harvester import GDELTHarvester
 from app.harvesters.nazk_harvester import NazkHarvester
+from app.harvesters.nbu_harvester import NBUHarvester
+from app.harvesters.open_sanctions_harvester import OpenSanctionsHarvester
+from app.harvesters.openalex_harvester import OpenAlexHarvester
+from app.harvesters.prozorro_sync import ProzorroSynchronizer
+from app.harvesters.spending_harvester import SpendingHarvester
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +36,15 @@ class Harvester:
     async def _harvest_datagov(self) -> None:
         """Сканує data.gov.ua та ЄДР (використовуючи EDRAggregator)."""
         logger.info("Harvester: Сканування ЄДР розпочато...")
-        
+
         # Використовуємо реальний агрегатор
         aggregator = EDRAggregator()
         # Для прикладу беремо ключову компанію
         edrpou_to_scan = "04362489"
-        
+
         try:
             graph = await aggregator.build_ownership_graph(edrpou_to_scan)
-            
+
             event = {
                 "event_id": str(uuid.uuid4()),
                 "tenant_id": self.tenant_id,
@@ -53,7 +53,7 @@ class Harvester:
                 "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
                 "payload": graph.model_dump()
             }
-            
+
             topic = getattr(self.settings, 'KAFKA_TOPIC_EDR', "registry.edr.events")
             await self.producer.send_and_wait(
                 topic=topic,
@@ -69,11 +69,11 @@ class Harvester:
     async def _harvest_prozorro(self) -> None:
         """Сканує тендери Prozorro через ProzorroSynchronizer."""
         logger.info("Harvester: Сканування Prozorro розпочато...")
-        
+
         sync = ProzorroSynchronizer(max_pages_per_run=1)  # 1 сторінка для демо
         try:
             tenders = await sync.sync_tenders()
-            
+
             if tenders:
                 payload = [t.model_dump() for t in tenders]
                 event = {
@@ -85,7 +85,7 @@ class Harvester:
                 }
 
                 topic = getattr(self.settings, 'KAFKA_TOPIC_PROZORRO', "registry.prozorro.events")
-                
+
                 await self.producer.send_and_wait(
                     topic=topic,
                     value=json.dumps(event).encode("utf-8"),
@@ -100,7 +100,7 @@ class Harvester:
     async def harvest_all(self) -> None:
         """Запускає всі модулі збору (Orchestrator)."""
         logger.info("Harvester: Початок глобального циклу збору даних (Phase 6.4)")
-        
+
         # Запускаємо існуючі модулі
         await asyncio.gather(
             self._harvest_datagov(),
@@ -109,7 +109,7 @@ class Harvester:
             self._harvest_youcontrol(),
             return_exceptions=True
         )
-        
+
         # Запускаємо нові модулі збору Phase 6
         # Використовуємо послідовний виклик або розбиваємо на групи для уникнення мережевого перевантаження
         try:
@@ -123,7 +123,7 @@ class Harvester:
             await self._harvest_nazk()
         except Exception as e:
             logger.error(f"Harvester: Помилка під час виконання нових конвеєрів: {e}")
-        
+
         logger.info("Harvester: Глобальний цикл збору даних завершено.")
 
     async def _harvest_opendatabot(self) -> None:
@@ -276,11 +276,24 @@ class Harvester:
         logger.info("Harvester: Запуск Spending Harvester...")
         harvester = SpendingHarvester()
         try:
-            # Для демо вантажимо лише сьогоднішній день
-            today = datetime.datetime.now(datetime.UTC).date()
-            # У spending harvester метод історичного завантаження не повертає дані напряму, тому це симуляція
-            # В реальному коді він відправляв би дані напряму у Kafka. Тут ми просто викликаємо.
-            await harvester.harvest_historical(today, today)
+            # Завантажуємо останні 7 днів як демо/стартовий діапазон
+            end_date = datetime.datetime.now(datetime.UTC).date()
+            start_date = end_date - datetime.timedelta(days=7)
+
+            batch = []
+            async for tx in harvester.stream_historical(start_date, end_date):
+                batch.append(tx)
+                if len(batch) >= 1000:
+                    await self._publish_to_kafka("registry.spending.events", "spending_batch", "spending.gov.ua", batch)
+                    logger.info("Harvester: Відправлено батч з 1000 транзакцій Spending в Kafka.")
+                    batch = []
+
+            if batch:
+                await self._publish_to_kafka("registry.spending.events", "spending_batch", "spending.gov.ua", batch)
+                logger.info(f"Harvester: Відправлено фінальний батч з {len(batch)} транзакцій Spending в Kafka.")
+
+        except Exception as e:
+            logger.error(f"Harvester: Помилка під час сканування Spending: {e}")
         finally:
             await harvester.close()
 

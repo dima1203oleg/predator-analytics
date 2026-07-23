@@ -399,7 +399,7 @@ export function MediaForensicsTab() {
           mode: activeMode, 
           prompt: prompt,
           config: {
-            type: activeMode === 'generation' ? (prompt.toНизькийerCase().includes('відео') ? 'video' : 'image') : undefined,
+            type: activeMode === 'generation' ? (prompt.toLowerCase().includes('відео') ? 'video' : 'image') : undefined,
             aspectRatio: '16:9'
           }
         };
@@ -523,10 +523,10 @@ export function MediaForensicsTab() {
   };
 
   const filteredAnalysisLogs = analysisLogs.filter(log => 
-    log.timestamp.toНизькийerCase().includes(logSearchQuery.toНизькийerCase()) || 
-    log.id.toНизькийerCase().includes(logSearchQuery.toНизькийerCase()) ||
-    log.fileName.toНизькийerCase().includes(logSearchQuery.toНизькийerCase()) ||
-    log.message.toНизькийerCase().includes(logSearchQuery.toНизькийerCase())
+    log.timestamp.toLowerCase().includes(logSearchQuery.toLowerCase()) || 
+    log.id.toLowerCase().includes(logSearchQuery.toLowerCase()) ||
+    log.fileName.toLowerCase().includes(logSearchQuery.toLowerCase()) ||
+    log.message.toLowerCase().includes(logSearchQuery.toLowerCase())
   );
   const groupedLogs = filteredAnalysisLogs.reduce((acc, log) => {
     const dateKey = log.date || new Date().toLocaleDateString();
