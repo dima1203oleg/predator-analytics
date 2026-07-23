@@ -1,9 +1,8 @@
-# 🦅 PREDATOR Analytics vNext — AI Intelligence Discovery Platform & Autonomous Connector Factory (AGENTS.md)
+# TECHNICAL SPECIFICATION
 
-TECHNICAL SPECIFICATION
-PREDATOR Analytics vNext
-Autonomous Data Discovery & AI Connector Factory
-System Directive for Google Antigravity Agent Mode
+## PREDATOR Analytics vNext
+**Autonomous Data Discovery & AI Connector Factory**
+*System Directive for Google Antigravity Agent Mode*
 
 ---
 
