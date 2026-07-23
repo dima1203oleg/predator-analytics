@@ -26,10 +26,10 @@ import {
   PlayCircle,
   StopCircle
 } from 'lucide-react';
-import { PageTransition } from '@/components/layout/PageTransition';
-import { ViewHeader } from '@/components/ViewHeader';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
+import PageTransition from '@/components/layout/PageTransition';
+import ViewHeader from '@/components/ViewHeader';
+import AdvancedBackground from '@/components/AdvancedBackground';
+import CyberGrid from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { factoryApi } from '@/services/api/factory';
 import { PipelineTable } from './components/PipelineTable';

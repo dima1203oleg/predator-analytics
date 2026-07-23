@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { type FactoryHealthCheckRecord } from '../systemFactoryView.utils';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
+import AdvancedBackground from '@/components/AdvancedBackground';
+import CyberGrid from '@/components/CyberGrid';
 import { FactoryChaosPanel } from './FactoryChaosPanel';
 
 export interface FactoryHealthPanelProps {

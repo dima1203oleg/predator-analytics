@@ -38,7 +38,20 @@ def create_factory_graph():
     workflow.add_edge("discovery", "profiling")
     workflow.add_edge("profiling", "coding")
     workflow.add_edge("coding", "testing")
-    workflow.add_edge("testing", END)
+    
+    def route_testing(state: AgentState):
+        if state.get("status") == "failed":
+            return "coding"
+        return END
+
+    workflow.add_conditional_edges(
+        "testing",
+        route_testing,
+        {
+            "coding": "coding",
+            END: END
+        }
+    )
 
     # Compile
     return workflow.compile()

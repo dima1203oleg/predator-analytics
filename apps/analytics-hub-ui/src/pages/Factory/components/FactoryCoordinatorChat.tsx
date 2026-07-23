@@ -7,8 +7,8 @@ import {
   Sparkles, Layers, Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
+import AdvancedBackground from '@/components/AdvancedBackground';
+import CyberGrid from '@/components/CyberGrid';
 
 export interface FactoryMessage {
   id: string;

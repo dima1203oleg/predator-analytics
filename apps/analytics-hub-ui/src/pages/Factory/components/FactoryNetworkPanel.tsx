@@ -7,8 +7,8 @@ import {
 } from 'lucide-react';
 import { RegistryStats } from './RegistryStats';
 import { type FactoryRegistryStatsSnapshot, type FactoryHealthCheckRecord } from '../systemFactoryView.utils';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
+import AdvancedBackground from '@/components/AdvancedBackground';
+import CyberGrid from '@/components/CyberGrid';
 
 export interface FactoryNetworkPanelProps {
   registryStats: FactoryRegistryStatsSnapshot;

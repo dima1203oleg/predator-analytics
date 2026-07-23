@@ -11,10 +11,10 @@ import {
   ServerCrash, ShieldAlert
 } from 'lucide-react';
 import { RiskLevelValue } from '@/types/intelligence';
-import { ViewHeader } from '@/components/ViewHeader';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
-import { PageTransition } from '@/components/layout/PageTransition';
+import ViewHeader from '@/components/ViewHeader';
+import AdvancedBackground from '@/components/AdvancedBackground';
+import CyberGrid from '@/components/CyberGrid';
+import PageTransition from '@/components/layout/PageTransition';
 import { HoloCard } from '@/components/ui/HoloCard';
 
 import { useDataOpsStatus } from '@/hooks/useAdminApi';

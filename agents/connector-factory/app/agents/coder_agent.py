@@ -27,12 +27,17 @@ class CoderAgent:
             logger.warning("No API Schema found in state, falling back to basic template.")
             api_schema = {"type": "unknown", "endpoints": [source_url]}
 
+        test_report = state.get("test_report")
+        error_context = ""
+        if test_report and test_report.get("error_logs"):
+            error_context = f"\n\nWARNING: The previous code generation failed tests with the following error:\n{test_report['error_logs']}\n\nPlease FIX the code to address these errors."
+
         prompt = f"""
         You are an expert AI Python Software Engineer for the PREDATOR Analytics platform.
         Your task is to write a production-ready API Client for the following source:
         
         Source URL: {source_url}
-        API Schema / Profile: {api_schema}
+        API Schema / Profile: {api_schema}{error_context}
         
         Requirements:
         1. Use modern Python 3.12 features and strictly type all signatures.
