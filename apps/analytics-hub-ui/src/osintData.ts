@@ -44,6 +44,47 @@ export interface OsintEntity {
 
 export const OSINT_ENTITIES: OsintEntity[] = [
   {
+    id: 'person-kyzyma',
+    type: 'person',
+    name: "Кізима Дмитро Миколайович",
+    code: '3111724753',
+    status: 'ACTIVE',
+    riskScore: 12,
+    address: "Львівська обл., Стрийський р-н, с. Угерсько",
+    phone: "+380 (97) 807-76-79",
+    email: "d.kyzyma@predator.analytics",
+    founders: [
+      { name: "Кізима Дмитро Миколайович", share: "100%", role: "Головний бенефіціар / Архітектор", riskLevel: 'LOW' }
+    ],
+    taxes: {
+      year: "2025",
+      paid: "420,000 UAH",
+      debt: "0 UAH",
+      status: "Сплачено в повному обсязі"
+    },
+    customs: {
+      importVolume: "$150,000",
+      exportVolume: "$0",
+      mainPartners: ["EU Tech Supplies", "Global Analytics Corp"],
+      lastCargo: "IT Обладнання & Серверні системи"
+    },
+    courts: {
+      totalCases: 2,
+      criminalCases: 0,
+      lastCaseTitle: "Про скасування постанови про накладення адмінстягнення (Сихівський суд м. Львова)",
+      lastCaseDate: "2024-02-20"
+    },
+    description: "Засновник та головний архітектор аналітичних систем. Володіє об'єктами нерухомості у м. Львові та с. Сокільники, а також автотранспортом преміум-класу (Toyota Land Cruiser 300, Mercedes-Benz S500). Перевірено за усіма державними реєстрами (ЄРБ, ЄДРСР, ДРРП, МВС).",
+    relationships: [
+      { targetId: 'comp-kyzyma-tech', targetName: 'ТОВ "Предатор Аналітика"', type: 'Засновник (100%)', risk: 'LOW' },
+      { targetId: 'prop-1', targetName: 'Будинок (210 кв.м, с. Сокільники)', type: 'Власник', risk: 'LOW' },
+      { targetId: 'auto-1', targetName: 'Toyota Land Cruiser 300 (BC0001AM)', type: 'Власник', risk: 'LOW' },
+      { targetId: 'auto-2', targetName: 'Mercedes-Benz S500 (BC7777OO)', type: 'Власник', risk: 'LOW' }
+    ],
+    aiRecommendations: "Особа перевірена за усіма реєстрами. Ознак фінансових аномалій чи тіньового капіталу не виявлено. Ризик низький (12/100).",
+    lastActivityDate: "2026-07-23"
+  },
+  {
     id: 'comp-1',
     type: 'company',
     name: "ТОВ 'СпецТехПостач'",
