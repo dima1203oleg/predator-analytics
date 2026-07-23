@@ -39,7 +39,8 @@ class Neo4jSink:
             self._connected = False
 
     async def upsert_company(self, data: dict[str, Any]) -> str | None:
-        """Створення або оновлення вузла компанії."""
+        """[DEPRECATED] Створення або оновлення вузла компанії."""
+        logger.warning("Neo4jSink: upsert_company() is [DEPRECATED]. Use merge_bulk_nodes instead.")
         if not self._connected or not self.driver:
             return "Neo4j connection not available, skipping"
 
@@ -83,7 +84,8 @@ class Neo4jSink:
         uktzed_code: str,
         value: float,
     ) -> None:
-        """Створює зв'язок IMPORTS_FROM між компанією та країною."""
+        """[DEPRECATED] Створює зв'язок IMPORTS_FROM між компанією та країною."""
+        logger.warning("Neo4jSink: create_trade_relationship() is [DEPRECATED]. Use merge_bulk_edges instead.")
         if not self._connected or not self.driver:
             return
 
@@ -110,7 +112,8 @@ class Neo4jSink:
             logger.error(f"Failed to create trade relationship: {e}")
 
     async def merge_company(self, data: dict[str, Any]) -> None:
-        """Створення або оновлення вузла компанії (legacy)."""
+        """[DEPRECATED] Створення або оновлення вузла компанії (legacy)."""
+        logger.warning("Neo4jSink: merge_company() is [DEPRECATED].")
         await self.upsert_company(data)
 
     async def merge_ownership_graph(self, graph_data: dict[str, Any]) -> None:

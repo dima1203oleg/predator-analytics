@@ -1,4 +1,8 @@
-"""Nominatim Harvester — Геокодування OSM об'єктів.
+"""Nominatim Harvester.
+
+[DEPRECATED]
+УВАГА: Геокодування через Nominatim перенесено до загального пулу 
+навичок AI-агентів. Цей хавестер більше не використовується безпосередньо.
 
 Забезпечує перетворення текстових адрес або назв об'єктів у географічні
 координати (широта, довгота) за допомогою OpenStreetMap Nominatim API.
@@ -48,15 +52,14 @@ class NominatimHarvester:
         wait=wait_exponential(multiplier=2, min=5, max=60),
         reraise=True,
     )
-    async def geocode(self, query: str) -> Optional[Dict[str, Any]]:
-        """
-        Виконує геокодування адреси з дотриманням 1 RPS ліміту.
-        Спочатку перевіряє кеш у Redis (через ETLStateManager).
-        """
-        if not query or not query.strip():
+    async def fetch(self, address: str) -> dict[str, Any]:
+        """[DEPRECATED] Геокодування адреси."""
+        logger.warning("NominatimHarvester: [DEPRECATED] Цей хавестер застарів.")
+        
+        if not address or not address.strip():
             return None
 
-        cache_key = self._generate_cache_key(query)
+        cache_key = self._generate_cache_key(address)
         cached_result = await self.state_manager.get_state(cache_key)
         
         if cached_result and "lat" in cached_result:

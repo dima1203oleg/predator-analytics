@@ -1,6 +1,9 @@
 """OpenSanctions (FollowTheMoney) Normalizer.
+"""OpenSanctions Normalizer.
 
-Транслює формат FtM (id, schema, properties) у Neo4j вузли та зв'язки.
+[DEPRECATED]
+УВАГА: Цей модуль є застарілим. Для обробки санкційних списків 
+використовується Автономна Фабрика Конекторів та автоматично згенеровані ETL.
 """
 from typing import Any, Generator
 import logging
@@ -8,7 +11,7 @@ import logging
 logger = logging.getLogger("ingestion_worker.opensanctions_normalizer")
 
 class OpenSanctionsNormalizer:
-    """Конвертер FollowTheMoney -> Neo4j."""
+    """[DEPRECATED] Конвертер FollowTheMoney -> Neo4j."""
 
     def __init__(self) -> None:
         self.node_mappings = {
@@ -50,6 +53,8 @@ class OpenSanctionsNormalizer:
         }
 
     def normalize(self, entity: dict[str, Any]) -> Generator[tuple[str, dict[str, Any]], None, None]:
+        """[DEPRECATED] Нормалізує FtM сутність OpenSanctions."""
+        logger.warning("OpenSanctionsNormalizer: [DEPRECATED] Цей нормалізатор застарів.")
         entity_id = entity.get("id")
         schema = entity.get("schema")
         properties = entity.get("properties", {})

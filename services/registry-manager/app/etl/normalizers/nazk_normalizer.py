@@ -1,7 +1,10 @@
 """
 NAZK Normalizer — PREDATOR Registry Manager
 Розділ 9. Нормалізація
-Перетворює сирі декларації НАЗК в моделі Person (PEP), Asset, Relative.
+
+[DEPRECATED]
+УВАГА: Цей модуль є застарілим. Обробка декларацій НАЗК тепер 
+відбувається через Автономну Фабрику Конекторів.
 """
 import logging
 from typing import Any, Dict
@@ -12,8 +15,9 @@ class NazkNormalizer:
     @staticmethod
     def normalize_declaration(raw_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Нормалізує документ декларації від НАЗК.
+        [DEPRECATED] Нормалізує документ декларації від НАЗК.
         """
+        logger.warning("NAZKNormalizer: [DEPRECATED] Цей нормалізатор застарів.")
         doc_id = raw_data.get("id")
         data_block = raw_data.get("data", {})
         step_1 = data_block.get("step_1", {}) # Інформація про суб'єкта
