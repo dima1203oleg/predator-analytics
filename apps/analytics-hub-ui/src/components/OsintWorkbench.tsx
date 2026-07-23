@@ -444,10 +444,10 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
       setIsSearchingLive(true);
       setLiveSearchError(null);
       try {
-        const { apiFetch } = await import('@/api');
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
         const urlParams = new URLSearchParams({ q: queryText });
         if (activeFilter !== 'all') urlParams.append('type', activeFilter);
-        const response = await apiFetch(`/api/v1/osint/search?${urlParams.toString()}`, {
+        const response = await fetch(`${API_BASE_URL}/api/v1/osint/search?${urlParams.toString()}`, {
           method: "GET",
         });
         if (!response.ok) {
@@ -476,9 +476,9 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
             entitiesToAdd.forEach(data => {
               // Ensure ID uniqueness if not provided
               data.id = (data.id || `osint-entity-${Date.now()}`) + `-${Math.random().toString(36).substr(2, 5)}`;
-              // Adapt data structure if it came from Company search (which might use edrpou instead of code, company_name instead of name)
-              if (!data.code && data.edrpou) data.code = data.edrpou;
-              if (data.company_name && !data.name) data.name = data.company_name;
+              // Adapt data structure if it came from Company search
+              if (!data.code && (data as any).edrpou) data.code = (data as any).edrpou;
+              if ((data as any).company_name && !data.name) data.name = (data as any).company_name;
               if (!data.type) data.type = "company";
               
               if (!newEntities.find(e => e.id === data.id)) {

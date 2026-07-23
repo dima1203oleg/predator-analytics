@@ -34,19 +34,28 @@ class CisaKevHarvester:
         """Обчислює SHA-256 хеш-суму завантажених даних."""
         return hashlib.sha256(content).hexdigest()
 
+    async def __aenter__(self) -> "CisaKevHarvester":
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        await self.close()
+
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
+    async def _fetch_raw_content(self) -> bytes:
+        """Виконує HTTP-запит із вбудованим механізмом повторних спроб (Exponential Backoff)."""
+        logger.info("CisaKevHarvester: Запит до CISA KEV API...")
+        response = await self.http_client.get(CISA_KEV_URL)
+        response.raise_for_status()
+        return response.content
+
     async def fetch_vulnerabilities(self) -> Optional[List[Dict[str, Any]]]:
         """Завантажує каталог вразливостей, перевіряючи зміни за хеш-сумою."""
         try:
-            logger.info("CisaKevHarvester: Отримання каталогу CISA KEV...")
-            response = await self.http_client.get(CISA_KEV_URL)
-            response.raise_for_status()
-            
-            raw_content = response.content
+            raw_content = await self._fetch_raw_content()
             current_hash = self._calculate_hash(raw_content)
             
             # Перевіряємо стан у Redis

@@ -10,12 +10,12 @@ from app.services.storage_router import StorageRouter
 logger = logging.getLogger(__name__)
 
 class ProzorroPipeline:
-    def __init__(self):
-        self.client = ProzorroClient()
-        self.storage_router = StorageRouter()
-        self.normalizer = TenderNormalizer()
+    def __init__(self, client: ProzorroClient | None = None, storage_router: StorageRouter | None = None, normalizer: TenderNormalizer | None = None):
+        self.client = client or ProzorroClient()
+        self.storage_router = storage_router or StorageRouter()
+        self.normalizer = normalizer or TenderNormalizer()
         
-    async def run_incremental_sync(self, starting_offset: Optional[str] = None, max_items: int = 100):
+    async def run_incremental_sync(self, starting_offset: Optional[str] = None, max_items: int = 100) -> None:
         """
         Запускає інкрементальне завантаження тендерів (з обмеженням для уникнення OOM).
         """
@@ -43,7 +43,7 @@ class ProzorroPipeline:
         finally:
             await self.client.close()
 
-    async def _store_raw_minio(self, raw_data: dict):
+    async def _store_raw_minio(self, raw_data: dict) -> None:
         """Mock збереження в MinIO (WORM)."""
         tender_id = raw_data.get("id")
         # В реальному коді тут буде s3_client.put_object(Bucket="raw-prozorro", Key=f"{tender_id}.json", Body=json.dumps(raw_data))

@@ -29,19 +29,28 @@ class NBUHarvester:
     def __init__(self) -> None:
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
+    async def __aenter__(self) -> "NBUHarvester":
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        await self.close()
+
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
+    async def _fetch_raw_data(self) -> Any:
+        """Виконує HTTP-запит із вбудованим механізмом повторних спроб (Exponential Backoff)."""
+        logger.info("NBUHarvester: Запит до API НБУ...")
+        response = await self.http_client.get(NBU_EXCHANGE_URL)
+        response.raise_for_status()
+        return response.json()
+
     async def fetch_exchange_rates(self) -> List[Dict[str, Any]]:
-        """Завантажує актуальні курси валют з повторними спробами (Circuit Breaker/Retry)."""
+        """Завантажує актуальні курси валют з API."""
         try:
-            logger.info("NBUHarvester: Отримання актуальних курсів валют...")
-            response = await self.http_client.get(NBU_EXCHANGE_URL)
-            response.raise_for_status()
-            
-            data = response.json()
+            data = await self._fetch_raw_data()
             logger.info(f"NBUHarvester: Успішно отримано {len(data)} курсів валют.")
             
             # Базова валідація/трансформація

@@ -17,7 +17,7 @@ import AdvisorTab from "./components/AdvisorTab";
 import OsintWorkbench from "./components/OsintWorkbench";
 import PersonProfiler from "./components/PersonProfiler";
 import DashboardView from "./components/DashboardView";
-import DataIngestionTab from "./components/DataIngestionTab";
+import DataIngestionLiveBoard from "./components/DataIngestionLiveBoard";
 import InspectorPanel from "./components/InspectorPanel";
 import LiveAnalyticalCenter from "./components/LiveAnalyticalCenter";
 import AdminBackOffice from "./components/AdminBackOffice";
@@ -1079,7 +1079,7 @@ export default function App() {
                     />
                   )}
                   {activeTab === "media-forensics" && <MediaForensicsTab />}
-                  {activeTab === "data-ingestion" && <DataIngestionTab />}
+                  {activeTab === "data-ingestion" && <DataIngestionLiveBoard />}
                 </>
               ) : (
                 <>
@@ -1638,7 +1638,7 @@ export default function App() {
                 {activeTab === "volumes" && <VolumesTab />}
                 {activeTab === "advisor" && <AdvisorTab />}
                 {activeTab === "media-forensics" && <MediaForensicsTab />}
-                {activeTab === "data-ingestion" && <DataIngestionTab />}
+                {activeTab === "data-ingestion" && <DataIngestionLiveBoard />}
                 {activeTab === "autonomous-factory" && <AutonomousFactory />}
               </motion.div>
             </AnimatePresence>

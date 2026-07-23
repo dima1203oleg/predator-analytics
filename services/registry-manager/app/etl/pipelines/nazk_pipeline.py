@@ -9,12 +9,12 @@ from app.services.storage_router import StorageRouter
 logger = logging.getLogger(__name__)
 
 class NazkPipeline:
-    def __init__(self):
-        self.client = NazkClient()
-        self.storage_router = StorageRouter()
-        self.normalizer = NazkNormalizer()
+    def __init__(self, client: NazkClient | None = None, storage_router: StorageRouter | None = None, normalizer: NazkNormalizer | None = None):
+        self.client = client or NazkClient()
+        self.storage_router = storage_router or StorageRouter()
+        self.normalizer = normalizer or NazkNormalizer()
         
-    async def run_incremental_sync(self, date_from: str = None, max_items: int = 100):
+    async def run_incremental_sync(self, date_from: str | None = None, max_items: int = 100) -> None:
         """
         Завантажує нові декларації з певної дати.
         """
@@ -42,6 +42,6 @@ class NazkPipeline:
         finally:
             await self.client.close()
 
-    async def _store_raw_minio(self, raw_data: dict):
+    async def _store_raw_minio(self, raw_data: dict) -> None:
         doc_id = raw_data.get("id")
         logger.debug(f"Stored {doc_id} to MinIO WORM")

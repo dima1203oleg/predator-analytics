@@ -15,10 +15,10 @@ class OpenSanctionsPipeline:
     а потім завантажує нормалізовані вузли та зв'язки в Neo4j через GraphProjector.
     """
 
-    def __init__(self):
-        self.harvester = OpenSanctionsHarvester()
-        self.normalizer = OpenSanctionsNormalizer()
-        self.projector = GraphProjector()
+    def __init__(self, harvester: OpenSanctionsHarvester | None = None, normalizer: OpenSanctionsNormalizer | None = None, projector: GraphProjector | None = None):
+        self.harvester = harvester or OpenSanctionsHarvester()
+        self.normalizer = normalizer or OpenSanctionsNormalizer()
+        self.projector = projector or GraphProjector()
 
     async def run(self, limit: Optional[int] = None) -> None:
         """Запуск пайплайну."""

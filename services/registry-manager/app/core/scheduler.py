@@ -54,23 +54,29 @@ class RegistryScheduler:
     async def _schedule_prozorro(self):
         """Імітація періодичного запуску інтеграції ProZorro (кожні 15 хвилин)."""
         pipeline = ProzorroPipeline()
+        base_sleep = 900  # 15 min
+        backoff = base_sleep
         while self.is_running:
             self.status["prozorro"]["status"] = "running"
             logger.info("Triggering ProZorro Incremental Sync...")
             try:
                 await pipeline.run_incremental_sync(max_items=100)
                 self.status["prozorro"]["error"] = None
+                backoff = base_sleep  # Скидаємо backoff після успіху
             except Exception as e:
                 logger.error(f"Scheduled ProZorro task failed: {e}")
                 self.status["prozorro"]["error"] = str(e)
+                backoff = min(backoff * 2, 3600)  # Exponential backoff до 1 години
             finally:
                 self.status["prozorro"]["status"] = "idle"
                 self.status["prozorro"]["last_run"] = datetime.now().isoformat()
-            await asyncio.sleep(900)  # 15 min
+            await asyncio.sleep(backoff)
 
     async def _schedule_spending(self):
         """Імітація щоденного запуску інтеграції Spending.gov.ua (вночі)."""
         pipeline = SpendingPipeline()
+        base_sleep = 86400  # 24 hours
+        backoff = base_sleep
         while self.is_running:
             self.status["spending"]["status"] = "running"
             logger.info("Triggering Spending Sync (Yesterday)...")
@@ -78,17 +84,21 @@ class RegistryScheduler:
             try:
                 await pipeline.run_sync_for_date(target_date=yesterday, max_items=100)
                 self.status["spending"]["error"] = None
+                backoff = base_sleep
             except Exception as e:
                 logger.error(f"Scheduled Spending task failed: {e}")
                 self.status["spending"]["error"] = str(e)
+                backoff = min(backoff * 2, 3600)  # Якщо впало, повторювати частіше (до 1 год), а не чекати 24 год
             finally:
                 self.status["spending"]["status"] = "idle"
                 self.status["spending"]["last_run"] = datetime.now().isoformat()
-            await asyncio.sleep(86400)  # 24 hours
+            await asyncio.sleep(backoff)
 
     async def _schedule_nazk(self):
         """Імітація періодичного запуску інтеграції НАЗК (кожні 6 годин)."""
         pipeline = NazkPipeline()
+        base_sleep = 21600  # 6 hours
+        backoff = base_sleep
         while self.is_running:
             self.status["nazk"]["status"] = "running"
             logger.info("Triggering NAZK Incremental Sync...")
@@ -96,13 +106,15 @@ class RegistryScheduler:
             try:
                 await pipeline.run_incremental_sync(date_from=six_hours_ago, max_items=100)
                 self.status["nazk"]["error"] = None
+                backoff = base_sleep
             except Exception as e:
                 logger.error(f"Scheduled NAZK task failed: {e}")
                 self.status["nazk"]["error"] = str(e)
+                backoff = min(backoff * 2, 3600)
             finally:
                 self.status["nazk"]["status"] = "idle"
                 self.status["nazk"]["last_run"] = datetime.now().isoformat()
-            await asyncio.sleep(21600)  # 6 hours
+            await asyncio.sleep(backoff)
 
     async def _schedule_sanctions(self):
         """Імітація запуску Bulk-інтеграцій санкцій (OFAC, РНБО)."""
