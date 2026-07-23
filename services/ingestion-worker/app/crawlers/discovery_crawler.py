@@ -39,17 +39,22 @@ OPENAPI_CATALOGS: list[str] = [
 INTERNATIONAL_REGISTRIES: list[str] = [
     "https://api.worldbank.org/v2/sources?format=json&per_page=100",
     "https://data.opensanctions.org/datasets/default/index.json",
+    "https://offshoreleaks-data.icij.org/offshoreleaks/api/v1/summary.json",
+    "https://api.gleif.org/api/v1/lei-records?page[size]=100",
 ]
 
 UKRAINE_SPECIFIC: list[str] = [
     "https://public-api.nazk.gov.ua/v2/documents",
     "https://bank.gov.ua/NBU_files/electronic-register/current-dir/index_codes.json",
+    "https://public.api.openprocurement.org/api/2.5/tenders",
+    "https://e-spending.gov.ua/api/v2/disclosures",
 ]
 
 ACADEMIC_AND_OSINT: list[str] = [
     "https://api.crossref.org/types",
     "https://api.openalex.org/works?sample=10&select=id,title,authorships",
     "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+    "https://api.shodan.io/api-info",
 ]
 
 # Об'єднаний каталог усіх джерел з типом
@@ -257,8 +262,7 @@ class DiscoveryCrawler:
     def _calculate_priority_score(
         self, pkg: dict[str, Any]
     ) -> tuple[float, dict[str, float]]:
-        """
-        11-факторний AI Priority Score (0.0 – 1.0).
+        """11-факторний AI Priority Score (0.0 – 1.0).
 
         Фактори згідно ТЗ:
           1.  business_value       — компанії, фінанси, тендери
