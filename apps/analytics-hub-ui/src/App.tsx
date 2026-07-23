@@ -1402,7 +1402,6 @@ export default function App() {
           >
             {/* Navigation group */}
             <div className="p-3 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
-              
               {/* Ecosystem Selector Desktop */}
               {!sidebarCollapsed && (
                 <div className="mb-4 space-y-2 pb-4 border-b border-slate-800/60">
@@ -1417,202 +1416,77 @@ export default function App() {
                       }}
                       className={`flex-1 py-1.5 px-1 rounded-md text-[10px] font-medium transition-all flex items-center justify-center gap-1 ${ecosystem === "user" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                     >
-                      <User className="w-3.5 h-3.5" /> Користувач
+                      <User className="w-3 h-3" /> Користувач
                     </button>
                     <button
                       onClick={() => {
                         setEcosystem("admin");
                         setActiveTab("admin-back-office");
                       }}
-                      className={`flex-1 py-1.5 px-1 rounded-md text-[10px] font-medium transition-all flex items-center justify-center gap-1 ${ecosystem === "admin" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                      className={`flex-1 py-1.5 px-1 rounded-md text-[10px] font-medium transition-all flex items-center justify-center gap-1 ${ecosystem === "admin" ? "bg-blue-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                     >
-                      <Shield className="w-3.5 h-3.5" /> Адмін
+                      <Shield className="w-3 h-3" /> Адміністратор
                     </button>
                   </div>
                 </div>
               )}
-              {sidebarCollapsed && (
-                <div className="mb-4 pb-4 border-b border-slate-800/60 flex justify-center">
-                   <button
-                      onClick={() => {
-                        if (ecosystem === "user") {
-                          setEcosystem("admin");
-                          setActiveTab("admin-back-office");
-                        } else {
-                          setEcosystem("user");
-                          setActiveTab("live-analytical-center");
-                        }
-                      }}
-                      className="w-10 h-10 rounded-lg bg-slate-950/50 border border-slate-800/80 flex items-center justify-center text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
-                      title={ecosystem === "user" ? "Switch to Admin" : "Switch to User"}
-                    >
-                      {ecosystem === "user" ? <User className="w-5 h-5" /> : <Shield className="w-5 h-5 text-emerald-400" />}
-                    </button>
-                </div>
-              )}
 
-              {ecosystem === "user" ? (
-                <>
-                  <div className="space-y-6">
-                    {/* 📊 ГОЛОВНЕ */}
-                    <div className="space-y-1">
-                      {!sidebarCollapsed && (
-                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Головне
-                        </div>
-                      )}
-                      
-                      <button
-                        onClick={() => setActiveTab("dashboard")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "dashboard" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Layers className={`w-4 h-4 ${activeTab === "dashboard" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Головна Панель</span>}
-                      </button>
+              {/* DYNAMIC SIDEBAR BASED ON SIDEBAR_GROUPS */}
+              {SIDEBAR_GROUPS.map((group) => {
+                // Filter groups based on ecosystem (hide admin groups in user mode, etc., though here we can just show/hide based on group.id)
+                if (ecosystem === "user" && group.id === "admin") return null;
+                if (ecosystem === "admin" && group.id !== "admin") return null;
 
-                      <button
-                        onClick={() => setActiveTab("live-analytical-center")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "live-analytical-center" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Compass className={`w-4 h-4 ${activeTab === "live-analytical-center" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Аналітика та Звіти</span>}
-                      </button>
-                    </div>
-
-                    {/* 🔍 РОЗСЛІДУВАННЯ */}
-                    <div className="space-y-1">
-                      {!sidebarCollapsed && (
-                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Розслідування
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => setActiveTab("osint")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "osint" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Search className={`w-4 h-4 ${activeTab === "osint" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Глибокий Пошук</span>}
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab("person-profiler")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "person-profiler" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <UserCheck className={`w-4 h-4 ${activeTab === "person-profiler" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Перевірка Осіб</span>}
-                      </button>
-                      
-                      <button
-                        onClick={() => setActiveTab("media-forensics")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "media-forensics" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Camera className={`w-4 h-4 ${activeTab === "media-forensics" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Аналіз Фото/Відео</span>}
-                      </button>
-                    </div>
-
-                    {/* 🛠 ДОДАТКОВІ ІНСТРУМЕНТИ */}
-                    <div className="space-y-1">
-                      {!sidebarCollapsed && (
-                        <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Додатково
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => setActiveTab("maps")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "maps" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Globe className={`w-4 h-4 ${activeTab === "maps" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Інтерактивна Карта</span>}
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab("data-ingestion")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "data-ingestion" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Database className={`w-4 h-4 ${activeTab === "data-ingestion" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Завантаження Даних</span>}
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab("sandbox")}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "sandbox" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                      >
-                        <Network className={`w-4 h-4 ${activeTab === "sandbox" ? "text-blue-400" : "text-slate-400"}`} />
-                        {!sidebarCollapsed && <span>Розширений Аналіз</span>}
-                      </button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1">
+                return (
+                  <div key={group.id} className="space-y-1">
                     {!sidebarCollapsed && (
                       <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Адміністрування
+                        {group.label}
                       </div>
                     )}
-                    <button
-                      onClick={() => setActiveTab("admin-back-office")}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "admin-back-office" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                    >
-                      <Settings className={`w-4 h-4 ${activeTab === "admin-back-office" ? "text-blue-400" : "text-slate-400"}`} />
-                      {!sidebarCollapsed && <span>Консоль управління</span>}
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("autonomous-factory")}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${activeTab === "autonomous-factory" ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
-                    >
-                      <Cpu className={`w-4 h-4 ${activeTab === "autonomous-factory" ? "text-blue-400" : "text-slate-400"}`} />
-                      {!sidebarCollapsed && <span>Автономна Фабрика</span>}
-                    </button>
-                  </div>
+                    {group.items.map((item) => {
+                      const isActive = activeTab === item.id;
+                      // Determine icon based on item.id
+                      let Icon = LayoutDashboard;
+                      if (item.id === "live-analytical-center") Icon = Activity;
+                      else if (item.id === "osint") Icon = Search;
+                      else if (item.id === "person-profiler") Icon = UserCheck;
+                      else if (item.id === "maps") Icon = Globe;
+                      else if (item.id === "media-forensics") Icon = Camera;
+                      else if (item.id === "sandbox") Icon = Network;
+                      else if (item.id === "data-ingestion") Icon = Database;
+                      else if (item.id === "admin-back-office") Icon = Settings;
+                      else if (item.id === "architecture") Icon = Network;
+                      else if (item.id === "catalog") Icon = Layers;
 
-                  <div className="space-y-1 mt-6">
-                    {!sidebarCollapsed && (
-                      <div className="px-3 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Архітектура Інфраструктури
-                      </div>
-                    )}
-                    {[
-                      { id: "architecture", label: "Граф залежностей", icon: Network },
-                      { id: "gap", label: "Аналіз прогалин", icon: Wrench },
-                      { id: "roadmap", label: "Дорожня карта", icon: Calendar },
-                      { id: "catalog", label: "Каталог рішень", icon: Layers },
-                      { id: "license", label: "Сумісність ліцензій", icon: ShieldAlert },
-                      { id: "volumes", label: "Томи ТЗ", icon: Database },
-                      { id: "advisor", label: "ШІ-Архітектор", icon: Cpu },
-                    ].map((tab) => {
-                      const Icon = tab.icon;
-                      const isActive = activeTab === tab.id;
                       return (
                         <button
-                          key={tab.id}
-                          onClick={() => {
-                            setActiveTab(tab.id);
-                            if (tab.id === "architecture") {
-                              setSelectedNode({
-                                id: "core_api",
-                                label: "Core REST API",
-                                group: "Core",
-                              });
-                              setSelectedEntity(null);
-                              setSelectedTool(null);
-                            }
-                          }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${isActive ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
+                          key={item.id}
+                          onClick={() => setActiveTab(item.id)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${isActive ? "bg-blue-500/10 text-blue-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"}`}
                         >
-                          <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
-                          {!sidebarCollapsed && <span>{tab.label}</span>}
+                          <div className="flex items-center gap-3">
+                            <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
+                            {!sidebarCollapsed && <span>{item.label}</span>}
+                          </div>
+                          {!sidebarCollapsed && item.badge && (
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider
+                              ${item.badgeColor === "emerald" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : ""}
+                              ${item.badgeColor === "rose" ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : ""}
+                              ${item.badgeColor === "blue" ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" : ""}
+                              ${item.badgeColor === "fuchsia" ? "bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30" : ""}
+                              ${item.badgeColor === "indigo" ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30" : ""}
+                            `}>
+                              {item.badge}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
                   </div>
-                </>
-              )}
-              
+                );
+              })}
+
               {!sidebarCollapsed && (
                 <div className="bg-slate-800/30 border border-slate-700/50 p-3 rounded-xl space-y-3 mt-6">
                   <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
