@@ -64,6 +64,9 @@ ALL_SOURCES: list[dict[str, str]] = (
     + [{"url": u, "type": "international_registry"} for u in INTERNATIONAL_REGISTRIES]
     + [{"url": u, "type": "ukraine_registry"} for u in UKRAINE_SPECIFIC]
     + [{"url": u, "type": "academic_osint"} for u in ACADEMIC_AND_OSINT]
+    # Додаткові протоколи для автономного пошуку
+    + [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "type": "rss"}]
+    + [{"url": "https://api.github.com/graphql", "type": "graphql"}]
 )
 
 
@@ -132,6 +135,10 @@ class DiscoveryCrawler:
                     await self._scan_ckan_portal(url)
                 elif src_type == "openapi_catalog":
                     await self._scan_openapi_catalog(url)
+                elif src_type == "rss":
+                    await self._scan_rss_feed(url)
+                elif src_type == "graphql":
+                    await self._scan_graphql_endpoint(url)
                 else:
                     await self._scan_generic_source(url, src_type)
             except Exception as e:
@@ -209,6 +216,40 @@ class DiscoveryCrawler:
             "update_frequency": "daily" if "ukraine" in src_type else "monthly",
             "tags": [{"name": src_type}, {"name": "auto_discovered"}],
             "source_type": src_type.upper(),
+        }
+        await self._register_dataset(pkg, portal_url=url)
+
+    async def _scan_rss_feed(self, url: str) -> None:
+        """Сканування RSS/Atom потоку для виявлення новин/апдейтів."""
+        logger.info(f"DiscoveryCrawler: RSS сканування {url}")
+        domain = urlparse(url).netloc
+        pkg = {
+            "id": f"rss_{domain.replace('.', '_')}",
+            "title": f"RSS Feed: {domain}",
+            "notes": "Автоматично виявлене джерело новин/даних через RSS.",
+            "url": url,
+            "organization": {"title": domain},
+            "resources": [{"format": "xml"}],
+            "update_frequency": "hourly",
+            "tags": [{"name": "rss"}, {"name": "news"}],
+            "source_type": "RSS",
+        }
+        await self._register_dataset(pkg, portal_url=url)
+
+    async def _scan_graphql_endpoint(self, url: str) -> None:
+        """Сканування GraphQL API."""
+        logger.info(f"DiscoveryCrawler: GraphQL сканування {url}")
+        domain = urlparse(url).netloc
+        pkg = {
+            "id": f"graphql_{domain.replace('.', '_')}",
+            "title": f"GraphQL API: {domain}",
+            "notes": "Автоматично виявлений GraphQL Endpoint. Потребує інтроспекції.",
+            "url": url,
+            "organization": {"title": domain},
+            "resources": [{"format": "graphql"}],
+            "update_frequency": "realtime",
+            "tags": [{"name": "graphql"}, {"name": "api"}],
+            "source_type": "GRAPHQL",
         }
         await self._register_dataset(pkg, portal_url=url)
 
