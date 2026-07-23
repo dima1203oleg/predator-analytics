@@ -21,7 +21,7 @@ import DataIngestionTab from "./components/DataIngestionTab";
 import InspectorPanel from "./components/InspectorPanel";
 import LiveAnalyticalCenter from "./components/LiveAnalyticalCenter";
 import AdminBackOffice from "./components/AdminBackOffice";
-import AutonomousFactoryTab from "./components/AutonomousFactoryTab";
+import AutonomousFactory from "./components/AutonomousFactory";
 import MapsTab from "./components/MapsTab";
 import InvestigationSandbox from "./components/InvestigationSandbox";
 import { MediaForensicsTab } from "./components/MediaForensicsTab";
@@ -1084,7 +1084,7 @@ export default function App() {
               ) : (
                 <>
                   {activeTab === "admin-back-office" && <AdminBackOffice />}
-                  {activeTab === "autonomous-factory" && <AutonomousFactoryTab />}
+                  {activeTab === "autonomous-factory" && <AutonomousFactory />}
                   {activeTab === "catalog" && <CatalogTab />}
                   {activeTab === "license" && <LicenseTab />}
                   {activeTab === "architecture" && <ArchitectureTab />}
@@ -1633,7 +1633,7 @@ export default function App() {
                 {activeTab === "advisor" && <AdvisorTab />}
                 {activeTab === "media-forensics" && <MediaForensicsTab />}
                 {activeTab === "data-ingestion" && <DataIngestionTab />}
-                {activeTab === "autonomous-factory" && <AutonomousFactoryTab />}
+                {activeTab === "autonomous-factory" && <AutonomousFactory />}
               </motion.div>
             </AnimatePresence>
           </div>
