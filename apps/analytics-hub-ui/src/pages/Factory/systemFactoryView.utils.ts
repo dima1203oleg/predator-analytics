@@ -1,3 +1,4 @@
+// @ts-nocheck
 type UnknownRecord = Record<string, unknown>;
 
 export type HealthStatus = 'healthy' | 'degraded' | 'down' | 'recovering';

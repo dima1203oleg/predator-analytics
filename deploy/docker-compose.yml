@@ -241,6 +241,17 @@ services:
     networks:
       - predator_net
 
+  # 4.5. CONNECTOR FACTORY
+  connector-factory:
+    build:
+      context: ../agents/connector-factory
+      dockerfile: Dockerfile
+    container_name: predator_connector_factory
+    ports:
+      - "8008:8000"
+    networks:
+      - predator_net
+
   # 5. REGISTRY MANAGER (ETL Pipelines & Storage Router)
   registry-manager:
     build:

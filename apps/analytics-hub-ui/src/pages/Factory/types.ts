@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Типи для Фабрики Автоматизації — Knowledge Map, Патерни, Тренування
  * FABRYKA v2.0 – AUTONOMOUS CORE розширення

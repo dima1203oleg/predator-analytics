@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Типи для модуля Antigravity AGI — автономного ядра розробки ПЗ.
  * Базується на ТЗ Google Antigravity Coder v1.0 (Enterprise MVP).

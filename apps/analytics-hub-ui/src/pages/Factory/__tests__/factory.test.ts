@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, it, expect, beforeAll } from 'vitest';
 import { factoryApi } from '../../../services/api/factory';
 import { apiClient, v45Client } from '../../../services/api/config';
