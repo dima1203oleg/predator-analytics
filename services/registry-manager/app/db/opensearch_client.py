@@ -3,7 +3,10 @@ OpenSearch Client — PREDATOR Registry Manager
 """
 import logging
 import os
-from opensearchpy import AsyncOpenSearch
+try:
+    from opensearchpy import AsyncOpenSearch
+except ImportError:
+    AsyncOpenSearch = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -15,14 +18,18 @@ class OpenSearchClient:
         self.password = os.getenv("OPENSEARCH_PASSWORD", "admin")
         
         try:
-            self.client = AsyncOpenSearch(
-                hosts=[{'host': self.host, 'port': self.port}],
-                http_auth=(self.user, self.password),
-                use_ssl=False,
-                verify_certs=False,
-                ssl_show_warn=False
-            )
-            logger.info("Initialized OpenSearchClient")
+            if AsyncOpenSearch:
+                self.client = AsyncOpenSearch(
+                    hosts=[{'host': self.host, 'port': self.port}],
+                    http_auth=(self.user, self.password),
+                    use_ssl=False,
+                    verify_certs=False,
+                    ssl_show_warn=False
+                )
+                logger.info("Initialized OpenSearchClient")
+            else:
+                self.client = None
+                logger.warning("opensearchpy not installed, OpenSearchClient disabled")
         except Exception as e:
             logger.error(f"Failed to initialize OpenSearchClient: {e}")
             self.client = None

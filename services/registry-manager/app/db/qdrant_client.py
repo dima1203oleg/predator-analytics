@@ -4,8 +4,12 @@ Qdrant Client — PREDATOR Registry Manager
 import logging
 import os
 import uuid
-from qdrant_client import AsyncQdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+try:
+    from qdrant_client import AsyncQdrantClient
+    from qdrant_client.models import Distance, VectorParams, PointStruct
+except ImportError:
+    AsyncQdrantClient = None  # type: ignore
+    Distance = VectorParams = PointStruct = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +19,12 @@ class QdrantVectorClient:
         self.port = int(os.getenv("QDRANT_PORT", 6333))
         
         try:
-            self.client = AsyncQdrantClient(host=self.host, port=self.port)
-            logger.info("Initialized QdrantVectorClient")
+            if AsyncQdrantClient:
+                self.client = AsyncQdrantClient(host=self.host, port=self.port)
+                logger.info("Initialized QdrantVectorClient")
+            else:
+                self.client = None
+                logger.warning("qdrant-client not installed, QdrantVectorClient disabled")
         except Exception as e:
             logger.error(f"Failed to initialize QdrantVectorClient: {e}")
             self.client = None
