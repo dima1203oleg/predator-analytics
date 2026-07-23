@@ -51,3 +51,30 @@ async def update_task(task_id: str, request: TaskUpdateRequest):
 @adip_router.get("/tasks")
 async def get_tasks():
     return task_tracker.get_all_tasks()
+
+@adip_router.get("/ecosystem")
+async def get_ecosystem():
+    """Повертає підсумковий стан екосистеми з Knowledge Base та Meta-Learning."""
+    return adip_core.get_ecosystem_status()
+
+@adip_router.get("/sources")
+async def get_sources():
+    """Повертає перелік усіх відстежуваних джерел даних."""
+    return adip_core.kb.get_all_sources()
+
+class TriggerHealingRequest(BaseModel):
+    url: str
+    error_type: str = "MANUAL_TRIGGER"
+    details: str = "Штучний запуск Self-Healing з UI Дашборду"
+
+@adip_router.post("/heal")
+async def trigger_self_healing(request: TriggerHealingRequest):
+    """Штучний або автоматичний запуск Self-Healing для джерела."""
+    logger.info(f"UI Trigger Self-Healing for: {request.url}")
+    res = await adip_core.handle_runtime_incident(
+        source_url=request.url,
+        error_type=request.error_type,
+        details=request.details,
+    )
+    return res
+
