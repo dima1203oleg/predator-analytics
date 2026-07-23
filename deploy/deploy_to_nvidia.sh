@@ -15,7 +15,7 @@ echo "============================================="
 ssh -p ${SSH_PORT} ${USER}@${SERVER_IP} "mkdir -p ${REMOTE_DIR}"
 
 echo "[1/3] Syncing files to server..."
-rsync -avz -e "ssh -p ${SSH_PORT}" --exclude 'node_modules' --exclude '__pycache__' --exclude '.git' ../deploy ../services ../libs ${USER}@${SERVER_IP}:${REMOTE_DIR}/
+rsync -avz -e "ssh -p ${SSH_PORT}" --exclude 'node_modules' --exclude '__pycache__' --exclude '.git' deploy services libs ${USER}@${SERVER_IP}:${REMOTE_DIR}/
 
 echo "[2/3] Building and bringing up Docker containers..."
 ssh -p ${SSH_PORT} ${USER}@${SERVER_IP} "cd ${REMOTE_DIR}/deploy && docker compose down && docker compose up --build -d"
