@@ -39,6 +39,7 @@
     "lucide-react": "^0.546.0",
     "maplibre-gl": "^5.24.0",
     "motion": "^12.42.2",
+    "multer": "^2.2.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.1",
     "react-cytoscapejs": "^2.0.0",

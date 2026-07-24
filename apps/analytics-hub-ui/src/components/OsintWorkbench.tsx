@@ -444,7 +444,7 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
       setIsSearchingLive(true);
       setLiveSearchError(null);
       try {
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
         const urlParams = new URLSearchParams({ q: queryText });
         if (activeFilter !== 'all') urlParams.append('type', activeFilter);
         const response = await fetch(`${API_BASE_URL}/api/v1/osint/search?${urlParams.toString()}`, {

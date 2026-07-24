@@ -7,7 +7,6 @@ from typing import Dict, Any
 
 from neo4j import AsyncGraphDatabase
 
-from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 

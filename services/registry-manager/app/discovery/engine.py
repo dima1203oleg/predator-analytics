@@ -90,7 +90,8 @@ class APIDiscoveryEngine:
                 logger.info("Starting new discovery cycle...")
                 
                 # 1. Скануємо Глобальний Маніфест (20+ категорій джерел)
-                manifest_path = "config/global_discovery_manifest.yaml"
+                import os
+                manifest_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config", "global_discovery_manifest.yaml")
                 async for source in self.scanner.scan_global_manifest(manifest_path):
                     await self._process_discovered_source(source)
                     

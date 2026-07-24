@@ -27,7 +27,7 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
       // Використовуємо глобальний API_BASE_URL (або хардкодимо для логіну якщо його тут немає)
       // В даному випадку ми можемо використати відносний шлях, якщо налаштовано проксі, або абсолютний
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
       
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/token`, {
         method: 'POST',

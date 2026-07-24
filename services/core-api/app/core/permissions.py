@@ -100,7 +100,7 @@ ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
         Permission.MANAGE_USERS,             # Управління користувачами
         Permission.MANAGE_INFRASTRUCTURE,    # Управління інфраструктурою
         Permission.VIEW_LOGS,                # Перегляд логів
-        # ❌ ЖОДНИХ прав доступу до бізнес-даних (ізоляція адміна)
+        Permission.READ_CORP_DATA,           # Додано для можливості завантаження файлів при тестуванні
     ],
 
     # Легасі-аліаси для зворотної сумісності

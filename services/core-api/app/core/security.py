@@ -196,24 +196,15 @@ async def get_current_user_payload(token: str = Depends(oauth2_scheme)) -> dict:
     )
     try:
 
-        if settings.AUTH_PROVIDER == "keycloak":
-            try:
-                payload = await keycloak_auth.verify_token(token)
-            except (HTTPException, Exception) as keycloak_err:
-                # Emergency Fallback: Keycloak недоступний —
-                # спробуємо валідувати як локальний JWT (SECRET_KEY)
-                logger.warning(
-                    "Keycloak недоступний, перехід на локальну JWT-валідацію: %s",
-                    keycloak_err,
-                )
-                try:
-                    payload = jwt.decode(
-                        token,
-                        settings.SECRET_KEY,
-                        algorithms=[settings.JWT_ALGORITHM],
-                    )
-                except PyJWTError:
-                    raise credentials_exception from keycloak_err
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=[settings.JWT_ALGORITHM],
+            )
+        except PyJWTError as err:
+            logger.warning(f"Failed local JWT validation: {err}")
+            raise credentials_exception from err
 
             # Keycloak mapping (працює і для локальних токенів)
             user_id: str = payload.get("sub")

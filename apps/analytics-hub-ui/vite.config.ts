@@ -12,28 +12,28 @@ export default defineConfig(() => {
       },
     },
     server: {
-      port: 3032,
+      port: 3030,
       proxy: {
-        // OSINT scan → Core API (FastAPI на порту 8000)
-        '/api/v1/dossier/person/scan': {
-          target: 'http://localhost:8000',
+        // Весь трафік /api → Mock API Server (порт 9080) поки бекенд недоступний
+        '/api': {
+          target: 'http://127.0.0.1:9080',
           changeOrigin: true,
           secure: false,
         },
-        // Загальний fallback → NVIDIA Compute Node або Mock API
-        '/api': {
-          // Основний Compute Node — NVIDIA (194.177.1.240)
-          target: 'http://localhost:8000',
+        // ADIP та ETL маршрути
+        '/adip': {
+          target: 'http://127.0.0.1:8888',
           changeOrigin: true,
           secure: false,
-          // Kaggle/zrok fallback — замінити вручну при активному тунелі:
-          // target: 'https://l7rb3vt15xjq.share.zrok.io',
-        }
+        },
+        '/etl': {
+          target: 'http://127.0.0.1:8888',
+          changeOrigin: true,
+          secure: false,
+        },
       },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };

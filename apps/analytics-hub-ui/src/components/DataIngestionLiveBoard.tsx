@@ -68,7 +68,7 @@ export default function DataIngestionLiveBoard() {
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
   const addLog = (text: string, type: 'info' | 'success' | 'warn' | 'ai' = 'info') => {
     setLogs(prev => [...prev.slice(-49), {
@@ -188,6 +188,18 @@ export default function DataIngestionLiveBoard() {
       });
 
       if (!response.ok) {
+          if (response.status === 401) {
+              localStorage.removeItem('predator_token');
+              addLog(`Ваша сесія застаріла. Будь ласка, оновіть сторінку та увійдіть знову.`, 'warn');
+              setTimeout(() => window.location.reload(), 2000);
+              return;
+          }
+          if (response.status === 403) {
+              addLog(`У вас немає прав (READ_CORP_DATA) для завантаження файлів.`, 'warn');
+              setPhase('IDLE');
+              setProgress(0);
+              return;
+          }
           throw new Error('Upload failed');
       }
       

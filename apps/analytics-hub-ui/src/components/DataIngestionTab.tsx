@@ -449,7 +449,7 @@ export default function DataIngestionTab() {
     "ШІ Автомат Інтеграції",
   );
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
   // Poll ETL Status
   useEffect(() => {

@@ -7,6 +7,7 @@ SSE підтримка для real-time прогресу.
 import asyncio
 from collections.abc import AsyncGenerator
 import hashlib
+import os
 import uuid
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, Query
