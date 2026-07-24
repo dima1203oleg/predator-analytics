@@ -27,22 +27,22 @@ class KeycloakAuthMiddleware(BaseHTTPMiddleware):
     Перевіряє підпис (через JWKS), аудиторію та expiration.
     """
     
-    # Список шляхів, які не потребують авторизації
-    PUBLIC_PATHS = {
+    # Список префіксів шляхів, які не потребують авторизації
+    PUBLIC_PATHS = (
         "/api/v1/health",
-        "/api/v1/ready",
-        "/api/v1/metrics",
-        "/api/v1/auth/token",
-        "/api/v1/auth/login",
+        "/health",
+        "/ready",
+        "/metrics",
+        "/api/v1/auth/",
         "/docs",
         "/redoc",
         "/openapi.json"
-    }
+    )
 
     async def dispatch(self, request: Request, call_next: Any) -> Response:
         path = request.url.path
         
-        if path in self.PUBLIC_PATHS:
+        if path.startswith(self.PUBLIC_PATHS) or path == "/":
             return await call_next(request)
 
         # Отримуємо Authorization header або query параметр
