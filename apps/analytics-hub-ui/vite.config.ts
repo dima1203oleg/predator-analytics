@@ -14,9 +14,9 @@ export default defineConfig(() => {
     server: {
       port: 3030,
       proxy: {
-        // Весь трафік /api → Реальний API Server (NVIDIA)
+        // Весь трафік /api → Реальний API Server (NVIDIA) через локальний SSH тунель на порту 8000
         '/api': {
-          target: 'https://194.177.1.240:8000',
+          target: 'http://127.0.0.1:8000',
           changeOrigin: true,
           secure: false,
         },
