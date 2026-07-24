@@ -14,9 +14,9 @@ export default defineConfig(() => {
     server: {
       port: 3030,
       proxy: {
-        // Весь трафік /api → Mock API Server (порт 9080) поки бекенд недоступний
+        // Весь трафік /api → Реальний API Server (NVIDIA)
         '/api': {
-          target: 'http://127.0.0.1:9080',
+          target: 'https://194.177.1.240:8000',
           changeOrigin: true,
           secure: false,
         },

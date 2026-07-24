@@ -27,15 +27,16 @@ async def main():
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest = yaml.safe_load(f)
         
-    first_category = manifest["categories"][0]
-    first_source = first_category["sources"][0]
-    
-    # Enrich with category info
-    first_source["category"] = first_category["name"]
-    
-    print(f"Testing engine on source: {first_source['name']}")
-    
-    await engine._process_discovered_source(first_source)
+    for category in manifest.get("categories", []):
+        for source in category.get("sources", []):
+            # Skip if already generated (we could check if file exists, but for now we just process)
+            source["category"] = category["name"]
+            print(f"\n[{category['name']}] Processing source: {source['name']}")
+            try:
+                await engine._process_discovered_source(source)
+            except Exception as e:
+                logging.error(f"Error processing {source['name']}: {e}")
+                continue
     
     await engine.close()
 
