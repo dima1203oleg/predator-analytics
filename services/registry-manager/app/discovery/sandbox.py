@@ -25,7 +25,23 @@ class GhostRuntime:
         """
         logger.info(f"GhostRuntime: Testing connector {script_path}")
         
-        # Створюємо простий тестовий файл, який імпортує згенерований клас та викликає harvest() з обмеженням
+        # 1. Синтаксична перевірка за допомогою ast.parse
+        import ast
+        try:
+            with open(script_path, "r", encoding="utf-8") as f:
+                source_code = f.read()
+            ast.parse(source_code)
+            logger.info("GhostRuntime: AST Syntax check passed.")
+        except SyntaxError as e:
+            error_msg = f"SyntaxError in generated code: {e}"
+            logger.error(f"GhostRuntime: {error_msg}")
+            return False, error_msg
+        except Exception as e:
+            error_msg = f"Failed to read or parse file: {e}"
+            logger.error(f"GhostRuntime: {error_msg}")
+            return False, error_msg
+
+        # 2. Створюємо простий тестовий файл, який імпортує згенерований клас та викликає harvest() з обмеженням
         test_script_content = f"""
 import asyncio
 import sys
