@@ -261,7 +261,7 @@ async def upload_file(
 
     # Перевірка формату
     file_ext = os.path.splitext(file.filename)[1].lower()
-    if file_ext not in [".csv", ".json", ".jsonl", ".parquet", ".xml", ".xlsx", ".xls"]:
+    if file_ext not in [".csv", ".json", ".jsonl", ".parquet", ".xml", ".xlsx", ".xls", ".zip", ".gz", ".tar"]:
         raise HTTPException(status_code=400, detail=f"Непідтримуваний формат файлу: {file_ext}")
 
     # Читаємо вміст файлу

@@ -292,7 +292,7 @@ export default function DataIngestionLiveBoard() {
              <UploadCloud className={`w-4 h-4 ${phase !== 'IDLE' && phase !== 'DONE' ? 'animate-pulse' : ''}`} />
              {phase === 'IDLE' ? 'ОБРАТИ ФАЙЛ' : 'В ПРОЦЕСІ...'}
            </button>
-           <input id="ingest-file-upload" type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx,.xls,.parquet,.xml" />
+           <input id="ingest-file-upload" type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} accept=".csv,.json,.xlsx,.xls,.parquet,.xml,.zip,.gz" />
         </div>
       </div>
 
