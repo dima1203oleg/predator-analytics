@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from app.etl.pipelines.prozorro_pipeline import ProzorroPipeline
 from app.etl.pipelines.spending_pipeline import SpendingPipeline
 from app.etl.pipelines.nazk_pipeline import NazkPipeline
+from app.discovery.engine import APIDiscoveryEngine
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,7 @@ class RegistryScheduler:
             "spending": {"status": "idle", "last_run": None, "error": None},
             "nazk": {"status": "idle", "last_run": None, "error": None},
             "sanctions": {"status": "idle", "last_run": None, "error": None},
+            "discovery": {"status": "idle", "last_run": None, "error": None},
         }
         self._initialized = True
 
@@ -43,6 +46,7 @@ class RegistryScheduler:
         self._tasks.append(asyncio.create_task(self._schedule_spending()))
         self._tasks.append(asyncio.create_task(self._schedule_nazk()))
         self._tasks.append(asyncio.create_task(self._schedule_sanctions()))
+        self._tasks.append(asyncio.create_task(self._schedule_discovery_engine()))
 
     async def stop(self):
         logger.info("Stopping Registry Scheduler...")
@@ -127,3 +131,25 @@ class RegistryScheduler:
             self.status["sanctions"]["last_run"] = datetime.now().isoformat()
             logger.info("Scheduler: OFAC/RNBO Sync Completed.")
             await asyncio.sleep(86400) # 24h
+
+    async def _schedule_discovery_engine(self):
+        """Імітація запуску Autonomous Discovery Engine."""
+        neo4j_uri = os.getenv("NEO4J_URI", "bolt://neo4j:7687")
+        neo4j_user = os.getenv("NEO4J_USER", "neo4j")
+        neo4j_password = os.getenv("NEO4J_PASSWORD", "neo4j_password")
+        
+        self.status["discovery"]["status"] = "running"
+        logger.info("Starting Autonomous Discovery Loop...")
+        
+        try:
+            engine = APIDiscoveryEngine(neo4j_uri, neo4j_user, neo4j_password)
+            await engine.start_autonomous_loop()
+        except asyncio.CancelledError:
+            logger.info("Autonomous Discovery Loop cancelled.")
+        except Exception as e:
+            logger.error(f"Scheduled Discovery Engine task failed: {e}")
+            self.status["discovery"]["error"] = str(e)
+        finally:
+            self.status["discovery"]["status"] = "idle"
+            self.status["discovery"]["last_run"] = datetime.now().isoformat()
+
