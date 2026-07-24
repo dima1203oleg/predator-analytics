@@ -10,7 +10,7 @@ from uuid import UUID
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.orm import Company
+from app.models.orm import Company, Person
 from app.services.ere_service import EREService
 
 logger = logging.getLogger(__name__)
@@ -61,6 +61,90 @@ class SearchService:
             logger.warning("Vector reranking failed or unavailable: %s", e)
 
         return companies
+
+    @staticmethod
+    async def hybrid_search_persons(
+        query: str,
+        db: AsyncSession,
+        tenant_id: UUID | str,
+        limit: int = 20,
+    ) -> list[Person]:
+        """Гібридний пошук фізичних осіб (текст + вектор).
+
+        Args:
+            query: Пошуковий запит
+            db: Async database session
+            tenant_id: UUID тенанта (обов'язково для RLS)
+            limit: Максимальна кількість результатів
+
+        """
+        # Текстовий пошук
+        stmt = select(Person).where(
+            Person.tenant_id == str(tenant_id),
+            or_(
+                Person.full_name.ilike(f"%{query}%"),
+                Person.inn.ilike(f"%{query}%")
+            )
+        ).limit(limit)
+        
+        result = await db.execute(stmt)
+        persons = list(result.scalars().all())
+
+        # Фаза 2: Qdrant vector reranking (опціонально для осіб, якщо підтримується ERE)
+        try:
+            ere = EREService()
+            vector_results = await ere.find_duplicates(tenant_id, query, threshold=0.3, limit=limit * 2)
+            vector_scores = {res["entity_id"]: res["score"] for res in vector_results}
+
+            persons.sort(
+                key=lambda p: vector_scores.get(str(p.id), 0.0) + vector_scores.get(p.ueid, 0.0),
+                reverse=True
+            )
+        except Exception as e:
+            logger.warning("Vector reranking for persons failed or unavailable: %s", e)
+
+        return persons
+
+    @staticmethod
+    async def hybrid_search_all(
+        query: str,
+        db: AsyncSession,
+        tenant_id: UUID | str,
+        limit: int = 20,
+    ) -> list[dict[str, Any]]:
+        """Гібридний пошук всіх сутностей (Company + Person) для OSINT-візуалізатора.
+        
+        Повертає нормалізований список словників для зручного використання в UI.
+        """
+        companies = await SearchService.hybrid_search_companies(query, db, tenant_id, limit)
+        persons = await SearchService.hybrid_search_persons(query, db, tenant_id, limit)
+        
+        results = []
+        for c in companies:
+            results.append({
+                "id": c.ueid,
+                "name": c.name,
+                "type": "company",
+                "code": c.edrpou or "",
+                "status": c.status or "ACTIVE",
+                "riskScore": c.cers_score or 50,
+                "description": c.industry or "Company",
+            })
+            
+        for p in persons:
+            results.append({
+                "id": p.ueid,
+                "name": p.full_name,
+                "type": "person",
+                "code": p.inn or "",
+                "status": "ACTIVE",
+                "riskScore": 50,
+                "description": f"Person (DOB: {p.date_of_birth})" if p.date_of_birth else "Person",
+            })
+            
+        # Optional: Sort by relevance/risk if needed.
+        # For now, just return combined limited list.
+        return results[:limit]
 
     @staticmethod
     async def recommend_similar_entities(

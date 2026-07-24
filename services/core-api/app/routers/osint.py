@@ -14,6 +14,7 @@ from fpdf import FPDF
 from app.database import get_db
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
+from app.services.search_service import SearchService
 from predator_common.models import Anomaly, Company, RiskScore
 from enum import Enum
 import uuid
@@ -250,34 +251,14 @@ async def get_osint_feed(
     return results
 
 
-@router.get("/search", summary="Пошук компаній (OSINT)")
-async def search_companies(
+@router.get("/search", summary="Пошук сутностей (OSINT)")
+async def search_entities(
     q: str,
     db: Annotated[AsyncSession, Depends(get_db)],
     tenant_id: Annotated[str, Depends(get_tenant_id)]
 ) -> list[dict[str, Any]]:
-    # Search by EDRPOU or Name (case insensitive)
-    query = select(Company, RiskScore).outerjoin(
-        RiskScore, (Company.ueid == RiskScore.entity_ueid) & (RiskScore.tenant_id == tenant_id)
-    ).where(
-        Company.tenant_id == tenant_id,
-        (Company.edrpou.ilike(f"%{q}%")) | (Company.name.ilike(f"%{q}%"))
-    ).limit(20)
-
-    result = await db.execute(query)
-    rows = result.all()
-
-    response = []
-    for company, risk in rows:
-        response.append({
-            "ueid": company.ueid,
-            "edrpou": company.edrpou,
-            "name": company.name,
-            "status": company.status,
-            "industry": company.industry,
-            "risk_score": risk.cers if risk else company.cers_score
-        })
-    return response
+    # Гібридний пошук компаній та осіб через SearchService
+    return await SearchService.hybrid_search_all(q, db, tenant_id, limit=20)
 
 @router.get("/company/{ueid}", summary="Досьє компанії")
 async def get_company_dossier(
