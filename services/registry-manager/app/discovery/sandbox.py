@@ -6,6 +6,7 @@ Ghost Runtimes Sandbox — PREDATOR Analytics
 import asyncio
 import logging
 import subprocess
+import sys
 from typing import Tuple
 
 logger = logging.getLogger(__name__)
@@ -50,6 +51,11 @@ import os
 
 async def run_test():
     try:
+        # Додаємо шлях до директорії ingestion-worker, щоб імпорти app.core працювали
+        from pathlib import Path
+        ingestion_dir = str(Path("{script_path}").resolve().parent.parent.parent.parent)
+        sys.path.insert(0, ingestion_dir)
+        
         spec = importlib.util.spec_from_file_location("harvester", "{script_path}")
         harvester_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(harvester_module)
@@ -64,8 +70,12 @@ async def run_test():
         if not harvester_class:
             print("ERROR: Harvester class not found")
             sys.exit(1)
-            
-        instance = harvester_class()
+
+        try:
+            instance = harvester_class(config={{}})
+        except TypeError:
+            instance = harvester_class()
+        
         count = 0
         async for item in instance.harvest():
             print(f"Sample item: {{item}}")
@@ -88,7 +98,7 @@ if __name__ == "__main__":
         # Запускаємо як окремий subprocess для ізоляції (Mock Ghost Runtime)
         try:
             process = await asyncio.create_subprocess_exec(
-                "python", test_file_path,
+                sys.executable, test_file_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
             )

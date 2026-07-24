@@ -59,6 +59,13 @@ class SourceEvaluator:
         # 3. Базові бали
         score += 10
         
+        # 4. Manifest Priority (override)
+        manifest_priority = source_metadata.get("priority", "").lower()
+        if manifest_priority == "critical":
+            score += 50
+        elif manifest_priority == "high":
+            score += 30
+            
         return min(score, 100)
 
     async def save_to_metagraph(self, source_metadata: Dict[str, Any], priority_score: int) -> None:
